@@ -1,0 +1,26 @@
+CREATE TABLE BillEntity (
+    id INTEGER NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL,
+    category TEXT NOT NULL,
+    amount REAL NOT NULL,
+    vendor TEXT NOT NULL,
+    billDate INTEGER NOT NULL,
+    imagePath TEXT NOT NULL
+);
+
+selectAll:
+SELECT * FROM BillEntity;
+
+selectById:
+SELECT * FROM BillEntity WHERE id = ?;
+
+insertBill:
+INSERT INTO BillEntity(id, title, category, amount, vendor, billDate, imagePath)
+VALUES (?, ?, ?, ?, ?, ?, ?);
+
+updateBill:
+UPDATE BillEntity SET title = ?, category = ?, amount = ?, vendor = ?, billDate = ?, imagePath = ? WHERE id = ?;
+
+deleteBill:
+DELETE FROM BillEntity WHERE id = ?;
+

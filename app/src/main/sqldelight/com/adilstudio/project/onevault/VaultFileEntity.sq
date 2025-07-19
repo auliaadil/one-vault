@@ -1,0 +1,23 @@
+CREATE TABLE VaultFileEntity (
+    id INTEGER NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    category TEXT NOT NULL,
+    filePath TEXT NOT NULL
+);
+
+selectAll:
+SELECT * FROM VaultFileEntity;
+
+selectById:
+SELECT * FROM VaultFileEntity WHERE id = ?;
+
+insertVaultFile:
+INSERT INTO VaultFileEntity(id, name, category, filePath)
+VALUES (?, ?, ?, ?);
+
+updateVaultFile:
+UPDATE VaultFileEntity SET name = ?, category = ?, filePath = ? WHERE id = ?;
+
+deleteVaultFile:
+DELETE FROM VaultFileEntity WHERE id = ?;
+
