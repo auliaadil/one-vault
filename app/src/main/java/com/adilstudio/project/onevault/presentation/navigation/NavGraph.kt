@@ -13,6 +13,7 @@ import com.adilstudio.project.onevault.presentation.bill.BillListScreen
 import org.koin.androidx.compose.koinViewModel
 import com.adilstudio.project.onevault.presentation.credential.PasswordManagerViewModel
 import com.adilstudio.project.onevault.presentation.filevault.FileVaultScreen
+import com.adilstudio.project.onevault.presentation.bill.BillTrackerViewModel
 
 sealed class Screen(val route: String) {
     object BillList : Screen("bill_list")
@@ -29,10 +30,16 @@ sealed class Screen(val route: String) {
 fun NavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(navController, startDestination = Screen.BillList.route, modifier = modifier) {
         composable(Screen.BillList.route) {
-            BillListScreen()
+            BillListScreen(
+                onAddBill = { navController.navigate(Screen.AddBill.route) }
+            )
         }
         composable(Screen.AddBill.route) {
-            AddBillScreen()
+            val viewModel: BillTrackerViewModel = koinViewModel()
+            AddBillScreen(
+                viewModel = viewModel,
+                onBillAdded = { navController.popBackStack() }
+            )
         }
         composable(Screen.CredentialList.route) {
             CredentialListScreen(

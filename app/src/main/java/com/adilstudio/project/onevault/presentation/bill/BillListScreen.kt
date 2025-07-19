@@ -10,7 +10,10 @@ import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun BillListScreen(viewModel: BillTrackerViewModel = koinViewModel()) {
+fun BillListScreen(
+    viewModel: BillTrackerViewModel = koinViewModel(),
+    onAddBill: () -> Unit = {}
+) {
     val bills = viewModel.bills.collectAsState().value
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Text("Bills", style = MaterialTheme.typography.headlineMedium)
@@ -26,9 +29,8 @@ fun BillListScreen(viewModel: BillTrackerViewModel = koinViewModel()) {
                 }
             }
         }
-        Button(onClick = { /* TODO: Navigate to AddBillScreen */ }, modifier = Modifier.fillMaxWidth()) {
+        Button(onClick = onAddBill, modifier = Modifier.fillMaxWidth()) {
             Text("Add Bill")
         }
     }
 }
-
