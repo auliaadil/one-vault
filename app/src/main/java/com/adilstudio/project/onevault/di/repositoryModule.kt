@@ -12,7 +12,8 @@ import org.koin.dsl.module
 
 val repositoryModule = module {
     single { SecurityManager(androidContext()) }
-    single<BillRepository> { BillRepositoryImpl() }
-    single<CredentialRepository> { CredentialRepositoryImpl(get()) }
-    single<VaultFileRepository> { VaultFileRepositoryImpl() }
+
+    single<BillRepository> { BillRepositoryImpl(get()) }
+    single<CredentialRepository> { CredentialRepositoryImpl(get(), get()) }
+    single<VaultFileRepository> { VaultFileRepositoryImpl(get()) }
 }
