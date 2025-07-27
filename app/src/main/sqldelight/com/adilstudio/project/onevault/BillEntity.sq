@@ -1,11 +1,11 @@
 CREATE TABLE BillEntity (
     id INTEGER NOT NULL PRIMARY KEY,
     title TEXT NOT NULL,
-    category TEXT NOT NULL,
+    category TEXT,
     amount REAL NOT NULL,
     vendor TEXT NOT NULL,
-    billDate INTEGER NOT NULL,
-    imagePath TEXT NOT NULL
+    billDate TEXT NOT NULL,
+    imagePath TEXT
 );
 
 selectAll:
@@ -23,4 +23,3 @@ UPDATE BillEntity SET title = ?, category = ?, amount = ?, vendor = ?, billDate 
 
 deleteBill:
 DELETE FROM BillEntity WHERE id = ?;
-

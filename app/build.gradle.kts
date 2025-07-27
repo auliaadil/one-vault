@@ -77,6 +77,9 @@ dependencies {
     // Google ML Kit (OCR)
     implementation(libs.google.mlkit.text.recognition)
 
+    // Image Loading
+    implementation(libs.coil.compose)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

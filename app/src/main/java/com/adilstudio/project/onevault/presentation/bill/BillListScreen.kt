@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -21,8 +22,10 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.adilstudio.project.onevault.core.util.DateUtil
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import org.koin.androidx.compose.koinViewModel
 
@@ -60,14 +63,42 @@ fun BillListScreen(
                 val bill = bills[idx]
                 Card(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text(bill.title, style = MaterialTheme.typography.titleMedium)
-                        Text("${RupiahFormatter.formatWithRupiahPrefix(bill.amount.toLong())} - ${bill.vendor}")
-                        if (bill.category.isNotEmpty()) {
-                            Text(
-                                "Category: ${bill.category}",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.Top
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(bill.title, style = MaterialTheme.typography.titleMedium)
+                                Text("${RupiahFormatter.formatWithRupiahPrefix(bill.amount.toLong())} - ${bill.vendor}")
+
+                                // Display formatted date
+                                val formattedDate = DateUtil.isoStringToLocalDate(bill.billDate)?.let { date ->
+                                    DateUtil.formatDateForDisplay(date)
+                                } ?: bill.billDate
+                                Text(
+                                    "Date: $formattedDate",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+
+                                // Display category or "No Category" if null
+                                Text(
+                                    "Category: ${bill.category ?: "No Category"}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+
+                            // Show attachment icon if image exists
+                            if (!bill.imagePath.isNullOrEmpty()) {
+                                Icon(
+                                    Icons.Default.AttachFile,
+                                    contentDescription = "Has Attachment",
+                                    modifier = Modifier.size(16.dp),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
                     }
                 }

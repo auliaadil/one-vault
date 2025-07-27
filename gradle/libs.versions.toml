@@ -14,6 +14,7 @@ sqldelight = "2.0.1"
 ktor = "2.3.10"
 serialization = "1.6.3"
 googleMlKit = "19.0.0"
+coil = "2.6.0"
 # Additional versions for consistency
 lifecycleViewmodelCompose = "2.7.0"
 navigationCompose = "2.7.7"
@@ -52,6 +53,8 @@ ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-conte
 ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
 google-mlkit-text-recognition = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition", version.ref = "googleMlKit" }
+coil = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

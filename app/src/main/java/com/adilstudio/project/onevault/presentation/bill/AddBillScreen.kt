@@ -4,7 +4,9 @@ import android.Manifest
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,21 +18,32 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AttachFile
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -39,10 +52,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
+import coil.compose.AsyncImage
+import com.adilstudio.project.onevault.core.util.DateUtil
+import com.adilstudio.project.onevault.core.util.ImageUtil
 import com.adilstudio.project.onevault.core.util.PermissionUtil
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.Bill
@@ -53,6 +72,9 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import org.koin.androidx.compose.koinViewModel
 import java.io.File
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,8 +92,17 @@ fun AddBillScreen(
     var amountValue by remember { mutableStateOf(0L) } // Store as Long
     var amountDisplay by remember { mutableStateOf("") } // Display formatted
     var vendor by remember { mutableStateOf("") }
-    var billDate by remember { mutableStateOf("") }
-    var imagePath by remember { mutableStateOf("") }
+
+    // Date picker state
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var showDatePicker by remember { mutableStateOf(false) }
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = System.currentTimeMillis()
+    )
+
+    // Image handling state
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    var savedImagePath by remember { mutableStateOf<String?>(null) }
 
     // MLKit scanning state
     var scannedTexts by remember { mutableStateOf<List<String>>(emptyList()) }
@@ -83,6 +114,18 @@ fun AddBillScreen(
     var showPermissionDialog by remember { mutableStateOf(false) }
     var hasCameraPermission by remember {
         mutableStateOf(PermissionUtil.isCameraPermissionGranted(context))
+    }
+
+    // Image picker launcher
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            selectedImageUri = it
+            // Save image to internal storage
+            val imagePath = ImageUtil.saveImageToInternalStorage(context, it)
+            savedImagePath = imagePath
+        }
     }
 
     // Camera launcher
@@ -171,20 +214,36 @@ fun AddBillScreen(
             OutlinedTextField(
                 value = selectedCategory?.name ?: "",
                 onValueChange = {},
-                label = { Text("Category") },
+                label = { Text("Category (Optional)") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .menuAnchor(),
                 readOnly = true,
                 trailingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = showCategoryDropdown)
-                }
+                },
+                placeholder = { Text("No category selected") }
             )
 
             ExposedDropdownMenu(
                 expanded = showCategoryDropdown,
                 onDismissRequest = { showCategoryDropdown = false }
             ) {
+                // Add option to clear selection
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            "No Category",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    },
+                    onClick = {
+                        selectedCategory = null
+                        showCategoryDropdown = false
+                    }
+                )
+
                 categories.forEach { category ->
                     DropdownMenuItem(
                         text = {
@@ -219,6 +278,13 @@ fun AddBillScreen(
                 }
             },
             label = { Text("Amount") },
+            leadingIcon = {
+                Text(
+                    text = "Rp",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("0") }
@@ -233,20 +299,73 @@ fun AddBillScreen(
         )
         Spacer(modifier = Modifier.height(8.dp))
 
+        // Date picker field
         OutlinedTextField(
-            value = billDate,
-            onValueChange = { billDate = it },
-            label = { Text("Bill Date (timestamp)") },
-            modifier = Modifier.fillMaxWidth()
+            value = DateUtil.formatDateForDisplay(selectedDate),
+            onValueChange = { },
+            label = { Text("Bill Date") },
+            modifier = Modifier.fillMaxWidth(),
+            readOnly = true,
+            trailingIcon = {
+                IconButton(onClick = { showDatePicker = true }) {
+                    Icon(Icons.Default.CalendarToday, contentDescription = "Select Date")
+                }
+            }
         )
         Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedTextField(
-            value = imagePath,
-            onValueChange = { imagePath = it },
-            label = { Text("Image Path") },
-            modifier = Modifier.fillMaxWidth()
-        )
+        // Image upload section
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            )
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Attachment (Optional)", style = MaterialTheme.typography.labelLarge)
+
+                    if (selectedImageUri != null || savedImagePath != null) {
+                        IconButton(
+                            onClick = {
+                                selectedImageUri = null
+                                savedImagePath?.let { ImageUtil.deleteImageFromInternalStorage(it) }
+                                savedImagePath = null
+                            }
+                        ) {
+                            Icon(Icons.Default.Delete, contentDescription = "Remove Image")
+                        }
+                    }
+                }
+
+                if (selectedImageUri != null) {
+                    // Show selected image
+                    AsyncImage(
+                        model = selectedImageUri,
+                        contentDescription = "Selected Image",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .clip(RoundedCornerShape(8.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+
+                OutlinedButton(
+                    onClick = { imagePickerLauncher.launch("image/*") },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(Icons.Default.AttachFile, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Choose Image")
+                }
+            }
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -273,11 +392,11 @@ fun AddBillScreen(
                 val bill = Bill(
                     id = System.currentTimeMillis(),
                     title = title,
-                    category = selectedCategory?.name ?: "",
+                    category = selectedCategory?.name, // Pass null if no category selected
                     amount = amountValue.toDouble(),
                     vendor = vendor,
-                    billDate = billDate.toLongOrNull() ?: System.currentTimeMillis(),
-                    imagePath = imagePath
+                    billDate = DateUtil.localDateToIsoString(selectedDate),
+                    imagePath = savedImagePath
                 )
                 viewModel.addBill(bill)
                 onBillAdded()
@@ -285,6 +404,34 @@ fun AddBillScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Save Bill")
+        }
+    }
+
+    // Date Picker Dialog
+    if (showDatePicker) {
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let { millis ->
+                            selectedDate = Instant.ofEpochMilli(millis)
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate()
+                        }
+                        showDatePicker = false
+                    }
+                ) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text("Cancel")
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
         }
     }
 
