@@ -10,6 +10,6 @@ import org.koin.dsl.module
 val viewModelModule = module {
     viewModel { BillTrackerViewModel(get(), get()) }
     viewModel { BillCategoryViewModel(get(), get(), get(), get(), get()) }
-    viewModel { PasswordManagerViewModel(get(), get()) }
+    viewModel { PasswordManagerViewModel(get(), get(), get(), get()) }
     viewModel { FileVaultViewModel() }
 }

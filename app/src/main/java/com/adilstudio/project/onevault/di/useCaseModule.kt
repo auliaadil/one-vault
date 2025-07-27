@@ -8,6 +8,8 @@ val useCaseModule = module {
     single { AddBillUseCase(get()) }
     single { GetBillsUseCase(get()) }
     single { AddCredentialUseCase(get()) }
+    single { UpdateCredentialUseCase(get()) }
+    single { DeleteCredentialUseCase(get()) }
     single { GetCredentialsUseCase(get()) }
     single { GetBillCategoriesUseCase(get()) }
     single { AddBillCategoryUseCase(get()) }

@@ -29,8 +29,7 @@ class CredentialRepositoryImpl(
                         id = entity.id,
                         serviceName = entity.serviceName,
                         username = entity.username,
-                        encryptedPassword = entity.encryptedPassword,
-                        category = entity.category
+                        encryptedPassword = entity.encryptedPassword
                     )
                 }
             }
@@ -46,8 +45,7 @@ class CredentialRepositoryImpl(
                         id = it.id,
                         serviceName = it.serviceName,
                         username = it.username,
-                        encryptedPassword = it.encryptedPassword,
-                        category = it.category
+                        encryptedPassword = it.encryptedPassword
                     )
                 }
             }.single()
@@ -63,8 +61,7 @@ class CredentialRepositoryImpl(
             id = credential.id,
             serviceName = credential.serviceName,
             username = credential.username,
-            encryptedPassword = encryptedPassword,
-            category = credential.category
+            encryptedPassword = encryptedPassword
         )
     }
 
@@ -78,7 +75,6 @@ class CredentialRepositoryImpl(
             serviceName = credential.serviceName,
             username = credential.username,
             encryptedPassword = encryptedPassword,
-            category = credential.category,
             id = credential.id
         )
     }

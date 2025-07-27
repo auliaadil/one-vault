@@ -7,7 +7,5 @@ data class Credential(
     val id: Long,
     val serviceName: String,
     val username: String,
-    val encryptedPassword: String,
-    val category: String
+    val encryptedPassword: String
 )
-

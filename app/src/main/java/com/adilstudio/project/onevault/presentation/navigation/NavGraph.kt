@@ -1,13 +1,21 @@
 package com.adilstudio.project.onevault.presentation.navigation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.adilstudio.project.onevault.presentation.bill.AddBillScreen
-import com.adilstudio.project.onevault.presentation.credential.AddCredentialScreen
+import com.adilstudio.project.onevault.presentation.credential.AddEditCredentialScreen
 import com.adilstudio.project.onevault.presentation.credential.CredentialListScreen
 import com.adilstudio.project.onevault.presentation.bill.BillListScreen
 import com.adilstudio.project.onevault.presentation.bill.category.BillCategoriesScreen
@@ -22,6 +30,7 @@ sealed class Screen(val route: String) {
     object BillCategories : Screen("bill_categories")
     object CredentialList : Screen("credential_list")
     object AddCredential : Screen("add_credential")
+    object EditCredential : Screen("edit_credential")
     object VaultFileList : Screen("vault_file_list")
     object AddVaultFile : Screen("add_vault_file")
     object FileVault : Screen("file_vault")
@@ -47,22 +56,70 @@ fun NavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
         composable(Screen.CredentialList.route) {
             CredentialListScreen(
                 viewModel = koinViewModel(),
-                onAddCredential = { navController.navigate(Screen.AddCredential.route) }
+                onAddCredential = { navController.navigate(Screen.AddCredential.route) },
+                onEditCredential = { credential ->
+                    // Pass only the credential ID through navigation arguments
+                    navController.currentBackStackEntry?.savedStateHandle?.set("credentialId", credential.id)
+                    navController.navigate(Screen.EditCredential.route)
+                }
             )
         }
         composable(Screen.AddCredential.route) {
             val viewModel: PasswordManagerViewModel = koinViewModel()
-            AddCredentialScreen { service, username, password, category ->
-                viewModel.addCredential(
-                    com.adilstudio.project.onevault.domain.model.Credential(
-                        id = System.currentTimeMillis(),
-                        serviceName = service,
-                        username = username,
-                        encryptedPassword = password,
-                        category = category
+            AddEditCredentialScreen(
+                onSave = { service, username, password ->
+                    viewModel.addCredential(
+                        com.adilstudio.project.onevault.domain.model.Credential(
+                            id = System.currentTimeMillis(),
+                            serviceName = service,
+                            username = username,
+                            encryptedPassword = password
+                        )
                     )
+                    navController.popBackStack()
+                }
+            )
+        }
+        composable(Screen.EditCredential.route) {
+            val viewModel: PasswordManagerViewModel = koinViewModel()
+            // Get credential ID from previous screen
+            val credentialId = navController.previousBackStackEntry?.savedStateHandle?.get<Long>("credentialId")
+
+            // Load credentials and find the specific one
+            LaunchedEffect(credentialId) {
+                viewModel.loadCredentials()
+            }
+
+            val credentials by viewModel.credentials.collectAsState()
+            val credential = remember(credentials, credentialId) {
+                credentials.find { it.id == credentialId }
+            }
+
+            // Show loading while credential is being fetched
+            if (credential == null) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                AddEditCredentialScreen(
+                    credential = credential,
+                    onSave = { service, username, password ->
+                        viewModel.updateCredential(
+                            credential.copy(
+                                serviceName = service,
+                                username = username,
+                                encryptedPassword = password
+                            )
+                        )
+                        navController.popBackStack()
+                    },
+                    onCancel = {
+                        navController.popBackStack()
+                    }
                 )
-                navController.popBackStack()
             }
         }
         composable(Screen.VaultFileList.route) {
