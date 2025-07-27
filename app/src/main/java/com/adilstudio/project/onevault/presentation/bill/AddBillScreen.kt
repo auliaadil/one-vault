@@ -4,33 +4,71 @@ import android.Manifest
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
+import com.adilstudio.project.onevault.core.util.PermissionUtil
+import com.adilstudio.project.onevault.core.util.RupiahFormatter
+import com.adilstudio.project.onevault.domain.model.Bill
+import com.adilstudio.project.onevault.domain.model.BillCategory
+import com.adilstudio.project.onevault.presentation.bill.category.BillCategoryViewModel
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-import java.io.File
-import com.adilstudio.project.onevault.domain.model.Bill
-import com.adilstudio.project.onevault.core.util.PermissionUtil
 import org.koin.androidx.compose.koinViewModel
+import java.io.File
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddBillScreen(
     viewModel: BillTrackerViewModel = koinViewModel(),
+    categoryViewModel: BillCategoryViewModel = koinViewModel(),
     onBillAdded: () -> Unit = {}
 ) {
     val context = LocalContext.current
+    val categories by categoryViewModel.categories.collectAsState()
 
     var title by remember { mutableStateOf("") }
-    var category by remember { mutableStateOf("") }
-    var amount by remember { mutableStateOf("") }
+    var selectedCategory by remember { mutableStateOf<BillCategory?>(null) }
+    var showCategoryDropdown by remember { mutableStateOf(false) }
+    var amountValue by remember { mutableStateOf(0L) } // Store as Long
+    var amountDisplay by remember { mutableStateOf("") } // Display formatted
     var vendor by remember { mutableStateOf("") }
     var billDate by remember { mutableStateOf("") }
     var imagePath by remember { mutableStateOf("") }
@@ -125,19 +163,65 @@ fun AddBillScreen(
         )
         Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedTextField(
-            value = category,
-            onValueChange = { category = it },
-            label = { Text("Category") },
-            modifier = Modifier.fillMaxWidth()
-        )
+        // Category selection
+        ExposedDropdownMenuBox(
+            expanded = showCategoryDropdown,
+            onExpandedChange = { showCategoryDropdown = !showCategoryDropdown }
+        ) {
+            OutlinedTextField(
+                value = selectedCategory?.name ?: "",
+                onValueChange = {},
+                label = { Text("Category") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .menuAnchor(),
+                readOnly = true,
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = showCategoryDropdown)
+                }
+            )
+
+            ExposedDropdownMenu(
+                expanded = showCategoryDropdown,
+                onDismissRequest = { showCategoryDropdown = false }
+            ) {
+                categories.forEach { category ->
+                    DropdownMenuItem(
+                        text = {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = category.icon,
+                                    modifier = Modifier.padding(end = 8.dp)
+                                )
+                                Text(category.name)
+                            }
+                        },
+                        onClick = {
+                            selectedCategory = category
+                            showCategoryDropdown = false
+                        }
+                    )
+                }
+            }
+        }
+
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = amount,
-            onValueChange = { amount = it },
+            value = amountDisplay,
+            onValueChange = { newValue ->
+                // Only allow digits and format as Indonesian Rupiah
+                val digitsOnly = newValue.replace(Regex("[^0-9]"), "")
+                if (digitsOnly.length <= 15) { // Reasonable limit for amount
+                    val longValue = digitsOnly.toLongOrNull() ?: 0L
+                    amountValue = longValue
+                    amountDisplay = RupiahFormatter.formatRupiahDisplay(longValue)
+                }
+            },
             label = { Text("Amount") },
-            modifier = Modifier.fillMaxWidth()
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier.fillMaxWidth(),
+            placeholder = { Text("0") }
         )
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -189,8 +273,8 @@ fun AddBillScreen(
                 val bill = Bill(
                     id = System.currentTimeMillis(),
                     title = title,
-                    category = category,
-                    amount = amount.toDoubleOrNull() ?: 0.0,
+                    category = selectedCategory?.name ?: "",
+                    amount = amountValue.toDouble(),
                     vendor = vendor,
                     billDate = billDate.toLongOrNull() ?: System.currentTimeMillis(),
                     imagePath = imagePath
@@ -236,7 +320,11 @@ fun AddBillScreen(
             scannedTexts = scannedTexts,
             onTextSelected = { selectedTitle, selectedAmount, selectedVendor ->
                 if (selectedTitle.isNotEmpty()) title = selectedTitle
-                if (selectedAmount.isNotEmpty()) amount = selectedAmount
+                if (selectedAmount.isNotEmpty()) {
+                    val extractedAmount = RupiahFormatter.extractNumberFromRupiahText(selectedAmount)
+                    amountValue = extractedAmount
+                    amountDisplay = RupiahFormatter.formatRupiahDisplay(extractedAmount)
+                }
                 if (selectedVendor.isNotEmpty()) vendor = selectedVendor
                 showTextSelectionDialog = false
             },

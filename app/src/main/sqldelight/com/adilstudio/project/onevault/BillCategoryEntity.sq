@@ -1,0 +1,29 @@
+CREATE TABLE BillCategoryEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    icon TEXT NOT NULL,
+    color TEXT NOT NULL,
+    type TEXT NOT NULL,
+    parentCategoryId TEXT,
+    isEditable INTEGER NOT NULL DEFAULT 1,
+    createdAt INTEGER NOT NULL,
+    updatedAt INTEGER NOT NULL
+);
+
+selectAll:
+SELECT * FROM BillCategoryEntity ORDER BY type, name;
+
+selectById:
+SELECT * FROM BillCategoryEntity WHERE id = ?;
+
+insertCategory:
+INSERT INTO BillCategoryEntity(id, name, icon, color, type, parentCategoryId, isEditable, createdAt, updatedAt)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+updateCategory:
+UPDATE BillCategoryEntity SET
+name = ?, icon = ?, color = ?, type = ?, parentCategoryId = ?, isEditable = ?, updatedAt = ?
+WHERE id = ?;
+
+deleteCategory:
+DELETE FROM BillCategoryEntity WHERE id = ?;

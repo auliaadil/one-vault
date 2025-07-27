@@ -10,6 +10,7 @@ import com.adilstudio.project.onevault.presentation.bill.AddBillScreen
 import com.adilstudio.project.onevault.presentation.credential.AddCredentialScreen
 import com.adilstudio.project.onevault.presentation.credential.CredentialListScreen
 import com.adilstudio.project.onevault.presentation.bill.BillListScreen
+import com.adilstudio.project.onevault.presentation.bill.category.BillCategoriesScreen
 import org.koin.androidx.compose.koinViewModel
 import com.adilstudio.project.onevault.presentation.credential.PasswordManagerViewModel
 import com.adilstudio.project.onevault.presentation.filevault.FileVaultScreen
@@ -18,6 +19,7 @@ import com.adilstudio.project.onevault.presentation.bill.BillTrackerViewModel
 sealed class Screen(val route: String) {
     object BillList : Screen("bill_list")
     object AddBill : Screen("add_bill")
+    object BillCategories : Screen("bill_categories")
     object CredentialList : Screen("credential_list")
     object AddCredential : Screen("add_credential")
     object VaultFileList : Screen("vault_file_list")
@@ -31,7 +33,8 @@ fun NavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(navController, startDestination = Screen.BillList.route, modifier = modifier) {
         composable(Screen.BillList.route) {
             BillListScreen(
-                onAddBill = { navController.navigate(Screen.AddBill.route) }
+                onAddBill = { navController.navigate(Screen.AddBill.route) },
+                onManageCategories = { navController.navigate(Screen.BillCategories.route) }
             )
         }
         composable(Screen.AddBill.route) {
@@ -81,6 +84,11 @@ fun NavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
                 onPickFile = { onResult -> /* TODO: Launch OpenDocument and call onResult(uri) */ },
                 onImport = { onResult -> /* TODO: Launch OpenDocument and call onResult(uri) */ },
                 onExport = { onResult -> /* TODO: Launch CreateDocument and call onResult(uri) */ }
+            )
+        }
+        composable(Screen.BillCategories.route) {
+            BillCategoriesScreen(
+                onNavigateBack = { navController.popBackStack() }
             )
         }
     }
