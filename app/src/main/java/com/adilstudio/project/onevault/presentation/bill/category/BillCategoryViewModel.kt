@@ -60,10 +60,10 @@ class BillCategoryViewModel(
             try {
                 getBillCategoriesUseCase().collect { categoryList ->
                     _categories.value = categoryList
+                    _isLoading.value = false
                 }
             } catch (e: Exception) {
                 _error.value = e.message
-            } finally {
                 _isLoading.value = false
             }
         }
