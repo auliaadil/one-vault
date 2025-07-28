@@ -38,6 +38,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        // Check if launched from TileService
+        val navigateTo = intent.getStringExtra("navigate_to")
+        val initialRoute = when (navigateTo) {
+            "add_bill" -> "add_bill"
+            else -> null
+        }
+
         // Setup activity result launchers
         val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
             if (success && cameraImageUri != null) {
@@ -86,7 +93,8 @@ class MainActivity : ComponentActivity() {
                 },
                 onExportFile = { onResult ->
                     createDocumentLauncher.launch("export.json")
-                }
+                },
+                initialRoute = initialRoute
             )
         }
     }
@@ -96,7 +104,8 @@ class MainActivity : ComponentActivity() {
 fun MainApp(
     onScanBill: () -> Unit = {},
     onPickFile: ((Uri) -> Unit) -> Unit = {},
-    onExportFile: ((Uri) -> Unit) -> Unit = {}
+    onExportFile: ((Uri) -> Unit) -> Unit = {},
+    initialRoute: String? = null
 ) {
     OneVaultTheme {
         val navController = rememberNavController()
@@ -131,7 +140,7 @@ fun MainApp(
                 }
             },
         ) { innerPadding ->
-            NavGraph(navController = navController, modifier = Modifier.padding(innerPadding))
+            NavGraph(navController = navController, modifier = Modifier.padding(innerPadding), startDestination = initialRoute ?: "bill_list")
         }
     }
 }

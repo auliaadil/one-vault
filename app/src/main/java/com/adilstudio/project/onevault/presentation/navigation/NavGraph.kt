@@ -38,8 +38,12 @@ sealed class Screen(val route: String) {
 }
 
 @Composable
-fun NavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
-    NavHost(navController, startDestination = Screen.BillList.route, modifier = modifier) {
+fun NavGraph(
+    navController: NavHostController,
+    modifier: Modifier = Modifier,
+    startDestination: String = Screen.BillList.route
+) {
+    NavHost(navController, startDestination = startDestination, modifier = modifier) {
         composable(Screen.BillList.route) {
             BillListScreen(
                 onAddBill = { navController.navigate(Screen.AddBill.route) },
