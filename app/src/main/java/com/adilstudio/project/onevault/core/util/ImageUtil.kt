@@ -8,7 +8,7 @@ import java.io.InputStream
 import java.util.UUID
 
 object ImageUtil {
-
+    
     /**
      * Save an image from URI to app's internal storage
      * @param context Application context
@@ -22,22 +22,22 @@ object ImageUtil {
                 // Create unique filename
                 val fileName = "bill_image_${UUID.randomUUID()}.jpg"
                 val imagesDir = File(context.filesDir, "images")
-
+                
                 // Create images directory if it doesn't exist
                 if (!imagesDir.exists()) {
                     imagesDir.mkdirs()
                 }
-
+                
                 val imageFile = File(imagesDir, fileName)
                 val outputStream = FileOutputStream(imageFile)
-
+                
                 // Copy image data
                 stream.copyTo(outputStream)
-
+                
                 // Close streams
                 stream.close()
                 outputStream.close()
-
+                
                 // Return the file path
                 imageFile.absolutePath
             }
@@ -46,7 +46,7 @@ object ImageUtil {
             null
         }
     }
-
+    
     /**
      * Delete an image file from internal storage
      * @param imagePath Path of the image to delete
@@ -55,7 +55,7 @@ object ImageUtil {
     fun deleteImageFromInternalStorage(imagePath: String?): Boolean {
         return try {
             if (imagePath.isNullOrEmpty()) return true
-
+            
             val file = File(imagePath)
             if (file.exists()) {
                 file.delete()
@@ -67,7 +67,7 @@ object ImageUtil {
             false
         }
     }
-
+    
     /**
      * Check if an image file exists
      * @param imagePath Path of the image to check

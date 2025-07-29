@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">One Vault</string>
+    <string name="autofill_service_description">One Vault Autofill Service</string>
 </resources>

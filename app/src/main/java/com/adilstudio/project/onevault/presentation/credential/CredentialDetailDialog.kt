@@ -41,7 +41,7 @@ fun CredentialDetailDialog(
             decryptPassword(credential.encryptedPassword, securityManager)
         } catch (e: Exception) {
             // Fallback to showing encrypted password if decryption fails
-            credential.encryptedPassword
+            "Failed to decrypt password"
         }
     }
 
