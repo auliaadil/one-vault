@@ -9,5 +9,5 @@ interface BillCategoryRepository {
     suspend fun addCategory(category: BillCategory)
     suspend fun updateCategory(category: BillCategory)
     suspend fun deleteCategory(id: String)
-    suspend fun initializeDefaultCategories()
+    suspend fun getCategoriesCount(): Int
 }

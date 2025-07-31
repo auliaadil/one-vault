@@ -15,5 +15,5 @@ val useCaseModule = module {
     single { AddBillCategoryUseCase(get()) }
     single { UpdateBillCategoryUseCase(get()) }
     single { DeleteBillCategoryUseCase(get()) }
-    single { InitializeDefaultCategoriesUseCase(get()) }
+    single { GetBillCategoriesCountUseCase(get()) }
 }

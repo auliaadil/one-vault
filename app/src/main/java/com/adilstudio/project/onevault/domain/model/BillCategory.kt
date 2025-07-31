@@ -4,8 +4,13 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class CategoryType {
-    ESSENTIAL,
-    LIFESTYLE,
+    UTILITIES,
+    FOOD_AND_DINING,
+    SHOPPING,
+    TRANSPORTATION,
+    ENTERTAINMENT,
+    HEALTHCARE,
+    EDUCATION,
     OTHER
 }
 

@@ -1,4 +1,134 @@
 <resources>
     <string name="app_name">One Vault</string>
     <string name="autofill_service_description">One Vault Autofill Service</string>
+
+    <!-- Bill Management -->
+    <string name="add_bill">Add Bill</string>
+    <string name="title">Title</string>
+    <string name="category_optional">Category (Optional)</string>
+    <string name="no_category_selected">No category selected</string>
+    <string name="no_category">No Category</string>
+    <string name="amount">Amount</string>
+    <string name="vendor">Vendor</string>
+    <string name="bill_date">Bill Date</string>
+    <string name="attachment_optional">Attachment (Optional)</string>
+    <string name="choose_image">Choose Image</string>
+    <string name="scan_bill">Scan Bill</string>
+    <string name="scanning">Scanning...</string>
+    <string name="save_bill">Save Bill</string>
+    <string name="select_date">Select Date</string>
+    <string name="remove_image">Remove Image</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Bill Categories -->
+    <string name="bill_categories">Bill Categories</string>
+    <string name="add_category">Add Category</string>
+    <string name="edit_category">Edit Category</string>
+    <string name="category_name">Category Name</string>
+    <string name="select_icon">Select Icon</string>
+    <string name="select_color">Select Color</string>
+    <string name="category_type">Category Type</string>
+    <string name="update">Update</string>
+    <string name="add">Add</string>
+    <string name="delete_category">Delete Category</string>
+    <string name="delete_category_message">Are you sure you want to delete \'%1$s\'? This action cannot be undone.</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+
+    <!-- Credentials -->
+    <string name="credentials">Credentials</string>
+    <string name="add_credential">Add Credential</string>
+    <string name="edit_credential">Edit Credential</string>
+    <string name="service_name">Service Name</string>
+    <string name="username">Username</string>
+    <string name="username_required">Username is required</string>
+    <string name="password">Password</string>
+    <string name="password_required">Password is required</string>
+    <string name="save_credential">Save Credential</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="copy_username">Copy Username</string>
+    <string name="copy_password">Copy Password</string>
+    <string name="show_password">Show Password</string>
+    <string name="hide_password">Hide Password</string>
+    <string name="close">Close</string>
+    <string name="delete_credential">Delete Credential</string>
+    <string name="delete_credential_message">Are you sure you want to delete the credential for \'%1$s\'? This action cannot be undone.</string>
+    <string name="failed_decrypt_password">Failed to decrypt password</string>
+
+    <!-- File Vault -->
+    <string name="file_vault">File Vault</string>
+    <string name="add_file">Add File</string>
+    <string name="import_data">Import Data</string>
+    <string name="export_data">Export Data</string>
+
+    <!-- Text Selection -->
+    <string name="select_scanned_text">Select Scanned Text</string>
+    <string name="tap_text_assign">Tap on text to assign to fields:</string>
+    <string name="selected">Selected:</string>
+    <string name="title_field">Title: %1$s</string>
+    <string name="amount_field">Amount: %1$s</string>
+    <string name="vendor_field">Vendor: %1$s</string>
+    <string name="none">None</string>
+    <string name="apply">Apply</string>
+
+    <!-- Permissions -->
+    <string name="camera_permission_required">Camera Permission Required</string>
+    <string name="camera_permission_message">This app needs camera permission to scan bills and extract text information. Please grant camera permission to use this feature.</string>
+    <string name="grant_permission">Grant Permission</string>
+
+    <!-- Category Types -->
+    <string name="utilities">Utilities</string>
+    <string name="food_and_dining">Food and dining</string>
+    <string name="shopping">Shopping</string>
+    <string name="transportation">Transportation</string>
+    <string name="entertainment">Entertainment</string>
+    <string name="healthcare">Healthcare</string>
+    <string name="education">Education</string>
+    <string name="other">Other</string>
+
+    <!-- Common -->
+    <string name="required_field">*</string>
+    <string name="zero">0</string>
+    <string name="rupiah_prefix">Rp</string>
+
+    <!-- Default Category Names -->
+    <string name="category_electricity">Electricity</string>
+    <string name="category_water">Water</string>
+    <string name="category_internet">Internet</string>
+    <string name="category_gas">Gas</string>
+    <string name="category_phone">Phone</string>
+    <string name="category_groceries">Groceries</string>
+    <string name="category_dining_out">Dining Out</string>
+    <string name="category_coffee_beverages">Coffee &amp; Beverages</string>
+    <string name="category_fast_food">Fast Food</string>
+    <string name="category_clothing">Clothing</string>
+    <string name="category_electronics">Electronics</string>
+    <string name="category_home_garden">Home &amp; Garden</string>
+    <string name="category_beauty_personal_care">Beauty &amp; Personal Care</string>
+    <string name="category_fuel">Fuel</string>
+    <string name="category_public_transport">Public Transport</string>
+    <string name="category_taxi_ride_share">Taxi &amp; Ride Share</string>
+    <string name="category_car_maintenance">Car Maintenance</string>
+    <string name="category_parking">Parking</string>
+    <string name="category_movies_cinema">Movies &amp; Cinema</string>
+    <string name="category_streaming_services">Streaming Services</string>
+    <string name="category_games">Games</string>
+    <string name="category_music">Music</string>
+    <string name="category_sports_recreation">Sports &amp; Recreation</string>
+    <string name="category_doctor_visits">Doctor Visits</string>
+    <string name="category_pharmacy">Pharmacy</string>
+    <string name="category_dental_care">Dental Care</string>
+    <string name="category_insurance">Insurance</string>
+    <string name="category_gym_fitness">Gym &amp; Fitness</string>
+    <string name="category_school_fees">School Fees</string>
+    <string name="category_books_supplies">Books &amp; Supplies</string>
+    <string name="category_online_courses">Online Courses</string>
+    <string name="category_tutoring">Tutoring</string>
+    <string name="category_pet_care">Pet Care</string>
+    <string name="category_donations_charity">Donations &amp; Charity</string>
+    <string name="category_bank_fees">Bank Fees</string>
+    <string name="category_taxes">Taxes</string>
+    <string name="category_travel">Travel</string>
+    <string name="category_miscellaneous">Miscellaneous</string>
 </resources>

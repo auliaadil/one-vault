@@ -16,9 +16,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.BillCategory
 import com.adilstudio.project.onevault.domain.model.CategoryType
 import org.koin.androidx.compose.koinViewModel
@@ -104,7 +106,7 @@ fun BillCategoriesScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                "Bill Categories",
+                stringResource(R.string.bill_categories),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -113,7 +115,7 @@ fun BillCategoriesScreen(
                 onClick = { showAddDialog = true },
                 modifier = Modifier.size(56.dp)
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Add Category")
+                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_category))
             }
         }
 
@@ -139,7 +141,7 @@ fun BillCategoriesScreen(
                     if (categoriesOfType.isNotEmpty()) {
                         item {
                             Text(
-                                text = type.name.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() },
+                                text = getCategoryTypeDisplayName(type),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.SemiBold,
                                 modifier = Modifier.padding(vertical = 8.dp)
@@ -190,8 +192,8 @@ fun BillCategoriesScreen(
     categoryToDelete?.let { category ->
         AlertDialog(
             onDismissRequest = { categoryToDelete = null },
-            title = { Text("Delete Category") },
-            text = { Text("Are you sure you want to delete '${category.name}'? This action cannot be undone.") },
+            title = { Text(stringResource(R.string.delete_category)) },
+            text = { Text(stringResource(R.string.delete_category_message, category.name)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -199,12 +201,12 @@ fun BillCategoriesScreen(
                         categoryToDelete = null
                     }
                 ) {
-                    Text("Delete", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { categoryToDelete = null }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
@@ -254,7 +256,7 @@ fun CategoryCard(
                     fontWeight = FontWeight.Medium
                 )
                 Text(
-                    text = category.type.name.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() },
+                    text = getCategoryTypeDisplayName(category.type),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -266,19 +268,33 @@ fun CategoryCard(
                     IconButton(onClick = { onEdit(category) }) {
                         Icon(
                             Icons.Default.Edit,
-                            contentDescription = "Edit",
+                            contentDescription = stringResource(R.string.edit),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
                     IconButton(onClick = { onDelete(category) }) {
                         Icon(
                             Icons.Default.Delete,
-                            contentDescription = "Delete",
+                            contentDescription = stringResource(R.string.delete),
                             tint = MaterialTheme.colorScheme.error
                         )
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun getCategoryTypeDisplayName(type: CategoryType): String {
+    return when (type) {
+        CategoryType.UTILITIES -> stringResource(R.string.utilities)
+        CategoryType.FOOD_AND_DINING -> stringResource(R.string.food_and_dining)
+        CategoryType.SHOPPING -> stringResource(R.string.shopping)
+        CategoryType.TRANSPORTATION -> stringResource(R.string.transportation)
+        CategoryType.ENTERTAINMENT -> stringResource(R.string.entertainment)
+        CategoryType.HEALTHCARE -> stringResource(R.string.healthcare)
+        CategoryType.EDUCATION -> stringResource(R.string.education)
+        CategoryType.OTHER -> stringResource(R.string.other)
     }
 }

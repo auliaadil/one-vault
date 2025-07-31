@@ -7,8 +7,10 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.Credential
 import org.koin.androidx.compose.koinViewModel
 
@@ -43,7 +45,7 @@ fun CredentialListScreen(
     }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("Credentials", style = MaterialTheme.typography.headlineMedium)
+        Text(stringResource(R.string.credentials), style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(16.dp))
 
         // Success/Error message display
@@ -92,7 +94,7 @@ fun CredentialListScreen(
         }
 
         Button(onClick = onAddCredential, modifier = Modifier.fillMaxWidth()) {
-            Text("Add Credential")
+            Text(stringResource(R.string.add_credential))
         }
     }
 
@@ -151,7 +153,7 @@ fun CredentialCard(
             ) {
                 Icon(
                     Icons.Default.Delete,
-                    contentDescription = "Delete Credential",
+                    contentDescription = stringResource(R.string.delete_credential),
                     tint = MaterialTheme.colorScheme.error
                 )
             }
@@ -162,9 +164,9 @@ fun CredentialCard(
     if (showDeleteConfirmation) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirmation = false },
-            title = { Text("Delete Credential") },
+            title = { Text(stringResource(R.string.delete_credential)) },
             text = {
-                Text("Are you sure you want to delete the credential for '${credential.serviceName}'? This action cannot be undone.")
+                Text(stringResource(R.string.delete_credential_message, credential.serviceName))
             },
             confirmButton = {
                 TextButton(
@@ -176,12 +178,12 @@ fun CredentialCard(
                         contentColor = MaterialTheme.colorScheme.error
                     )
                 ) {
-                    Text("Delete")
+                    Text(stringResource(R.string.delete))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteConfirmation = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )

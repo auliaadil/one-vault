@@ -13,8 +13,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
+import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.BillCategory
 import com.adilstudio.project.onevault.domain.model.CategoryType
 
@@ -31,7 +34,7 @@ fun AddEditCategoryDialog(
     var selectedType by remember { mutableStateOf(category?.type ?: CategoryType.OTHER) }
 
     val isEditing = category != null
-    val title = if (isEditing) "Edit Category" else "Add Category"
+    val title = if (isEditing) stringResource(R.string.edit_category) else stringResource(R.string.add_category)
 
     // Predefined icons for selection
     val availableIcons = listOf(
@@ -59,7 +62,7 @@ fun AddEditCategoryDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Category Name") },
+                    label = { Text(stringResource(R.string.category_name)) },
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(
                         capitalization = KeyboardCapitalization.Words
@@ -69,7 +72,7 @@ fun AddEditCategoryDialog(
 
                 // Icon selection
                 Column {
-                    Text("Select Icon", style = MaterialTheme.typography.labelMedium)
+                    Text(stringResource(R.string.select_icon), style = MaterialTheme.typography.labelMedium)
                     Spacer(modifier = Modifier.height(8.dp))
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -99,7 +102,7 @@ fun AddEditCategoryDialog(
 
                 // Color selection
                 Column {
-                    Text("Select Color", style = MaterialTheme.typography.labelMedium)
+                    Text(stringResource(R.string.select_color), style = MaterialTheme.typography.labelMedium)
                     Spacer(modifier = Modifier.height(8.dp))
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -134,7 +137,7 @@ fun AddEditCategoryDialog(
 
                 // Type selection
                 Column {
-                    Text("Category Type", style = MaterialTheme.typography.labelMedium)
+                    Text(stringResource(R.string.category_type), style = MaterialTheme.typography.labelMedium)
                     Spacer(modifier = Modifier.height(8.dp))
 
                     CategoryType.values().forEach { type ->
@@ -150,7 +153,7 @@ fun AddEditCategoryDialog(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = type.name.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() },
+                                text = getCategoryTypeDisplayName(type),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
@@ -185,11 +188,11 @@ fun AddEditCategoryDialog(
 
                         Column {
                             Text(
-                                text = name.ifEmpty { "Category Name" },
+                                text = name.ifEmpty { stringResource(R.string.category_name) },
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Text(
-                                text = selectedType.name.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() },
+                                text = getCategoryTypeDisplayName(selectedType),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -207,13 +210,27 @@ fun AddEditCategoryDialog(
                 },
                 enabled = name.isNotBlank()
             ) {
-                Text(if (isEditing) "Update" else "Add")
+                Text(if (isEditing) stringResource(R.string.update) else stringResource(R.string.add))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         }
     )
+}
+
+@Composable
+private fun getCategoryTypeDisplayName(type: CategoryType): String {
+    return when (type) {
+        CategoryType.UTILITIES -> stringResource(R.string.utilities)
+        CategoryType.FOOD_AND_DINING -> stringResource(R.string.food_and_dining)
+        CategoryType.SHOPPING -> stringResource(R.string.shopping)
+        CategoryType.TRANSPORTATION -> stringResource(R.string.transportation)
+        CategoryType.ENTERTAINMENT -> stringResource(R.string.entertainment)
+        CategoryType.HEALTHCARE -> stringResource(R.string.healthcare)
+        CategoryType.EDUCATION -> stringResource(R.string.education)
+        CategoryType.OTHER -> stringResource(R.string.other)
+    }
 }

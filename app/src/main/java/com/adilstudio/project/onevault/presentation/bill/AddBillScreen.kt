@@ -45,6 +45,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,10 +57,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import coil.compose.AsyncImage
+import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.DateUtil
 import com.adilstudio.project.onevault.core.util.ImageUtil
 import com.adilstudio.project.onevault.core.util.PermissionUtil
@@ -67,6 +70,7 @@ import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.Bill
 import com.adilstudio.project.onevault.domain.model.BillCategory
 import com.adilstudio.project.onevault.presentation.bill.category.BillCategoryViewModel
+import com.adilstudio.project.onevault.presentation.bill.category.createDefaultCategories
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
@@ -85,6 +89,12 @@ fun AddBillScreen(
 ) {
     val context = LocalContext.current
     val categories by categoryViewModel.categories.collectAsState()
+
+    // Initialize default categories if needed
+    val defaultCategories = createDefaultCategories()
+    LaunchedEffect(Unit) {
+        categoryViewModel.checkAndInitializeDefaultCategories(defaultCategories)
+    }
 
     var title by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf<BillCategory?>(null) }
@@ -195,13 +205,13 @@ fun AddBillScreen(
     }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("Add Bill", style = MaterialTheme.typography.headlineMedium)
+        Text(stringResource(R.string.add_bill), style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
             value = title,
             onValueChange = { title = it },
-            label = { Text("Title") },
+            label = { Text(stringResource(R.string.title)) },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -214,7 +224,7 @@ fun AddBillScreen(
             OutlinedTextField(
                 value = selectedCategory?.name ?: "",
                 onValueChange = {},
-                label = { Text("Category (Optional)") },
+                label = { Text(stringResource(R.string.category_optional)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .menuAnchor(),
@@ -222,7 +232,7 @@ fun AddBillScreen(
                 trailingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = showCategoryDropdown)
                 },
-                placeholder = { Text("No category selected") }
+                placeholder = { Text(stringResource(R.string.no_category_selected)) }
             )
 
             ExposedDropdownMenu(
@@ -233,7 +243,7 @@ fun AddBillScreen(
                 DropdownMenuItem(
                     text = {
                         Text(
-                            "No Category",
+                            stringResource(R.string.no_category),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -277,24 +287,24 @@ fun AddBillScreen(
                     amountDisplay = RupiahFormatter.formatRupiahDisplay(longValue)
                 }
             },
-            label = { Text("Amount") },
+            label = { Text(stringResource(R.string.amount)) },
             leadingIcon = {
                 Text(
-                    text = "Rp",
+                    text = stringResource(R.string.rupiah_prefix),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("0") }
+            placeholder = { Text(stringResource(R.string.zero)) }
         )
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
             value = vendor,
             onValueChange = { vendor = it },
-            label = { Text("Vendor") },
+            label = { Text(stringResource(R.string.vendor)) },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -303,12 +313,12 @@ fun AddBillScreen(
         OutlinedTextField(
             value = DateUtil.formatDateForDisplay(selectedDate),
             onValueChange = { },
-            label = { Text("Bill Date") },
+            label = { Text(stringResource(R.string.bill_date)) },
             modifier = Modifier.fillMaxWidth(),
             readOnly = true,
             trailingIcon = {
                 IconButton(onClick = { showDatePicker = true }) {
-                    Icon(Icons.Default.CalendarToday, contentDescription = "Select Date")
+                    Icon(Icons.Default.CalendarToday, contentDescription = stringResource(R.string.select_date))
                 }
             }
         )
@@ -327,7 +337,7 @@ fun AddBillScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Attachment (Optional)", style = MaterialTheme.typography.labelLarge)
+                    Text(stringResource(R.string.attachment_optional), style = MaterialTheme.typography.labelLarge)
 
                     if (selectedImageUri != null || savedImagePath != null) {
                         IconButton(
@@ -337,7 +347,7 @@ fun AddBillScreen(
                                 savedImagePath = null
                             }
                         ) {
-                            Icon(Icons.Default.Delete, contentDescription = "Remove Image")
+                            Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.remove_image))
                         }
                     }
                 }
@@ -362,7 +372,7 @@ fun AddBillScreen(
                 ) {
                     Icon(Icons.Default.AttachFile, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Choose Image")
+                    Text(stringResource(R.string.choose_image))
                 }
             }
         }
@@ -378,9 +388,9 @@ fun AddBillScreen(
             if (isScanning) {
                 CircularProgressIndicator(modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Scanning...")
+                Text(stringResource(R.string.scanning))
             } else {
-                Text("Scan Bill")
+                Text(stringResource(R.string.scan_bill))
             }
         }
 
@@ -403,7 +413,7 @@ fun AddBillScreen(
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Save Bill")
+            Text(stringResource(R.string.save_bill))
         }
     }
 
@@ -422,12 +432,12 @@ fun AddBillScreen(
                         showDatePicker = false
                     }
                 ) {
-                    Text("OK")
+                    Text(stringResource(R.string.ok))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDatePicker = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         ) {
@@ -439,9 +449,9 @@ fun AddBillScreen(
     if (showPermissionDialog) {
         AlertDialog(
             onDismissRequest = { showPermissionDialog = false },
-            title = { Text("Camera Permission Required") },
+            title = { Text(stringResource(R.string.camera_permission_required)) },
             text = {
-                Text("This app needs camera permission to scan bills and extract text information. Please grant camera permission to use this feature.")
+                Text(stringResource(R.string.camera_permission_message))
             },
             confirmButton = {
                 TextButton(
@@ -450,12 +460,12 @@ fun AddBillScreen(
                         permissionLauncher.launch(Manifest.permission.CAMERA)
                     }
                 ) {
-                    Text("Grant Permission")
+                    Text(stringResource(R.string.grant_permission))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showPermissionDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
@@ -492,19 +502,19 @@ fun TextSelectionDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Select Scanned Text") },
+        title = { Text(stringResource(R.string.select_scanned_text)) },
         text = {
             Column {
-                Text("Tap on text to assign to fields:", style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(R.string.tap_text_assign), style = MaterialTheme.typography.bodyMedium)
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Show current selections
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.padding(8.dp)) {
-                        Text("Selected:", style = MaterialTheme.typography.labelMedium)
-                        Text("Title: ${selectedTitle.ifEmpty { "None" }}", style = MaterialTheme.typography.bodySmall)
-                        Text("Amount: ${selectedAmount.ifEmpty { "None" }}", style = MaterialTheme.typography.bodySmall)
-                        Text("Vendor: ${selectedVendor.ifEmpty { "None" }}", style = MaterialTheme.typography.bodySmall)
+                        Text(stringResource(R.string.selected), style = MaterialTheme.typography.labelMedium)
+                        Text(stringResource(R.string.title_field, selectedTitle.ifEmpty { stringResource(R.string.none) }), style = MaterialTheme.typography.bodySmall)
+                        Text(stringResource(R.string.amount_field, selectedAmount.ifEmpty { stringResource(R.string.none) }), style = MaterialTheme.typography.bodySmall)
+                        Text(stringResource(R.string.vendor_field, selectedVendor.ifEmpty { stringResource(R.string.none) }), style = MaterialTheme.typography.bodySmall)
                     }
                 }
 
@@ -541,7 +551,7 @@ fun TextSelectionDialog(
                                             else MaterialTheme.colorScheme.outline
                                         )
                                     ) {
-                                        Text("Title", style = MaterialTheme.typography.labelSmall)
+                                        Text(stringResource(R.string.title), style = MaterialTheme.typography.labelSmall)
                                     }
 
                                     Button(
@@ -553,7 +563,7 @@ fun TextSelectionDialog(
                                             else MaterialTheme.colorScheme.outline
                                         )
                                     ) {
-                                        Text("Amount", style = MaterialTheme.typography.labelSmall)
+                                        Text(stringResource(R.string.amount), style = MaterialTheme.typography.labelSmall)
                                     }
 
                                     Button(
@@ -565,7 +575,7 @@ fun TextSelectionDialog(
                                             else MaterialTheme.colorScheme.outline
                                         )
                                     ) {
-                                        Text("Vendor", style = MaterialTheme.typography.labelSmall)
+                                        Text(stringResource(R.string.vendor), style = MaterialTheme.typography.labelSmall)
                                     }
                                 }
                             }
@@ -580,12 +590,12 @@ fun TextSelectionDialog(
                     onTextSelected(selectedTitle, selectedAmount, selectedVendor)
                 }
             ) {
-                Text("Apply")
+                Text(stringResource(R.string.apply))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         }
     )

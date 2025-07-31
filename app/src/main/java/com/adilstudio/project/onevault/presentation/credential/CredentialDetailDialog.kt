@@ -15,8 +15,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.Credential
 import com.adilstudio.project.onevault.data.security.SecurityManager
 import org.koin.compose.koinInject
@@ -34,16 +36,13 @@ fun CredentialDetailDialog(
     var showDeleteConfirmation by remember { mutableStateOf(false) }
 
     // Decrypt the password for display
-    val decryptedPassword = remember(credential) {
-        try {
-            // Assuming the encrypted password is stored in a format that can be decrypted
-            // You may need to adjust this based on how the password is actually stored
-            decryptPassword(credential.encryptedPassword, securityManager)
-        } catch (e: Exception) {
-            // Fallback to showing encrypted password if decryption fails
-            "Failed to decrypt password"
-        }
+    val decryptedPassword = try {
+        decryptPassword(credential.encryptedPassword, securityManager)
+    } catch (e: Exception) {
+        null
     }
+    val usernameLabel = stringResource(R.string.username)
+    val passwordLabel = stringResource(R.string.password)
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -62,7 +61,7 @@ fun CredentialDetailDialog(
                 // Username Section
                 Column {
                     Text(
-                        text = "Username",
+                        text = stringResource(R.string.username),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -78,12 +77,12 @@ fun CredentialDetailDialog(
                         )
                         IconButton(
                             onClick = {
-                                copyToClipboard(context, "Username", credential.username)
+                                copyToClipboard(context, usernameLabel, credential.username)
                             }
                         ) {
                             Icon(
                                 Icons.Default.ContentCopy,
-                                contentDescription = "Copy Username",
+                                contentDescription = stringResource(R.string.copy_username),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -93,7 +92,7 @@ fun CredentialDetailDialog(
                 // Password Section
                 Column {
                     Text(
-                        text = "Password",
+                        text = stringResource(R.string.password),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -103,10 +102,16 @@ fun CredentialDetailDialog(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = if (isPasswordVisible) {
-                                decryptedPassword
-                            } else {
-                                "•".repeat(decryptedPassword.length)
+                            text = when {
+                                decryptedPassword == null -> {
+                                    stringResource(R.string.failed_decrypt_password)
+                                }
+                                isPasswordVisible -> {
+                                    decryptedPassword
+                                }
+                                else -> {
+                                    "•".repeat(decryptedPassword.length)
+                                }
                             },
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.weight(1f)
@@ -117,18 +122,18 @@ fun CredentialDetailDialog(
                             ) {
                                 Icon(
                                     if (isPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                                    contentDescription = if (isPasswordVisible) "Hide Password" else "Show Password",
+                                    contentDescription = if (isPasswordVisible) stringResource(R.string.hide_password) else stringResource(R.string.show_password),
                                     tint = MaterialTheme.colorScheme.primary
                                 )
                             }
                             IconButton(
                                 onClick = {
-                                    copyToClipboard(context, "Password", decryptedPassword)
+                                    copyToClipboard(context, passwordLabel, decryptedPassword.orEmpty())
                                 }
                             ) {
                                 Icon(
                                     Icons.Default.ContentCopy,
-                                    contentDescription = "Copy Password",
+                                    contentDescription = stringResource(R.string.copy_password),
                                     tint = MaterialTheme.colorScheme.primary
                                 )
                             }
@@ -151,7 +156,7 @@ fun CredentialDetailDialog(
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Edit")
+                    Text(stringResource(R.string.edit))
                 }
 
                 // Delete Button
@@ -167,13 +172,13 @@ fun CredentialDetailDialog(
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Delete")
+                    Text(stringResource(R.string.delete))
                 }
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Close")
+                Text(stringResource(R.string.close))
             }
         }
     )
@@ -182,9 +187,9 @@ fun CredentialDetailDialog(
     if (showDeleteConfirmation) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirmation = false },
-            title = { Text("Delete Credential") },
+            title = { Text(stringResource(R.string.delete_credential)) },
             text = {
-                Text("Are you sure you want to delete the credential for '${credential.serviceName}'? This action cannot be undone.")
+                Text(stringResource(R.string.delete_credential_message, credential.serviceName))
             },
             confirmButton = {
                 TextButton(
@@ -197,12 +202,12 @@ fun CredentialDetailDialog(
                         contentColor = MaterialTheme.colorScheme.error
                     )
                 ) {
-                    Text("Delete")
+                    Text(stringResource(R.string.delete))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteConfirmation = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )

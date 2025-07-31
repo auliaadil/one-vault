@@ -7,8 +7,8 @@ import com.adilstudio.project.onevault.domain.model.CategoryType
 import com.adilstudio.project.onevault.domain.usecase.AddBillCategoryUseCase
 import com.adilstudio.project.onevault.domain.usecase.DeleteBillCategoryUseCase
 import com.adilstudio.project.onevault.domain.usecase.GetBillCategoriesUseCase
+import com.adilstudio.project.onevault.domain.usecase.GetBillCategoriesCountUseCase
 import com.adilstudio.project.onevault.domain.usecase.UpdateBillCategoryUseCase
-import com.adilstudio.project.onevault.domain.usecase.InitializeDefaultCategoriesUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,7 +20,7 @@ class BillCategoryViewModel(
     private val addBillCategoryUseCase: AddBillCategoryUseCase,
     private val updateBillCategoryUseCase: UpdateBillCategoryUseCase,
     private val deleteBillCategoryUseCase: DeleteBillCategoryUseCase,
-    private val initializeDefaultCategoriesUseCase: InitializeDefaultCategoriesUseCase
+    private val getBillCategoriesCountUseCase: GetBillCategoriesCountUseCase
 ) : ViewModel() {
 
     private val _categories = MutableStateFlow<List<BillCategory>>(emptyList())
@@ -36,22 +36,7 @@ class BillCategoryViewModel(
     val successMessage: StateFlow<String?> = _successMessage.asStateFlow()
 
     init {
-        initializeData()
-    }
-
-    private fun initializeData() {
-        viewModelScope.launch {
-            try {
-                // Initialize default categories if they don't exist
-                initializeDefaultCategoriesUseCase()
-                // Then load categories
-                loadCategories()
-            } catch (e: Exception) {
-                _error.value = "Failed to initialize categories: ${e.message}"
-                // Still try to load existing categories
-                loadCategories()
-            }
-        }
+        loadCategories()
     }
 
     private fun loadCategories() {
@@ -66,6 +51,20 @@ class BillCategoryViewModel(
                 _error.value = e.message
                 _isLoading.value = false
             }
+        }
+    }
+
+    suspend fun checkAndInitializeDefaultCategories(defaultCategories: List<BillCategory>) {
+        try {
+            val categoriesCount = getBillCategoriesCountUseCase()
+            if (categoriesCount == 0) {
+                // No categories exist, initialize with defaults
+                defaultCategories.forEach { category ->
+                    addBillCategoryUseCase(category)
+                }
+            }
+        } catch (e: Exception) {
+            _error.value = "Failed to initialize default categories: ${e.message}"
         }
     }
 
@@ -92,8 +91,6 @@ class BillCategoryViewModel(
                 )
                 addBillCategoryUseCase(category)
                 _successMessage.value = "Category '$name' added successfully"
-                // Refresh categories list
-                loadCategories()
             } catch (e: Exception) {
                 _error.value = e.message
             }
@@ -103,26 +100,19 @@ class BillCategoryViewModel(
     fun updateCategory(category: BillCategory) {
         viewModelScope.launch {
             try {
-                val updatedCategory = category.copy(updatedAt = System.currentTimeMillis())
-                updateBillCategoryUseCase(updatedCategory)
+                updateBillCategoryUseCase(category.copy(updatedAt = System.currentTimeMillis()))
                 _successMessage.value = "Category '${category.name}' updated successfully"
-                // Refresh categories list
-                loadCategories()
             } catch (e: Exception) {
                 _error.value = e.message
             }
         }
     }
 
-    fun deleteCategory(id: String) {
+    fun deleteCategory(categoryId: String) {
         viewModelScope.launch {
             try {
-                // Get category name before deletion for success message
-                val categoryName = _categories.value.find { it.id == id }?.name ?: "Category"
-                deleteBillCategoryUseCase(id)
-                _successMessage.value = "Category '$categoryName' deleted successfully"
-                // Refresh categories list
-                loadCategories()
+                deleteBillCategoryUseCase(categoryId)
+                _successMessage.value = "Category deleted successfully"
             } catch (e: Exception) {
                 _error.value = e.message
             }
