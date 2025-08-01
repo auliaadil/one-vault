@@ -21,39 +21,52 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.DateUtil
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
+import com.adilstudio.project.onevault.presentation.bill.category.BillCategoryViewModel
+import com.adilstudio.project.onevault.presentation.bill.category.createDefaultCategories
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun BillListScreen(
-    viewModel: BillTrackerViewModel = koinViewModel(),
+    billTrackerViewModel: BillTrackerViewModel = koinViewModel(),
+    categoryViewModel: BillCategoryViewModel = koinViewModel(),
     onAddBill: () -> Unit = {},
     onManageCategories: () -> Unit = {}
 ) {
-    val bills = viewModel.bills.collectAsState().value
+    val bills = billTrackerViewModel.bills.collectAsState().value
+
+    // Initialize default categories if needed
+    val defaultCategories = createDefaultCategories()
+    LaunchedEffect(Unit) {
+        categoryViewModel.checkAndInitializeDefaultCategories(defaultCategories)
+    }
+
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         // Header with Categories button
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("Bills", style = MaterialTheme.typography.headlineMedium)
+            Text(stringResource(R.string.bills), style = MaterialTheme.typography.headlineMedium)
             OutlinedButton(
                 onClick = onManageCategories,
                 modifier = Modifier.height(40.dp)
             ) {
                 Icon(
                     Icons.Default.Category,
-                    contentDescription = "Manage Categories",
+                    contentDescription = stringResource(R.string.manage_categories),
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                Text("Categories")
+                Text(stringResource(R.string.categories))
             }
         }
 
@@ -77,14 +90,14 @@ fun BillListScreen(
                                     DateUtil.formatDateForDisplay(date)
                                 } ?: bill.billDate
                                 Text(
-                                    "Date: $formattedDate",
+                                    stringResource(R.string.date_label, formattedDate),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
 
                                 // Display category or "No Category" if null
                                 Text(
-                                    "Category: ${bill.category ?: "No Category"}",
+                                    stringResource(R.string.category_label, bill.category ?: stringResource(R.string.no_category)),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -94,7 +107,7 @@ fun BillListScreen(
                             if (!bill.imagePath.isNullOrEmpty()) {
                                 Icon(
                                     Icons.Default.AttachFile,
-                                    contentDescription = "Has Attachment",
+                                    contentDescription = stringResource(R.string.has_attachment),
                                     modifier = Modifier.size(16.dp),
                                     tint = MaterialTheme.colorScheme.primary
                                 )
@@ -105,7 +118,7 @@ fun BillListScreen(
             }
         }
         Button(onClick = onAddBill, modifier = Modifier.fillMaxWidth()) {
-            Text("Add Bill")
+            Text(stringResource(R.string.add_bill))
         }
     }
 }

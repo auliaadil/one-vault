@@ -92,6 +92,14 @@
     <string name="zero">0</string>
     <string name="rupiah_prefix">Rp</string>
 
+    <!-- Bill List -->
+    <string name="bills">Bills</string>
+    <string name="categories">Categories</string>
+    <string name="manage_categories">Manage Categories</string>
+    <string name="date_label">Date: %1$s</string>
+    <string name="category_label">Category: %1$s</string>
+    <string name="has_attachment">Has Attachment</string>
+
     <!-- Default Category Names -->
     <string name="category_electricity">Electricity</string>
     <string name="category_water">Water</string>

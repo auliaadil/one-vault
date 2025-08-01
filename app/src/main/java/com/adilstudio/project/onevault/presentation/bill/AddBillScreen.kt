@@ -90,12 +90,6 @@ fun AddBillScreen(
     val context = LocalContext.current
     val categories by categoryViewModel.categories.collectAsState()
 
-    // Initialize default categories if needed
-    val defaultCategories = createDefaultCategories()
-    LaunchedEffect(Unit) {
-        categoryViewModel.checkAndInitializeDefaultCategories(defaultCategories)
-    }
-
     var title by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf<BillCategory?>(null) }
     var showCategoryDropdown by remember { mutableStateOf(false) }

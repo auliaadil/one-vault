@@ -17,6 +17,10 @@ class BillTrackerViewModel(
     private val _bills = MutableStateFlow<List<Bill>>(emptyList())
     val bills: StateFlow<List<Bill>> = _bills.asStateFlow()
 
+    init {
+        loadBills()
+    }
+
     fun loadBills() {
         viewModelScope.launch {
             getBillsUseCase().collect { _bills.value = it }
@@ -26,8 +30,6 @@ class BillTrackerViewModel(
     fun addBill(bill: Bill) {
         viewModelScope.launch {
             addBillUseCase(bill)
-            loadBills()
         }
     }
 }
-
