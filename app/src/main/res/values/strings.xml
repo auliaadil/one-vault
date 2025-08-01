@@ -139,4 +139,9 @@
     <string name="category_taxes">Taxes</string>
     <string name="category_travel">Travel</string>
     <string name="category_miscellaneous">Miscellaneous</string>
+
+    <!-- Navigation -->
+    <string name="bill_tracker">Bill Tracker</string>
+    <string name="password_manager">Password Manager</string>
+    <string name="file_vault">File Vault</string>
 </resources>

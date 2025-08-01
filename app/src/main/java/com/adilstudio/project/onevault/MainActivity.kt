@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -20,16 +19,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.content.FileProvider
 import com.adilstudio.project.onevault.presentation.navigation.NavGraph
 import com.adilstudio.project.onevault.ui.theme.OneVaultTheme
-import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.text.TextRecognition
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-import java.io.File
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.adilstudio.project.onevault.presentation.navigation.Screen
 
 class MainActivity : ComponentActivity() {
     private var cameraImageUri: Uri? = null
@@ -41,59 +37,12 @@ class MainActivity : ComponentActivity() {
         // Check if launched from TileService
         val navigateTo = intent.getStringExtra("navigate_to")
         val initialRoute = when (navigateTo) {
-            "add_bill" -> "add_bill"
+            Screen.AddBill.route -> Screen.AddBill.route
             else -> null
-        }
-
-        // Setup activity result launchers
-        val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-            if (success && cameraImageUri != null) {
-                val image = InputImage.fromFilePath(this, cameraImageUri!!)
-                val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-                recognizer.process(image)
-                    .addOnSuccessListener { visionText ->
-                        val lines = visionText.textBlocks.flatMap { it.lines }.map { it.text }
-                        // Process scan results here
-                        val title = lines.getOrNull(0) ?: ""
-                        val amount = lines.find { it.contains("$", true) || it.matches(".*\\d+\\.\\d{2}".toRegex()) } ?: ""
-                        val vendor = lines.getOrNull(1) ?: ""
-                        // TODO: Pass results to UI or handle them
-                    }
-            }
-        }
-
-        val openDocumentLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-            uri?.let { pickedUri ->
-                // TODO: Handle picked file here
-            }
-        }
-
-        val createDocumentLauncher = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
-            uri?.let { exportUri ->
-                // TODO: Handle export here
-            }
         }
 
         setContent {
             MainApp(
-                onScanBill = {
-                    // Create image file and launch camera
-                    val imageFile = File(filesDir, "camera_image.jpg")
-                    cameraImageUri = FileProvider.getUriForFile(
-                        this,
-                        "${packageName}.fileprovider",
-                        imageFile
-                    )
-                    cameraImageUri?.let { uri ->
-                        cameraLauncher.launch(uri)
-                    }
-                },
-                onPickFile = { onResult ->
-                    openDocumentLauncher.launch(arrayOf("*/*"))
-                },
-                onExportFile = { onResult ->
-                    createDocumentLauncher.launch("export.json")
-                },
                 initialRoute = initialRoute
             )
         }
@@ -102,9 +51,6 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainApp(
-    onScanBill: () -> Unit = {},
-    onPickFile: ((Uri) -> Unit) -> Unit = {},
-    onExportFile: ((Uri) -> Unit) -> Unit = {},
     initialRoute: String? = null
 ) {
     OneVaultTheme {
@@ -114,9 +60,9 @@ fun MainApp(
             modifier = Modifier.fillMaxSize(),
             bottomBar = {
                 val items = listOf(
-                    Triple("Bill Tracker", "bill_list", Icons.Filled.ShoppingCart),
-                    Triple("Password Manager", "credential_list", Icons.Filled.Lock),
-                    Triple("File Vault", "file_vault", Icons.Filled.Email)
+                    Triple(stringResource(R.string.bill_tracker), "bill_list", Icons.Filled.ShoppingCart),
+                    Triple(stringResource(R.string.password_manager), "credential_list", Icons.Filled.Lock),
+                    Triple(stringResource(R.string.file_vault), "file_vault", Icons.Filled.Email)
                 )
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = navBackStackEntry?.destination?.route
