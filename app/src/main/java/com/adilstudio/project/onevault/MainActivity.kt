@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -60,9 +61,10 @@ fun MainApp(
             modifier = Modifier.fillMaxSize(),
             bottomBar = {
                 val items = listOf(
-                    Triple(stringResource(R.string.bill_tracker), "bill_list", Icons.Filled.ShoppingCart),
-                    Triple(stringResource(R.string.password_manager), "credential_list", Icons.Filled.Lock),
-                    Triple(stringResource(R.string.file_vault), "file_vault", Icons.Filled.Email)
+                    Triple(stringResource(R.string.bills), Screen.BillList.route, Icons.Filled.ShoppingCart),
+                    Triple(stringResource(R.string.passwords), Screen.CredentialList.route, Icons.Filled.Lock),
+                    Triple(stringResource(R.string.file_vault), Screen.FileVault.route, Icons.Filled.Email),
+                    Triple(stringResource(R.string.settings), Screen.Settings.route, Icons.Filled.Settings)
                 )
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = navBackStackEntry?.destination?.route
@@ -86,7 +88,7 @@ fun MainApp(
                 }
             },
         ) { innerPadding ->
-            NavGraph(navController = navController, modifier = Modifier.padding(innerPadding), startDestination = initialRoute ?: "bill_list")
+            NavGraph(navController = navController, modifier = Modifier.padding(innerPadding), startDestination = initialRoute ?: Screen.BillList.route)
         }
     }
 }

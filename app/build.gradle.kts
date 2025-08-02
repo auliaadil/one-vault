@@ -37,6 +37,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -79,6 +80,12 @@ dependencies {
 
     // Image Loading
     implementation(libs.coil.compose)
+
+    // Biometric Authentication
+    implementation(libs.androidx.biometric)
+
+    // DataStore (for settings)
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

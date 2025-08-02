@@ -15,6 +15,7 @@ ktor = "2.3.10"
 serialization = "1.6.3"
 googleMlKit = "19.0.0"
 coil = "2.6.0"
+biometric = "1.1.0"
 # Additional versions for consistency
 lifecycleViewmodelCompose = "2.7.0"
 navigationCompose = "2.7.7"
@@ -55,6 +56,7 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 google-mlkit-text-recognition = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition", version.ref = "googleMlKit" }
 coil = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

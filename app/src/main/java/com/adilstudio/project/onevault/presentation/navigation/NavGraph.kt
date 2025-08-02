@@ -23,6 +23,10 @@ import org.koin.androidx.compose.koinViewModel
 import com.adilstudio.project.onevault.presentation.credential.PasswordManagerViewModel
 import com.adilstudio.project.onevault.presentation.filevault.FileVaultScreen
 import com.adilstudio.project.onevault.presentation.bill.BillTrackerViewModel
+import com.adilstudio.project.onevault.presentation.settings.SettingsScreen
+import com.adilstudio.project.onevault.presentation.settings.AboutScreen
+import com.adilstudio.project.onevault.presentation.settings.PrivacyPolicyScreen
+import com.adilstudio.project.onevault.presentation.settings.ImportExportScreen
 
 sealed class Screen(val route: String) {
     object BillList : Screen("bill_list")
@@ -35,6 +39,9 @@ sealed class Screen(val route: String) {
     object AddVaultFile : Screen("add_vault_file")
     object FileVault : Screen("file_vault")
     object ImportExport : Screen("import_export")
+    object Settings : Screen("settings")
+    object About : Screen("about")
+    object PrivacyPolicy : Screen("privacy_policy")
 }
 
 @Composable
@@ -54,7 +61,8 @@ fun NavGraph(
             val viewModel: BillTrackerViewModel = koinViewModel()
             AddBillScreen(
                 viewModel = viewModel,
-                onBillAdded = { navController.popBackStack() }
+                onBillAdded = { navController.popBackStack() },
+                onNavigateBack = { navController.popBackStack() }
             )
         }
         composable(Screen.CredentialList.route) {
@@ -63,7 +71,10 @@ fun NavGraph(
                 onAddCredential = { navController.navigate(Screen.AddCredential.route) },
                 onEditCredential = { credential ->
                     // Pass only the credential ID through navigation arguments
-                    navController.currentBackStackEntry?.savedStateHandle?.set("credentialId", credential.id)
+                    navController.currentBackStackEntry?.savedStateHandle?.set(
+                        "credentialId",
+                        credential.id
+                    )
                     navController.navigate(Screen.EditCredential.route)
                 }
             )
@@ -81,13 +92,20 @@ fun NavGraph(
                         )
                     )
                     navController.popBackStack()
+                },
+                onCancel = {
+                    navController.popBackStack()
+                },
+                onNavigateBack = {
+                    navController.popBackStack()
                 }
             )
         }
         composable(Screen.EditCredential.route) {
             val viewModel: PasswordManagerViewModel = koinViewModel()
             // Get credential ID from previous screen
-            val credentialId = navController.previousBackStackEntry?.savedStateHandle?.get<Long>("credentialId")
+            val credentialId =
+                navController.previousBackStackEntry?.savedStateHandle?.get<Long>("credentialId")
 
             // Load credentials and find the specific one
             LaunchedEffect(credentialId) {
@@ -122,6 +140,9 @@ fun NavGraph(
                     },
                     onCancel = {
                         navController.popBackStack()
+                    },
+                    onNavigateBack = {
+                        navController.popBackStack()
                     }
                 )
             }
@@ -149,6 +170,28 @@ fun NavGraph(
         }
         composable(Screen.BillCategories.route) {
             BillCategoriesScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+        composable(Screen.Settings.route) {
+            SettingsScreen(
+                onNavigateToAbout = { navController.navigate(Screen.About.route) },
+                onNavigateToPrivacyPolicy = { navController.navigate(Screen.PrivacyPolicy.route) },
+                onNavigateToImportExport = { navController.navigate(Screen.ImportExport.route) }
+            )
+        }
+        composable(Screen.About.route) {
+            AboutScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+        composable(Screen.PrivacyPolicy.route) {
+            PrivacyPolicyScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+        composable(Screen.ImportExport.route) {
+            ImportExportScreen(
                 onNavigateBack = { navController.popBackStack() }
             )
         }

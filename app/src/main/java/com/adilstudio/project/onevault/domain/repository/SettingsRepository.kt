@@ -1,0 +1,8 @@
+package com.adilstudio.project.onevault.domain.repository
+
+import kotlinx.coroutines.flow.Flow
+
+interface SettingsRepository {
+    suspend fun setBiometricEnabled(enabled: Boolean)
+    fun getBiometricEnabled(): Flow<Boolean>
+}

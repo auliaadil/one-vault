@@ -57,7 +57,6 @@
     <string name="failed_decrypt_password">Failed to decrypt password</string>
 
     <!-- File Vault -->
-    <string name="file_vault">File Vault</string>
     <string name="add_file">Add File</string>
     <string name="import_data">Import Data</string>
     <string name="export_data">Export Data</string>
@@ -93,7 +92,6 @@
     <string name="rupiah_prefix">Rp</string>
 
     <!-- Bill List -->
-    <string name="bills">Bills</string>
     <string name="categories">Categories</string>
     <string name="manage_categories">Manage Categories</string>
     <string name="date_label">Date: %1$s</string>
@@ -141,7 +139,82 @@
     <string name="category_miscellaneous">Miscellaneous</string>
 
     <!-- Navigation -->
+    <string name="bills">Bills</string>
     <string name="bill_tracker">Bill Tracker</string>
+    <string name="passwords">Passwords</string>
     <string name="password_manager">Password Manager</string>
     <string name="file_vault">File Vault</string>
+    <string name="settings">Settings</string>
+
+    <!-- Settings -->
+    <string name="about_us">About Us</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="import_export">Import / Export</string>
+    <string name="biometric_authentication">Biometric Authentication</string>
+    <string name="app_version">App Version</string>
+    <string name="version_format">%1$s (%2$d)</string>
+
+    <!-- Biometric -->
+    <string name="biometric_prompt_title">Authenticate</string>
+    <string name="biometric_prompt_subtitle">Use your biometric credential to access OneVault</string>
+    <string name="biometric_prompt_description">Place your finger on the sensor or look at the camera to authenticate</string>
+    <string name="biometric_error_hw_unavailable">Biometric hardware is unavailable</string>
+    <string name="biometric_error_no_biometrics">No biometric credentials enrolled</string>
+    <string name="biometric_error_user_cancel">Authentication was cancelled</string>
+    <string name="biometric_error_generic">Authentication error occurred</string>
+
+    <!-- Navigation -->
+    <string name="back">Back</string>
+
+    <!-- About Screen -->
+    <string name="app_description">OneVault is a secure, local-first Android application that helps you manage your financial bills, store passwords safely, and organize your important files. All your data is stored locally on your device to ensure maximum privacy and security.</string>
+    <string name="key_features">Key Features</string>
+    <string name="feature_bill_tracker">Bill Tracker: Track and manage your bills with OCR scanning capability</string>
+    <string name="feature_password_manager">Password Manager: Securely store and manage your credentials</string>
+    <string name="feature_file_vault">File Vault: Organize and store your important documents</string>
+    <string name="feature_biometric_security">Biometric Security: Protect your app with fingerprint or face authentication</string>
+    <string name="feature_data_encryption">Advanced encryption for all your data</string>
+    <string name="developer_info">Developer Information</string>
+    <string name="developer_name">Adil Studio</string>
+    <string name="developer_email">support@adilstudio.com</string>
+
+    <!-- Privacy Policy Screen -->
+    <string name="privacy_introduction_title">Introduction</string>
+    <string name="privacy_introduction_content">OneVault is committed to protecting your privacy. This policy explains how we handle your data and protect your personal information.</string>
+    <string name="privacy_information_collect_title">Information We Collect</string>
+    <string name="privacy_information_collect_content">OneVault stores all data locally on your device. We do not collect or transmit any personal information to external servers. Your bills, passwords, and files remain entirely on your device.</string>
+    <string name="privacy_how_we_use_title">How We Use Your Information</string>
+    <string name="privacy_how_we_use_content">All data processing occurs locally on your device. We use your information solely to provide the app\'s functionality: organizing bills, managing passwords, and storing files securely.</string>
+    <string name="privacy_data_security_title">Data Security</string>
+    <string name="privacy_data_security_content">We implement industry-standard encryption to protect your data. All sensitive information is encrypted using AES-256 encryption before being stored on your device.</string>
+    <string name="privacy_data_storage_title">Data Storage</string>
+    <string name="privacy_data_storage_content">Your data is stored exclusively in your device\'s secure storage. We do not use cloud storage or external databases. You have full control over your data at all times.</string>
+    <string name="privacy_third_party_title">Third-Party Services</string>
+    <string name="privacy_third_party_content">OneVault may use Google ML Kit for text recognition during bill scanning. This processing occurs on-device and no data is sent to Google servers.</string>
+    <string name="privacy_your_rights_title">Your Rights</string>
+    <string name="privacy_your_rights_content">You have complete control over your data. You can export, delete, or modify any information stored in the app at any time. No third parties have access to your data.</string>
+    <string name="privacy_contact_title">Contact Us</string>
+    <string name="privacy_contact_content">If you have any questions about this privacy policy, please contact us at support@adilstudio.com</string>
+    <string name="privacy_last_updated">Last updated: August 2025</string>
+
+    <!-- Import/Export Screen -->
+    <string name="import_export_warning">Important: Always keep backups of your exported data in a secure location. Imported data will replace existing data.</string>
+    <string name="export_credentials">Export Credentials</string>
+    <string name="export_credentials_description">Export all stored passwords and login information to a secure file</string>
+    <string name="export_bills">Export Bills</string>
+    <string name="export_bills_description">Export all bill data including attachments to a backup file</string>
+    <string name="export_vault_files">Export Vault Files</string>
+    <string name="export_vault_files_description">Export all files stored in your vault to a backup location</string>
+    <string name="import_credentials">Import Credentials</string>
+    <string name="import_credentials_description">Import credentials from a previously exported backup file</string>
+    <string name="import_bills">Import Bills</string>
+    <string name="import_bills_description">Import bill data from a backup file</string>
+    <string name="import_vault_files">Import Vault Files</string>
+    <string name="import_vault_files_description">Import files from a backup location into your vault</string>
+    <string name="export_confirmation_title">Export Data</string>
+    <string name="export_confirmation_message">This will create a backup file of your selected data. Make sure to store it in a secure location.</string>
+    <string name="export">Export</string>
+    <string name="import_confirmation_title">Import Data</string>
+    <string name="import_confirmation_message">This will replace your current data with the data from the backup file. This action cannot be undone.</string>
+    <string name="import_text">Import</string>
 </resources>

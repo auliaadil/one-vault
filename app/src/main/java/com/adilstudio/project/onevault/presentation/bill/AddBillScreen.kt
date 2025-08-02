@@ -2,8 +2,10 @@ package com.adilstudio.project.onevault.presentation.bill
 
 import android.Manifest
 import android.net.Uri
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +23,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Delete
@@ -41,8 +44,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -80,12 +85,14 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddBillScreen(
     viewModel: BillTrackerViewModel = koinViewModel(),
     categoryViewModel: BillCategoryViewModel = koinViewModel(),
-    onBillAdded: () -> Unit = {}
+    onBillAdded: () -> Unit = {},
+    onNavigateBack: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val categories by categoryViewModel.categories.collectAsState()
@@ -198,216 +205,251 @@ fun AddBillScreen(
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text(stringResource(R.string.add_bill), style = MaterialTheme.typography.headlineMedium)
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = title,
-            onValueChange = { title = it },
-            label = { Text(stringResource(R.string.title)) },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Category selection
-        ExposedDropdownMenuBox(
-            expanded = showCategoryDropdown,
-            onExpandedChange = { showCategoryDropdown = !showCategoryDropdown }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(R.string.add_bill)
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.back)
+                        )
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp)
         ) {
             OutlinedTextField(
-                value = selectedCategory?.name ?: "",
-                onValueChange = {},
-                label = { Text(stringResource(R.string.category_optional)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .menuAnchor(),
-                readOnly = true,
-                trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = showCategoryDropdown)
-                },
-                placeholder = { Text(stringResource(R.string.no_category_selected)) }
+                value = title,
+                onValueChange = { title = it },
+                label = { Text(stringResource(R.string.title)) },
+                modifier = Modifier.fillMaxWidth()
             )
+            Spacer(modifier = Modifier.height(8.dp))
 
-            ExposedDropdownMenu(
+            // Category selection
+            ExposedDropdownMenuBox(
                 expanded = showCategoryDropdown,
-                onDismissRequest = { showCategoryDropdown = false }
+                onExpandedChange = { showCategoryDropdown = !showCategoryDropdown }
             ) {
-                // Add option to clear selection
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            stringResource(R.string.no_category),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                OutlinedTextField(
+                    value = selectedCategory?.name ?: "",
+                    onValueChange = {},
+                    label = { Text(stringResource(R.string.category_optional)) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(),
+                    readOnly = true,
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = showCategoryDropdown)
                     },
-                    onClick = {
-                        selectedCategory = null
-                        showCategoryDropdown = false
-                    }
+                    placeholder = { Text(stringResource(R.string.no_category_selected)) }
                 )
 
-                categories.forEach { category ->
+                ExposedDropdownMenu(
+                    expanded = showCategoryDropdown,
+                    onDismissRequest = { showCategoryDropdown = false }
+                ) {
+                    // Add option to clear selection
                     DropdownMenuItem(
                         text = {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    text = category.icon,
-                                    modifier = Modifier.padding(end = 8.dp)
-                                )
-                                Text(category.name)
-                            }
+                            Text(
+                                stringResource(R.string.no_category),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         },
                         onClick = {
-                            selectedCategory = category
+                            selectedCategory = null
                             showCategoryDropdown = false
                         }
                     )
-                }
-            }
-        }
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = amountDisplay,
-            onValueChange = { newValue ->
-                // Only allow digits and format as Indonesian Rupiah
-                val digitsOnly = newValue.replace(Regex("[^0-9]"), "")
-                if (digitsOnly.length <= 15) { // Reasonable limit for amount
-                    val longValue = digitsOnly.toLongOrNull() ?: 0L
-                    amountValue = longValue
-                    amountDisplay = RupiahFormatter.formatRupiahDisplay(longValue)
-                }
-            },
-            label = { Text(stringResource(R.string.amount)) },
-            leadingIcon = {
-                Text(
-                    text = stringResource(R.string.rupiah_prefix),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(stringResource(R.string.zero)) }
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = vendor,
-            onValueChange = { vendor = it },
-            label = { Text(stringResource(R.string.vendor)) },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Date picker field
-        OutlinedTextField(
-            value = DateUtil.formatDateForDisplay(selectedDate),
-            onValueChange = { },
-            label = { Text(stringResource(R.string.bill_date)) },
-            modifier = Modifier.fillMaxWidth(),
-            readOnly = true,
-            trailingIcon = {
-                IconButton(onClick = { showDatePicker = true }) {
-                    Icon(Icons.Default.CalendarToday, contentDescription = stringResource(R.string.select_date))
-                }
-            }
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Image upload section
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
-            )
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(stringResource(R.string.attachment_optional), style = MaterialTheme.typography.labelLarge)
-
-                    if (selectedImageUri != null || savedImagePath != null) {
-                        IconButton(
+                    categories.forEach { category ->
+                        DropdownMenuItem(
+                            text = {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        text = category.icon,
+                                        modifier = Modifier.padding(end = 8.dp)
+                                    )
+                                    Text(category.name)
+                                }
+                            },
                             onClick = {
-                                selectedImageUri = null
-                                savedImagePath?.let { ImageUtil.deleteImageFromInternalStorage(it) }
-                                savedImagePath = null
+                                selectedCategory = category
+                                showCategoryDropdown = false
                             }
-                        ) {
-                            Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.remove_image))
-                        }
+                        )
                     }
                 }
+            }
 
-                if (selectedImageUri != null) {
-                    // Show selected image
-                    AsyncImage(
-                        model = selectedImageUri,
-                        contentDescription = "Selected Image",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                            .clip(RoundedCornerShape(8.dp)),
-                        contentScale = ContentScale.Crop
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = amountDisplay,
+                onValueChange = { newValue ->
+                    // Only allow digits and format as Indonesian Rupiah
+                    val digitsOnly = newValue.replace(Regex("[^0-9]"), "")
+                    if (digitsOnly.length <= 15) { // Reasonable limit for amount
+                        val longValue = digitsOnly.toLongOrNull() ?: 0L
+                        amountValue = longValue
+                        amountDisplay = RupiahFormatter.formatRupiahDisplay(longValue)
+                    }
+                },
+                label = { Text(stringResource(R.string.amount)) },
+                leadingIcon = {
+                    Text(
+                        text = stringResource(R.string.rupiah_prefix),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text(stringResource(R.string.zero)) }
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = vendor,
+                onValueChange = { vendor = it },
+                label = { Text(stringResource(R.string.vendor)) },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Date picker field
+            OutlinedTextField(
+                value = DateUtil.formatDateForDisplay(selectedDate),
+                onValueChange = { },
+                label = { Text(stringResource(R.string.bill_date)) },
+                modifier = Modifier.fillMaxWidth(),
+                readOnly = true,
+                trailingIcon = {
+                    IconButton(onClick = { showDatePicker = true }) {
+                        Icon(
+                            Icons.Default.CalendarToday,
+                            contentDescription = stringResource(R.string.select_date)
+                        )
+                    }
                 }
+            )
+            Spacer(modifier = Modifier.height(8.dp))
 
-                OutlinedButton(
-                    onClick = { imagePickerLauncher.launch("image/*") },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(Icons.Default.AttachFile, contentDescription = null)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(stringResource(R.string.choose_image))
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Scan Bill Button
-        Button(
-            onClick = { handleScanButtonClick() },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !isScanning
-        ) {
-            if (isScanning) {
-                CircularProgressIndicator(modifier = Modifier.size(16.dp))
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(stringResource(R.string.scanning))
-            } else {
-                Text(stringResource(R.string.scan_bill))
-            }
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Save Bill Button
-        Button(
-            onClick = {
-                val bill = Bill(
-                    id = System.currentTimeMillis(),
-                    title = title,
-                    category = selectedCategory?.name, // Pass null if no category selected
-                    amount = amountValue.toDouble(),
-                    vendor = vendor,
-                    billDate = DateUtil.localDateToIsoString(selectedDate),
-                    imagePath = savedImagePath
+            // Image upload section
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
-                viewModel.addBill(bill)
-                onBillAdded()
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(stringResource(R.string.save_bill))
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            stringResource(R.string.attachment_optional),
+                            style = MaterialTheme.typography.labelLarge
+                        )
+
+                        if (selectedImageUri != null || savedImagePath != null) {
+                            IconButton(
+                                onClick = {
+                                    selectedImageUri = null
+                                    savedImagePath?.let {
+                                        ImageUtil.deleteImageFromInternalStorage(
+                                            it
+                                        )
+                                    }
+                                    savedImagePath = null
+                                }
+                            ) {
+                                Icon(
+                                    Icons.Default.Delete,
+                                    contentDescription = stringResource(R.string.remove_image)
+                                )
+                            }
+                        }
+                    }
+
+                    if (selectedImageUri != null) {
+                        // Show selected image
+                        AsyncImage(
+                            model = selectedImageUri,
+                            contentDescription = "Selected Image",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp)
+                                .clip(RoundedCornerShape(8.dp)),
+                            contentScale = ContentScale.Crop
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+
+                    OutlinedButton(
+                        onClick = { imagePickerLauncher.launch("image/*") },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(Icons.Default.AttachFile, contentDescription = null)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(stringResource(R.string.choose_image))
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Scan Bill Button
+            Button(
+                onClick = { handleScanButtonClick() },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !isScanning
+            ) {
+                if (isScanning) {
+                    CircularProgressIndicator(modifier = Modifier.size(16.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(stringResource(R.string.scanning))
+                } else {
+                    Text(stringResource(R.string.scan_bill))
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Save Bill Button
+            Button(
+                onClick = {
+                    val bill = Bill(
+                        id = System.currentTimeMillis(),
+                        title = title,
+                        category = selectedCategory?.name, // Pass null if no category selected
+                        amount = amountValue.toDouble(),
+                        vendor = vendor,
+                        billDate = DateUtil.localDateToIsoString(selectedDate),
+                        imagePath = savedImagePath
+                    )
+                    viewModel.addBill(bill)
+                    onBillAdded()
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.save_bill))
+            }
         }
     }
 
@@ -472,7 +514,8 @@ fun AddBillScreen(
             onTextSelected = { selectedTitle, selectedAmount, selectedVendor ->
                 if (selectedTitle.isNotEmpty()) title = selectedTitle
                 if (selectedAmount.isNotEmpty()) {
-                    val extractedAmount = RupiahFormatter.extractNumberFromRupiahText(selectedAmount)
+                    val extractedAmount =
+                        RupiahFormatter.extractNumberFromRupiahText(selectedAmount)
                     amountValue = extractedAmount
                     amountDisplay = RupiahFormatter.formatRupiahDisplay(extractedAmount)
                 }
@@ -499,16 +542,37 @@ fun TextSelectionDialog(
         title = { Text(stringResource(R.string.select_scanned_text)) },
         text = {
             Column {
-                Text(stringResource(R.string.tap_text_assign), style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    stringResource(R.string.tap_text_assign),
+                    style = MaterialTheme.typography.bodyMedium
+                )
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Show current selections
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.padding(8.dp)) {
-                        Text(stringResource(R.string.selected), style = MaterialTheme.typography.labelMedium)
-                        Text(stringResource(R.string.title_field, selectedTitle.ifEmpty { stringResource(R.string.none) }), style = MaterialTheme.typography.bodySmall)
-                        Text(stringResource(R.string.amount_field, selectedAmount.ifEmpty { stringResource(R.string.none) }), style = MaterialTheme.typography.bodySmall)
-                        Text(stringResource(R.string.vendor_field, selectedVendor.ifEmpty { stringResource(R.string.none) }), style = MaterialTheme.typography.bodySmall)
+                        Text(
+                            stringResource(R.string.selected),
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                        Text(
+                            stringResource(
+                                R.string.title_field,
+                                selectedTitle.ifEmpty { stringResource(R.string.none) }),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        Text(
+                            stringResource(
+                                R.string.amount_field,
+                                selectedAmount.ifEmpty { stringResource(R.string.none) }),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        Text(
+                            stringResource(
+                                R.string.vendor_field,
+                                selectedVendor.ifEmpty { stringResource(R.string.none) }),
+                            style = MaterialTheme.typography.bodySmall
+                        )
                     }
                 }
 
@@ -545,7 +609,10 @@ fun TextSelectionDialog(
                                             else MaterialTheme.colorScheme.outline
                                         )
                                     ) {
-                                        Text(stringResource(R.string.title), style = MaterialTheme.typography.labelSmall)
+                                        Text(
+                                            stringResource(R.string.title),
+                                            style = MaterialTheme.typography.labelSmall
+                                        )
                                     }
 
                                     Button(
@@ -557,7 +624,10 @@ fun TextSelectionDialog(
                                             else MaterialTheme.colorScheme.outline
                                         )
                                     ) {
-                                        Text(stringResource(R.string.amount), style = MaterialTheme.typography.labelSmall)
+                                        Text(
+                                            stringResource(R.string.amount),
+                                            style = MaterialTheme.typography.labelSmall
+                                        )
                                     }
 
                                     Button(
@@ -569,7 +639,10 @@ fun TextSelectionDialog(
                                             else MaterialTheme.colorScheme.outline
                                         )
                                     ) {
-                                        Text(stringResource(R.string.vendor), style = MaterialTheme.typography.labelSmall)
+                                        Text(
+                                            stringResource(R.string.vendor),
+                                            style = MaterialTheme.typography.labelSmall
+                                        )
                                     }
                                 }
                             }
