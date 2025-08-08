@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.FragmentActivity
 import com.adilstudio.project.onevault.BuildConfig
 import com.adilstudio.project.onevault.R
 import org.koin.androidx.compose.koinViewModel
@@ -23,7 +24,18 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
+    val activity = context as? FragmentActivity
     val biometricEnabled by viewModel.biometricEnabled.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
+
+    // Show error message if any
+    errorMessage?.let { message ->
+        LaunchedEffect(message) {
+            // You can show a Snackbar or Toast here
+            // For now, we'll just clear the error after showing it
+            viewModel.clearErrorMessage()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -32,6 +44,19 @@ fun SettingsScreen(
                     Text(text = stringResource(R.string.settings))
                 }
             )
+        },
+        snackbarHost = {
+            errorMessage?.let { message ->
+                Snackbar(
+                    action = {
+                        TextButton(onClick = { viewModel.clearErrorMessage() }) {
+                            Text(stringResource(R.string.ok))
+                        }
+                    }
+                ) {
+                    Text(message)
+                }
+            }
         }
     ) { paddingValues ->
         Column(
@@ -68,7 +93,12 @@ fun SettingsScreen(
                 checked = biometricEnabled,
                 onCheckedChange = { enabled ->
                     if (enabled) {
-                        viewModel.enableBiometric(context)
+                        activity?.let { fragmentActivity ->
+                            viewModel.enableBiometric(fragmentActivity)
+                        } ?: run {
+                            // Show error if we can't get FragmentActivity
+                            viewModel.setErrorMessage(context.getString(R.string.biometric_error_generic))
+                        }
                     } else {
                         viewModel.disableBiometric()
                     }

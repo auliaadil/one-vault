@@ -4,6 +4,9 @@
 
     <!-- Bill Management -->
     <string name="add_bill">Add Bill</string>
+    <string name="edit_bill">Edit Bill</string>
+    <string name="delete_bill">Delete Bill</string>
+    <string name="delete_bill_message">Are you sure you want to delete \'%1$s\'? This action cannot be undone.</string>
     <string name="title">Title</string>
     <string name="category_optional">Category (Optional)</string>
     <string name="no_category_selected">No category selected</string>

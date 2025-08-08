@@ -14,23 +14,24 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.adilstudio.project.onevault.presentation.bill.AddBillScreen
-import com.adilstudio.project.onevault.presentation.credential.AddEditCredentialScreen
-import com.adilstudio.project.onevault.presentation.credential.CredentialListScreen
+import com.adilstudio.project.onevault.presentation.bill.AddEditBillScreen
 import com.adilstudio.project.onevault.presentation.bill.BillListScreen
 import com.adilstudio.project.onevault.presentation.bill.category.BillCategoriesScreen
 import org.koin.androidx.compose.koinViewModel
-import com.adilstudio.project.onevault.presentation.credential.PasswordManagerViewModel
+import com.adilstudio.project.onevault.presentation.credential.AddEditCredentialScreen
+import com.adilstudio.project.onevault.presentation.credential.CredentialListScreen
 import com.adilstudio.project.onevault.presentation.filevault.FileVaultScreen
-import com.adilstudio.project.onevault.presentation.bill.BillTrackerViewModel
 import com.adilstudio.project.onevault.presentation.settings.SettingsScreen
 import com.adilstudio.project.onevault.presentation.settings.AboutScreen
 import com.adilstudio.project.onevault.presentation.settings.PrivacyPolicyScreen
 import com.adilstudio.project.onevault.presentation.settings.ImportExportScreen
+import com.adilstudio.project.onevault.presentation.credential.PasswordManagerViewModel
+import com.adilstudio.project.onevault.presentation.bill.BillTrackerViewModel
 
 sealed class Screen(val route: String) {
     object BillList : Screen("bill_list")
     object AddBill : Screen("add_bill")
+    object EditBill : Screen("edit_bill")
     object BillCategories : Screen("bill_categories")
     object CredentialList : Screen("credential_list")
     object AddCredential : Screen("add_credential")
@@ -54,16 +55,62 @@ fun NavGraph(
         composable(Screen.BillList.route) {
             BillListScreen(
                 onAddBill = { navController.navigate(Screen.AddBill.route) },
-                onManageCategories = { navController.navigate(Screen.BillCategories.route) }
+                onManageCategories = { navController.navigate(Screen.BillCategories.route) },
+                onEditBill = { bill ->
+                    // Pass the bill ID through navigation arguments
+                    navController.currentBackStackEntry?.savedStateHandle?.set("billId", bill.id)
+                    navController.navigate(Screen.EditBill.route)
+                }
             )
         }
         composable(Screen.AddBill.route) {
             val viewModel: BillTrackerViewModel = koinViewModel()
-            AddBillScreen(
-                viewModel = viewModel,
-                onBillAdded = { navController.popBackStack() },
+            AddEditBillScreen(
+                onSave = { bill ->
+                    viewModel.addBill(bill)
+                    navController.popBackStack()
+                },
                 onNavigateBack = { navController.popBackStack() }
             )
+        }
+        composable(Screen.EditBill.route) {
+            val viewModel: BillTrackerViewModel = koinViewModel()
+            // Get bill ID from previous screen
+            val billId = navController.previousBackStackEntry?.savedStateHandle?.get<Long>("billId")
+
+            // Load bills and find the specific one
+            LaunchedEffect(billId) {
+                viewModel.loadBills()
+            }
+
+            val bills by viewModel.bills.collectAsState()
+            val bill = remember(bills, billId) {
+                bills.find { it.id == billId }
+            }
+
+            // Show loading while bill is being fetched
+            if (bill == null) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                AddEditBillScreen(
+                    bill = bill,
+                    onSave = { updatedBill ->
+                        viewModel.updateBill(updatedBill)
+                        navController.popBackStack()
+                    },
+                    onDelete = { billId ->
+                        viewModel.deleteBill(billId)
+                        navController.popBackStack()
+                    },
+                    onNavigateBack = { navController.popBackStack() },
+                    onCancel = { navController.popBackStack() }
+                )
+            }
         }
         composable(Screen.CredentialList.route) {
             CredentialListScreen(

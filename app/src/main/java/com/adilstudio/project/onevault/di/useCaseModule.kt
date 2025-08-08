@@ -6,6 +6,8 @@ import org.koin.dsl.module
 
 val useCaseModule = module {
     single { AddBillUseCase(get()) }
+    single { UpdateBillUseCase(get()) }
+    single { DeleteBillUseCase(get()) }
     single { GetBillsUseCase(get()) }
     single { AddCredentialUseCase(get()) }
     single { UpdateCredentialUseCase(get()) }

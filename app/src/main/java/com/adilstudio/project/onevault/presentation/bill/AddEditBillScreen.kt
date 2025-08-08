@@ -81,39 +81,70 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import org.koin.androidx.compose.koinViewModel
 import java.io.File
-import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneId
+import java.util.Calendar
+import java.util.Date
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddBillScreen(
-    viewModel: BillTrackerViewModel = koinViewModel(),
-    categoryViewModel: BillCategoryViewModel = koinViewModel(),
-    onBillAdded: () -> Unit = {},
-    onNavigateBack: () -> Unit = {}
+fun AddEditBillScreen(
+    bill: Bill? = null, // null for add, non-null for edit
+    onSave: (Bill) -> Unit,
+    onDelete: ((Long) -> Unit)? = null,
+    onNavigateBack: () -> Unit,
+    onCancel: () -> Unit = {},
+    categoryViewModel: BillCategoryViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
     val categories by categoryViewModel.categories.collectAsState()
+    val isEditing = bill != null
 
-    var title by remember { mutableStateOf("") }
-    var selectedCategory by remember { mutableStateOf<BillCategory?>(null) }
+    // Initialize form state from existing bill or defaults
+    var title by remember { mutableStateOf(bill?.title ?: "") }
+    var selectedCategory by remember {
+        mutableStateOf(categories.find { it.name == bill?.category })
+    }
     var showCategoryDropdown by remember { mutableStateOf(false) }
-    var amountValue by remember { mutableStateOf(0L) } // Store as Long
-    var amountDisplay by remember { mutableStateOf("") } // Display formatted
-    var vendor by remember { mutableStateOf("") }
+    var amountValue by remember { mutableStateOf(bill?.amount?.toLong() ?: 0L) }
+    var amountDisplay by remember {
+        mutableStateOf(
+            if (bill?.amount != null)
+                RupiahFormatter.formatRupiahDisplay(bill.amount.toLong())
+            else ""
+        )
+    }
+    var vendor by remember { mutableStateOf(bill?.vendor ?: "") }
 
-    // Date picker state
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    // Date picker state - using Calendar for API 24 compatibility
+    var selectedDate by remember {
+        mutableStateOf(
+            bill?.billDate?.let { DateUtil.isoStringToLocalDate(it) } ?: LocalDate.now()
+        )
+    }
     var showDatePicker by remember { mutableStateOf(false) }
+
+    // Convert LocalDate to milliseconds for DatePicker (API 24 compatible)
+    val selectedDateMillis = remember(selectedDate) {
+        val calendar = Calendar.getInstance().apply {
+            set(Calendar.YEAR, selectedDate.year)
+            set(Calendar.MONTH, selectedDate.monthValue - 1) // Calendar months are 0-based
+            set(Calendar.DAY_OF_MONTH, selectedDate.dayOfMonth)
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        calendar.timeInMillis
+    }
+
     val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = System.currentTimeMillis()
+        initialSelectedDateMillis = selectedDateMillis
     )
 
     // Image handling state
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
-    var savedImagePath by remember { mutableStateOf<String?>(null) }
+    var savedImagePath by remember { mutableStateOf(bill?.imagePath) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     // MLKit scanning state
     var scannedTexts by remember { mutableStateOf<List<String>>(emptyList()) }
@@ -125,6 +156,13 @@ fun AddBillScreen(
     var showPermissionDialog by remember { mutableStateOf(false) }
     var hasCameraPermission by remember {
         mutableStateOf(PermissionUtil.isCameraPermissionGranted(context))
+    }
+
+    // Update selectedCategory when categories are loaded
+    LaunchedEffect(categories, bill) {
+        if (bill != null && selectedCategory == null) {
+            selectedCategory = categories.find { it.name == bill.category }
+        }
     }
 
     // Image picker launcher
@@ -164,7 +202,6 @@ fun AddBillScreen(
                 }
                 .addOnFailureListener {
                     isScanning = false
-                    // Handle error if needed
                 }
         }
     }
@@ -188,10 +225,8 @@ fun AddBillScreen(
     ) { isGranted ->
         hasCameraPermission = isGranted
         if (isGranted) {
-            // Permission granted, proceed with camera
             launchCamera()
         } else {
-            // Permission denied, show explanation
             showPermissionDialog = true
         }
     }
@@ -210,7 +245,8 @@ fun AddBillScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = stringResource(R.string.add_bill)
+                        text = if (isEditing) stringResource(R.string.edit_bill)
+                               else stringResource(R.string.add_bill)
                     )
                 },
                 navigationIcon = {
@@ -219,6 +255,17 @@ fun AddBillScreen(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.back)
                         )
+                    }
+                },
+                actions = {
+                    if (isEditing && onDelete != null) {
+                        IconButton(onClick = { showDeleteDialog = true }) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = stringResource(R.string.delete),
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        }
                     }
                 }
             )
@@ -367,14 +414,12 @@ fun AddBillScreen(
                             style = MaterialTheme.typography.labelLarge
                         )
 
-                        if (selectedImageUri != null || savedImagePath != null) {
+                        if (selectedImageUri != null || !savedImagePath.isNullOrEmpty()) {
                             IconButton(
                                 onClick = {
                                     selectedImageUri = null
                                     savedImagePath?.let {
-                                        ImageUtil.deleteImageFromInternalStorage(
-                                            it
-                                        )
+                                        ImageUtil.deleteImageFromInternalStorage(it)
                                     }
                                     savedImagePath = null
                                 }
@@ -387,11 +432,15 @@ fun AddBillScreen(
                         }
                     }
 
-                    if (selectedImageUri != null) {
-                        // Show selected image
+                    // Show existing image or selected new image
+                    val imageToShow = selectedImageUri ?: savedImagePath?.let {
+                        ImageUtil.getImageFileUri(context, it)
+                    }
+
+                    imageToShow?.let {
                         AsyncImage(
-                            model = selectedImageUri,
-                            contentDescription = "Selected Image",
+                            model = it,
+                            contentDescription = "Bill Image",
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(200.dp)
@@ -431,24 +480,41 @@ fun AddBillScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Save Bill Button
-            Button(
-                onClick = {
-                    val bill = Bill(
-                        id = System.currentTimeMillis(),
-                        title = title,
-                        category = selectedCategory?.name, // Pass null if no category selected
-                        amount = amountValue.toDouble(),
-                        vendor = vendor,
-                        billDate = DateUtil.localDateToIsoString(selectedDate),
-                        imagePath = savedImagePath
-                    )
-                    viewModel.addBill(bill)
-                    onBillAdded()
-                },
-                modifier = Modifier.fillMaxWidth()
+            // Action buttons
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = if (isEditing) Arrangement.spacedBy(8.dp) else Arrangement.Center
             ) {
-                Text(stringResource(R.string.save_bill))
+                if (isEditing) {
+                    OutlinedButton(
+                        onClick = onCancel,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(stringResource(R.string.cancel))
+                    }
+                }
+
+                Button(
+                    onClick = {
+                        val billToSave = Bill(
+                            id = bill?.id ?: System.currentTimeMillis(),
+                            title = title,
+                            category = selectedCategory?.name,
+                            amount = amountValue.toDouble(),
+                            vendor = vendor,
+                            billDate = DateUtil.localDateToIsoString(selectedDate),
+                            imagePath = savedImagePath
+                        )
+                        onSave(billToSave)
+                    },
+                    modifier = if (isEditing) Modifier.weight(1f) else Modifier.fillMaxWidth(),
+                    enabled = title.isNotBlank() && amountValue > 0
+                ) {
+                    Text(
+                        if (isEditing) stringResource(R.string.save_changes)
+                        else stringResource(R.string.save_bill)
+                    )
+                }
             }
         }
     }
@@ -461,9 +527,15 @@ fun AddBillScreen(
                 TextButton(
                     onClick = {
                         datePickerState.selectedDateMillis?.let { millis ->
-                            selectedDate = Instant.ofEpochMilli(millis)
-                                .atZone(ZoneId.systemDefault())
-                                .toLocalDate()
+                            // Convert milliseconds back to LocalDate (API 24 compatible)
+                            val calendar = Calendar.getInstance().apply {
+                                timeInMillis = millis
+                            }
+                            selectedDate = LocalDate.of(
+                                calendar.get(Calendar.YEAR),
+                                calendar.get(Calendar.MONTH) + 1, // Calendar months are 0-based
+                                calendar.get(Calendar.DAY_OF_MONTH)
+                            )
                         }
                         showDatePicker = false
                     }
@@ -479,6 +551,35 @@ fun AddBillScreen(
         ) {
             DatePicker(state = datePickerState)
         }
+    }
+
+    // Delete confirmation dialog
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text(stringResource(R.string.delete_bill)) },
+            text = {
+                Text(stringResource(R.string.delete_bill_message, title))
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        bill?.let { onDelete?.invoke(it.id) }
+                        showDeleteDialog = false
+                    }
+                ) {
+                    Text(
+                        stringResource(R.string.delete),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
     }
 
     // Permission explanation dialog

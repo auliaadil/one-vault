@@ -2,6 +2,7 @@ package com.adilstudio.project.onevault.core.util
 
 import android.content.Context
 import android.net.Uri
+import androidx.core.content.FileProvider
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -79,6 +80,30 @@ object ImageUtil {
             File(imagePath).exists()
         } catch (e: Exception) {
             false
+        }
+    }
+
+    /**
+     * Get URI from file path for image loading
+     * @param context Application context
+     * @param imagePath Path of the image file
+     * @return URI for the image file, or null if file doesn't exist
+     */
+    fun getImageFileUri(context: Context, imagePath: String): Uri? {
+        return try {
+            val file = File(imagePath)
+            if (file.exists()) {
+                FileProvider.getUriForFile(
+                    context,
+                    "${context.packageName}.fileprovider",
+                    file
+                )
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
     }
 }

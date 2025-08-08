@@ -4,18 +4,25 @@ import android.content.Context
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.adilstudio.project.onevault.R
-import com.adilstudio.project.onevault.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+
 class SettingsViewModel(
-    private val settingsRepository: SettingsRepository
+    private val context: Context
 ) : ViewModel() {
     
     private val _biometricEnabled = MutableStateFlow(false)
@@ -24,39 +31,41 @@ class SettingsViewModel(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
+    private val BIOMETRIC_ENABLED_KEY = booleanPreferencesKey("biometric_enabled")
+
     init {
         loadSettings()
     }
 
     private fun loadSettings() {
         viewModelScope.launch {
-            settingsRepository.getBiometricEnabled().collect { enabled ->
+            context.dataStore.data.map { preferences ->
+                preferences[BIOMETRIC_ENABLED_KEY] ?: false
+            }.collect { enabled ->
                 _biometricEnabled.value = enabled
             }
         }
     }
 
-    fun enableBiometric(context: Context) {
-        val biometricManager = BiometricManager.from(context)
+    fun enableBiometric(activity: FragmentActivity) {
+        val biometricManager = BiometricManager.from(activity)
         when (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)) {
             BiometricManager.BIOMETRIC_SUCCESS -> {
                 // Show biometric prompt to verify user can authenticate
-                if (context is FragmentActivity) {
-                    showBiometricPrompt(context) { success ->
-                        if (success) {
-                            setBiometricEnabled(true)
-                        }
+                showBiometricPrompt(activity) { success ->
+                    if (success) {
+                        setBiometricEnabled(true)
                     }
                 }
             }
             BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
-                _errorMessage.value = context.getString(R.string.biometric_error_hw_unavailable)
+                _errorMessage.value = activity.getString(R.string.biometric_error_hw_unavailable)
             }
             BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> {
-                _errorMessage.value = context.getString(R.string.biometric_error_hw_unavailable)
+                _errorMessage.value = activity.getString(R.string.biometric_error_hw_unavailable)
             }
             BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
-                _errorMessage.value = context.getString(R.string.biometric_error_no_biometrics)
+                _errorMessage.value = activity.getString(R.string.biometric_error_no_biometrics)
             }
         }
     }
@@ -67,7 +76,9 @@ class SettingsViewModel(
 
     private fun setBiometricEnabled(enabled: Boolean) {
         viewModelScope.launch {
-            settingsRepository.setBiometricEnabled(enabled)
+            context.dataStore.edit { preferences ->
+                preferences[BIOMETRIC_ENABLED_KEY] = enabled
+            }
             _biometricEnabled.value = enabled
         }
     }
@@ -95,8 +106,8 @@ class SettingsViewModel(
 
                 override fun onAuthenticationFailed() {
                     super.onAuthenticationFailed()
-                    onResult(false)
-                    _errorMessage.value = activity.getString(R.string.biometric_error_generic)
+                    // Don't call onResult(false) here, as this is called for each failed attempt
+                    // The user can try again until they cancel or succeed
                 }
             })
 
@@ -112,5 +123,9 @@ class SettingsViewModel(
 
     fun clearErrorMessage() {
         _errorMessage.value = null
+    }
+
+    fun setErrorMessage(message: String) {
+        _errorMessage.value = message
     }
 }

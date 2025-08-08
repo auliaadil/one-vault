@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.DateUtil
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
+import com.adilstudio.project.onevault.domain.model.Bill
 import com.adilstudio.project.onevault.presentation.bill.category.BillCategoryViewModel
 import com.adilstudio.project.onevault.presentation.bill.category.createDefaultCategories
 import org.koin.androidx.compose.koinViewModel
@@ -39,7 +40,8 @@ fun BillListScreen(
     billTrackerViewModel: BillTrackerViewModel = koinViewModel(),
     categoryViewModel: BillCategoryViewModel = koinViewModel(),
     onAddBill: () -> Unit = {},
-    onManageCategories: () -> Unit = {}
+    onManageCategories: () -> Unit = {},
+    onEditBill: (Bill) -> Unit = {}
 ) {
     val bills = billTrackerViewModel.bills.collectAsState().value
 
@@ -74,7 +76,12 @@ fun BillListScreen(
         LazyColumn(modifier = Modifier.weight(1f)) {
             items(bills.size) { idx ->
                 val bill = bills[idx]
-                Card(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    onClick = { onEditBill(bill) }
+                ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
