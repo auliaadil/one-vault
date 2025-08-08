@@ -63,7 +63,6 @@ fun MainApp(
                 val items = listOf(
                     Triple(stringResource(R.string.bills), Screen.BillList.route, Icons.Filled.ShoppingCart),
                     Triple(stringResource(R.string.passwords), Screen.CredentialList.route, Icons.Filled.Lock),
-                    Triple(stringResource(R.string.file_vault), Screen.FileVault.route, Icons.Filled.Email),
                     Triple(stringResource(R.string.settings), Screen.Settings.route, Icons.Filled.Settings)
                 )
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
