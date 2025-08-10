@@ -14,11 +14,13 @@ import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.Credential
 import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CredentialListScreen(
     viewModel: PasswordManagerViewModel = koinViewModel(),
     onAddCredential: () -> Unit,
-    onEditCredential: (Credential) -> Unit = {}
+    onEditCredential: (Credential) -> Unit = {},
+    onNavigateToPasswordGenerator: () -> Unit
 ) {
     val credentials by viewModel.credentials.collectAsState()
     val successMessage by viewModel.successMessage.collectAsState()
@@ -44,57 +46,53 @@ fun CredentialListScreen(
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text(stringResource(R.string.credentials), style = MaterialTheme.typography.headlineMedium)
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Success/Error message display
-        successMessage?.let { message ->
-            Card(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
-                )
-            ) {
-                Text(
-                    text = message,
-                    modifier = Modifier.padding(16.dp),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    style = MaterialTheme.typography.bodyMedium
-                )
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = stringResource(R.string.credentials))
+                },
+                actions = {
+                    TextButton(onClick = onNavigateToPasswordGenerator) {
+                        Text(text = stringResource(R.string.password_generator)) // You'll need to add this string resource
+                    }
+                }
+            )
+        },
+    ) { paddingValues ->
+        Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            // Success/Error message display
+            successMessage?.let { message ->
+                Card(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                    )
+                ) {
+                    Text(
+                        text = message,
+                        modifier = Modifier.padding(16.dp),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
-        }
 
-        error?.let { message ->
-            Card(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer
-                )
-            ) {
-                Text(
-                    text = message,
-                    modifier = Modifier.padding(16.dp),
-                    color = MaterialTheme.colorScheme.onErrorContainer,
-                    style = MaterialTheme.typography.bodyMedium
-                )
+            LazyColumn(modifier = Modifier.weight(1f)) {
+                items(credentials.size) { idx ->
+                    val credential = credentials[idx]
+                    CredentialCard(
+                        credential = credential,
+                        onClick = { selectedCredential = credential },
+                        onDelete = { viewModel.deleteCredential(credential.id) }
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
             }
-        }
 
-        LazyColumn(modifier = Modifier.weight(1f)) {
-            items(credentials.size) { idx ->
-                val credential = credentials[idx]
-                CredentialCard(
-                    credential = credential,
-                    onClick = { selectedCredential = credential },
-                    onDelete = { viewModel.deleteCredential(credential.id) }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
+            Button(onClick = onAddCredential, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.add_credential))
             }
-        }
-
-        Button(onClick = onAddCredential, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.add_credential))
         }
     }
 

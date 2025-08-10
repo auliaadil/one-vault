@@ -24,6 +24,7 @@ import com.adilstudio.project.onevault.presentation.credential.PasswordManagerVi
 import com.adilstudio.project.onevault.presentation.filevault.FileVaultScreen
 import com.adilstudio.project.onevault.presentation.gpt2.GPT2Screen
 import com.adilstudio.project.onevault.presentation.gpt2.GPT2ViewModel
+import com.adilstudio.project.onevault.presentation.passwordgenerator.PasswordGeneratorScreen
 import com.adilstudio.project.onevault.presentation.settings.AboutScreen
 import com.adilstudio.project.onevault.presentation.settings.ImportExportScreen
 import com.adilstudio.project.onevault.presentation.settings.PrivacyPolicyScreen
@@ -38,6 +39,7 @@ sealed class Screen(val route: String) {
     object CredentialList : Screen("credential_list")
     object AddCredential : Screen("add_credential")
     object EditCredential : Screen("edit_credential")
+    object PasswordGenerator : Screen("password_generator")
     object VaultFileList : Screen("vault_file_list")
     object AddVaultFile : Screen("add_vault_file")
     object FileVault : Screen("file_vault")
@@ -121,12 +123,14 @@ fun NavGraph(
                 viewModel = koinViewModel(),
                 onAddCredential = { navController.navigate(Screen.AddCredential.route) },
                 onEditCredential = { credential ->
-                    // Pass only the credential ID through navigation arguments
                     navController.currentBackStackEntry?.savedStateHandle?.set(
                         "credentialId",
                         credential.id
                     )
                     navController.navigate(Screen.EditCredential.route)
+                },
+                onNavigateToPasswordGenerator = {
+                    navController.navigate(Screen.PasswordGenerator.route)
                 }
             )
         }
@@ -197,6 +201,11 @@ fun NavGraph(
                     }
                 )
             }
+        }
+        composable(Screen.PasswordGenerator.route) {
+            PasswordGeneratorScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
         }
         composable(Screen.VaultFileList.route) {
             FileVaultScreen(

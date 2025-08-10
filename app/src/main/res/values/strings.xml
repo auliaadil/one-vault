@@ -59,6 +59,10 @@
     <string name="delete_credential_message">Are you sure you want to delete the credential for \'%1$s\'? This action cannot be undone.</string>
     <string name="failed_decrypt_password">Failed to decrypt password</string>
 
+    <!-- Password Generator -->
+    <string name="ai_password_generator">AI Password Generator</string>
+    <string name="password_generator">Password Generator</string>
+
     <!-- File Vault -->
     <string name="add_file">Add File</string>
     <string name="import_data">Import Data</string>

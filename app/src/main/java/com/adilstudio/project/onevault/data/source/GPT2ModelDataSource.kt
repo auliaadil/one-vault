@@ -103,6 +103,7 @@ class GPT2ModelDataSource(
             val vocabStream = context.assets.open(VOCAB_PATH)
             vocabStream.use {
                 val vocabReader = JsonReader(InputStreamReader(it, "UTF-8"))
+                vocabReader.isLenient = true  // Allow comments and other malformed JSON
                 vocabReader.beginObject()
                 while (vocabReader.hasNext()) {
                     val key = vocabReader.nextName()

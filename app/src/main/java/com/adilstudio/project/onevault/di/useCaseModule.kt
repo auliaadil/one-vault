@@ -27,4 +27,10 @@ val useCaseModule = module {
     single { InitializeGPT2UseCase(get()) }
     single { GenerateGPT2TextUseCase(get()) }
     single { GetRandomPromptUseCase(get()) }
+
+    // Password Generation Use Cases
+    single { GeneratePasswordUseCase(get(), get()) }
+    single { SaveGeneratedPasswordUseCase(get()) }
+    single { GetDefaultPasswordPromptUseCase(get()) }
+    single { SaveDefaultPasswordPromptUseCase(get()) }
 }
