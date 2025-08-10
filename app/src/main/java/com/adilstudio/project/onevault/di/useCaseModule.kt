@@ -23,9 +23,8 @@ val useCaseModule = module {
     single { DeleteCredentialUseCase(get()) }
     single { GetCredentialsUseCase(get()) }
 
-    // LLM Use Cases
-    single { GenerateTextUseCase(get()) }
-    single { InitializeLLMUseCase(get()) }
-    single { GetAvailableModelsUseCase(get()) }
-    single { CheckModelStatusUseCase(get()) }
+    // GPT2 Use Cases
+    single { InitializeGPT2UseCase(get()) }
+    single { GenerateGPT2TextUseCase(get()) }
+    single { GetRandomPromptUseCase(get()) }
 }

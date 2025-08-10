@@ -16,18 +16,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.adilstudio.project.onevault.presentation.bill.AddEditBillScreen
 import com.adilstudio.project.onevault.presentation.bill.BillListScreen
+import com.adilstudio.project.onevault.presentation.bill.BillTrackerViewModel
 import com.adilstudio.project.onevault.presentation.bill.category.BillCategoriesScreen
-import org.koin.androidx.compose.koinViewModel
 import com.adilstudio.project.onevault.presentation.credential.AddEditCredentialScreen
 import com.adilstudio.project.onevault.presentation.credential.CredentialListScreen
-import com.adilstudio.project.onevault.presentation.filevault.FileVaultScreen
-import com.adilstudio.project.onevault.presentation.settings.SettingsScreen
-import com.adilstudio.project.onevault.presentation.settings.AboutScreen
-import com.adilstudio.project.onevault.presentation.settings.PrivacyPolicyScreen
-import com.adilstudio.project.onevault.presentation.settings.ImportExportScreen
 import com.adilstudio.project.onevault.presentation.credential.PasswordManagerViewModel
-import com.adilstudio.project.onevault.presentation.bill.BillTrackerViewModel
-import com.adilstudio.project.onevault.presentation.llm.LLMChatScreen
+import com.adilstudio.project.onevault.presentation.filevault.FileVaultScreen
+import com.adilstudio.project.onevault.presentation.gpt2.GPT2Screen
+import com.adilstudio.project.onevault.presentation.gpt2.GPT2ViewModel
+import com.adilstudio.project.onevault.presentation.settings.AboutScreen
+import com.adilstudio.project.onevault.presentation.settings.ImportExportScreen
+import com.adilstudio.project.onevault.presentation.settings.PrivacyPolicyScreen
+import com.adilstudio.project.onevault.presentation.settings.SettingsScreen
+import org.koin.androidx.compose.koinViewModel
 
 sealed class Screen(val route: String) {
     object BillList : Screen("bill_list")
@@ -246,9 +247,11 @@ fun NavGraph(
             )
         }
         composable(Screen.LLMChat.route) {
-             LLMChatScreen(
-                 onNavigateBack = { navController.popBackStack() }
-             )
+            val viewModel: GPT2ViewModel = koinViewModel()
+            GPT2Screen(
+                onNavigateBack = { navController.popBackStack() },
+                viewModel = viewModel
+            )
         }
     }
 }
