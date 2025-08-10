@@ -88,25 +88,19 @@ class GPT2ViewModel(
 
     private fun initializeModel() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isInitialized = false)
-            initializeGPT2UseCase()
-            _uiState.value = _uiState.value.copy(
-                isInitialized = true,
-                error = null
-            )
-//            try {
-//                _uiState.value = _uiState.value.copy(isInitialized = false)
-//                initializeGPT2UseCase()
-//                _uiState.value = _uiState.value.copy(
-//                    isInitialized = true,
-//                    error = null
-//                )
-//            } catch (throwable: Throwable) {
-//                _uiState.value = _uiState.value.copy(
-//                    isInitialized = false,
-//                    error = "Failed to initialize model: ${throwable.message}"
-//                )
-//            }
+            try {
+                _uiState.value = _uiState.value.copy(isInitialized = false)
+                initializeGPT2UseCase()
+                _uiState.value = _uiState.value.copy(
+                    isInitialized = true,
+                    error = null
+                )
+            } catch (throwable: Throwable) {
+                _uiState.value = _uiState.value.copy(
+                    isInitialized = false,
+                    error = "Failed to initialize model: ${throwable.message}"
+                )
+            }
         }
     }
 
