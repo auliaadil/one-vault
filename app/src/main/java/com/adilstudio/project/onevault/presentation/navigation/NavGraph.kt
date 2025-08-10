@@ -27,6 +27,7 @@ import com.adilstudio.project.onevault.presentation.settings.PrivacyPolicyScreen
 import com.adilstudio.project.onevault.presentation.settings.ImportExportScreen
 import com.adilstudio.project.onevault.presentation.credential.PasswordManagerViewModel
 import com.adilstudio.project.onevault.presentation.bill.BillTrackerViewModel
+import com.adilstudio.project.onevault.presentation.llm.LLMChatScreen
 
 sealed class Screen(val route: String) {
     object BillList : Screen("bill_list")
@@ -43,6 +44,8 @@ sealed class Screen(val route: String) {
     object Settings : Screen("settings")
     object About : Screen("about")
     object PrivacyPolicy : Screen("privacy_policy")
+    object LLMChat : Screen("llm_chat")
+    object LLMChatSettings : Screen("llm_chat_settings")
 }
 
 @Composable
@@ -241,6 +244,11 @@ fun NavGraph(
             ImportExportScreen(
                 onNavigateBack = { navController.popBackStack() }
             )
+        }
+        composable(Screen.LLMChat.route) {
+             LLMChatScreen(
+                 onNavigateBack = { navController.popBackStack() }
+             )
         }
     }
 }

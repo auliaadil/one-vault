@@ -220,4 +220,14 @@
     <string name="import_confirmation_title">Import Data</string>
     <string name="import_confirmation_message">This will replace your current data with the data from the backup file. This action cannot be undone.</string>
     <string name="import_text">Import</string>
+
+    <!-- LLM/AI Assistant -->
+    <string name="ai_assistant">AI Assistant</string>
+    <string name="no_model_loaded">No Model Loaded</string>
+    <string name="select_model_to_start">Select a model to start chatting</string>
+    <string name="select_model">Select Model</string>
+    <string name="no_models_available">No models available. Please add model files to the assets/models folder.</string>
+    <string name="clear_chat">Clear Chat</string>
+    <string name="type_message">Type a message...</string>
+    <string name="send">Send</string>
 </resources>

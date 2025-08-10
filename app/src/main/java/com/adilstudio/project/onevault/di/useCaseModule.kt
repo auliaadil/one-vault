@@ -5,17 +5,27 @@ import com.adilstudio.project.onevault.domain.usecase.GetBillCategoriesUseCase
 import org.koin.dsl.module
 
 val useCaseModule = module {
+
+    // Bill Use Cases
     single { AddBillUseCase(get()) }
     single { UpdateBillUseCase(get()) }
     single { DeleteBillUseCase(get()) }
     single { GetBillsUseCase(get()) }
-    single { AddCredentialUseCase(get()) }
-    single { UpdateCredentialUseCase(get()) }
-    single { DeleteCredentialUseCase(get()) }
-    single { GetCredentialsUseCase(get()) }
     single { GetBillCategoriesUseCase(get()) }
     single { AddBillCategoryUseCase(get()) }
     single { UpdateBillCategoryUseCase(get()) }
     single { DeleteBillCategoryUseCase(get()) }
     single { GetBillCategoriesCountUseCase(get()) }
+
+    // Credential Use Cases
+    single { AddCredentialUseCase(get()) }
+    single { UpdateCredentialUseCase(get()) }
+    single { DeleteCredentialUseCase(get()) }
+    single { GetCredentialsUseCase(get()) }
+
+    // LLM Use Cases
+    single { GenerateTextUseCase(get()) }
+    single { InitializeLLMUseCase(get()) }
+    single { GetAvailableModelsUseCase(get()) }
+    single { CheckModelStatusUseCase(get()) }
 }

@@ -11,6 +11,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Email
@@ -63,7 +64,8 @@ fun MainApp(
                 val items = listOf(
                     Triple(stringResource(R.string.bills), Screen.BillList.route, Icons.Filled.ShoppingCart),
                     Triple(stringResource(R.string.passwords), Screen.CredentialList.route, Icons.Filled.Lock),
-                    Triple(stringResource(R.string.settings), Screen.Settings.route, Icons.Filled.Settings)
+                    Triple(stringResource(R.string.settings), Screen.Settings.route, Icons.Filled.Settings),
+                    Triple(stringResource(R.string.ai_assistant), Screen.LLMChat.route, Icons.Filled.ChatBubble)
                 )
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = navBackStackEntry?.destination?.route

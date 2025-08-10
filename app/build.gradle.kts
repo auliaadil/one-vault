@@ -2,7 +2,7 @@ plugins {
     id("app.cash.sqldelight")
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -17,6 +17,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Configure native libraries for ONNX Runtime
+        ndk {
+            abiFilters += listOf("arm64-v8a", "x86_64")
+        }
     }
 
     buildTypes {
@@ -39,9 +44,20 @@ android {
         compose = true
         buildConfig = true
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.11"
+    }
+
+    // Configure packaging options for TensorFlow Lite
+    packaging {
+        jniLibs {
+            pickFirsts += listOf("**/libc++_shared.so", "**/libjsc.so")
+        }
+    }
 }
 
 dependencies {
+    implementation(platform(libs.androidx.compose.bom))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -85,7 +101,13 @@ dependencies {
     implementation(libs.androidx.biometric)
 
     // DataStore (for settings)
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation(libs.androidx.datastore.preferences)
+
+    // TensorFlow Lite for Local LLM
+    implementation(libs.tensorflow.lite)
+    implementation(libs.tensorflow.lite.support)
+    implementation(libs.tensorflow.lite.gpu) // For GPU acceleration
+    implementation(libs.tensorflow.lite.select.tf.ops) // For additional ops if needed
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
