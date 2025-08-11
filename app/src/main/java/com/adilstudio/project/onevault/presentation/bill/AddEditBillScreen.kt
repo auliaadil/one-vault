@@ -74,6 +74,7 @@ import com.adilstudio.project.onevault.core.util.PermissionUtil
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.Bill
 import com.adilstudio.project.onevault.domain.model.BillCategory
+import com.adilstudio.project.onevault.presentation.account.AccountViewModel
 import com.adilstudio.project.onevault.presentation.bill.category.BillCategoryViewModel
 import com.adilstudio.project.onevault.presentation.bill.category.createDefaultCategories
 import com.google.mlkit.vision.common.InputImage
@@ -93,10 +94,12 @@ fun AddEditBillScreen(
     onDelete: ((Long) -> Unit)? = null,
     onNavigateBack: () -> Unit,
     onCancel: () -> Unit = {},
-    categoryViewModel: BillCategoryViewModel = koinViewModel()
+    categoryViewModel: BillCategoryViewModel = koinViewModel(),
+    accountViewModel: AccountViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
     val categories by categoryViewModel.categories.collectAsState()
+    val accounts by accountViewModel.accounts.collectAsState()
     val isEditing = bill != null
 
     // Initialize form state from existing bill or defaults
@@ -104,7 +107,11 @@ fun AddEditBillScreen(
     var selectedCategory by remember {
         mutableStateOf(categories.find { it.name == bill?.category })
     }
+    var selectedAccount by remember {
+        mutableStateOf(accounts.find { it.id == bill?.accountId })
+    }
     var showCategoryDropdown by remember { mutableStateOf(false) }
+    var showAccountDropdown by remember { mutableStateOf(false) }
     var amountValue by remember { mutableStateOf(bill?.amount?.toLong() ?: 0L) }
     var amountDisplay by remember {
         mutableStateOf(
@@ -345,6 +352,71 @@ fun AddEditBillScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            // Account selection
+            ExposedDropdownMenuBox(
+                expanded = showAccountDropdown,
+                onExpandedChange = { showAccountDropdown = !showAccountDropdown }
+            ) {
+                OutlinedTextField(
+                    value = selectedAccount?.name ?: "",
+                    onValueChange = {},
+                    label = { Text(stringResource(R.string.account_optional)) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(),
+                    readOnly = true,
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = showAccountDropdown)
+                    },
+                    placeholder = { Text(stringResource(R.string.no_account_selected)) }
+                )
+
+                ExposedDropdownMenu(
+                    expanded = showAccountDropdown,
+                    onDismissRequest = { showAccountDropdown = false }
+                ) {
+                    // Add option to clear selection
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                stringResource(R.string.no_account),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        },
+                        onClick = {
+                            selectedAccount = null
+                            showAccountDropdown = false
+                        }
+                    )
+
+                    accounts.forEach { account ->
+                        DropdownMenuItem(
+                            text = {
+                                Column {
+                                    Text(account.name)
+                                    account.description?.let { desc ->
+                                        if (desc.isNotBlank()) {
+                                            Text(
+                                                text = desc,
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                    }
+                                }
+                            },
+                            onClick = {
+                                selectedAccount = account
+                                showAccountDropdown = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             OutlinedTextField(
                 value = amountDisplay,
                 onValueChange = { newValue ->
@@ -503,7 +575,8 @@ fun AddEditBillScreen(
                             amount = amountValue.toDouble(),
                             vendor = vendor,
                             billDate = DateUtil.localDateToIsoString(selectedDate),
-                            imagePath = savedImagePath
+                            imagePath = savedImagePath,
+                            accountId = selectedAccount?.id // Include account ID
                         )
                         onSave(billToSave)
                     },

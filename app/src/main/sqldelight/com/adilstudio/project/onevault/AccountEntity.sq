@@ -1,0 +1,32 @@
+CREATE TABLE AccountEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    amount REAL NOT NULL DEFAULT 0.0,
+    description TEXT,
+    isEditable INTEGER NOT NULL DEFAULT 1,
+    createdAt INTEGER NOT NULL,
+    updatedAt INTEGER NOT NULL
+);
+
+selectAll:
+SELECT * FROM AccountEntity ORDER BY name ASC;
+
+selectById:
+SELECT * FROM AccountEntity WHERE id = ?;
+
+insertAccount:
+INSERT INTO AccountEntity(id, name, amount, description, isEditable, createdAt, updatedAt)
+VALUES (?, ?, ?, ?, ?, ?, ?);
+
+updateAccount:
+UPDATE AccountEntity
+SET name = ?, amount = ?, description = ?, isEditable = ?, updatedAt = ?
+WHERE id = ?;
+
+updateAccountBalance:
+UPDATE AccountEntity
+SET amount = ?, updatedAt = ?
+WHERE id = ?;
+
+deleteAccount:
+DELETE FROM AccountEntity WHERE id = ?;

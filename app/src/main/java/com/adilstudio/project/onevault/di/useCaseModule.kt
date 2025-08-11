@@ -33,4 +33,11 @@ val useCaseModule = module {
     single { SaveGeneratedPasswordUseCase(get()) }
     single { GetDefaultPasswordPromptUseCase(get()) }
     single { SaveDefaultPasswordPromptUseCase(get()) }
+
+    // Account Use Cases
+    single { GetAccountsUseCase(get()) }
+    single { AddAccountUseCase(get()) }
+    single { UpdateAccountUseCase(get()) }
+    single { DeleteAccountUseCase(get()) }
+    single { GetAccountsCountUseCase(get()) }
 }

@@ -11,5 +11,6 @@ data class Bill(
     val amount: Double,
     val vendor: String,
     val billDate: String, // Store as ISO date string (YYYY-MM-DD)
-    val imagePath: String? = null // Optional image path
+    val imagePath: String? = null, // Optional image path
+    val accountId: String? = null // Optional account where bill is deducted from
 )

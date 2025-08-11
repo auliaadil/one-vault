@@ -6,11 +6,13 @@ import com.adilstudio.project.onevault.data.BillRepositoryImpl
 import com.adilstudio.project.onevault.data.CredentialRepositoryImpl
 import com.adilstudio.project.onevault.data.SettingsRepositoryImpl
 import com.adilstudio.project.onevault.data.VaultFileRepositoryImpl
+import com.adilstudio.project.onevault.data.AccountRepositoryImpl
 import com.adilstudio.project.onevault.data.local.PreferenceManager
 import com.adilstudio.project.onevault.data.repository.GPT2RepositoryImpl
 import com.adilstudio.project.onevault.data.repository.PasswordGenerationRepositoryImpl
 import com.adilstudio.project.onevault.data.security.SecurityManager
 import com.adilstudio.project.onevault.data.source.GPT2ModelDataSource
+import com.adilstudio.project.onevault.domain.repository.AccountRepository
 import com.adilstudio.project.onevault.domain.repository.BillCategoryRepository
 import com.adilstudio.project.onevault.domain.repository.BillRepository
 import com.adilstudio.project.onevault.domain.repository.CredentialRepository
@@ -33,4 +35,5 @@ val repositoryModule = module {
     single<SettingsRepository> { SettingsRepositoryImpl(get()) }
     single<GPT2Repository> { GPT2RepositoryImpl(get()) }
     single<PasswordGenerationRepository> { PasswordGenerationRepositoryImpl(get(), get()) }
+    single<AccountRepository> { AccountRepositoryImpl(get()) }
 }
