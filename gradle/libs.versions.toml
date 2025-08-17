@@ -1,6 +1,6 @@
 [versions]
 # Core Android
-agp = "8.6.1"
+agp = "8.11.0"
 kotlin = "1.9.23"
 composeCompiler = "1.5.11"
 coreKtx = "1.13.1"
