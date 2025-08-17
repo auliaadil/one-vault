@@ -125,7 +125,7 @@ fun AddEditBillScreen(
     // Date picker state - using Calendar for API 24 compatibility
     var selectedDate by remember {
         mutableStateOf(
-            bill?.billDate?.let { DateUtil.isoStringToLocalDate(it) } ?: LocalDate.now()
+            bill?.billDate?.let { DateUtil.isoStringToLocalDate(it) } ?: DateUtil.getCurrentDate()
         )
     }
     var showDatePicker by remember { mutableStateOf(false) }

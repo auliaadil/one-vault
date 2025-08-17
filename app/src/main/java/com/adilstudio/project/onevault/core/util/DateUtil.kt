@@ -3,6 +3,7 @@ package com.adilstudio.project.onevault.core.util
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
+import java.util.Calendar
 
 object DateUtil {
     
@@ -38,13 +39,18 @@ object DateUtil {
      * Get current date as ISO string
      */
     fun getCurrentDateAsIsoString(): String {
-        return LocalDate.now().format(isoFormatter)
+        return localDateToIsoString(getCurrentDate())
     }
     
     /**
      * Get current date
      */
     fun getCurrentDate(): LocalDate {
-        return LocalDate.now()
+        val calendar = Calendar.getInstance()
+        return LocalDate.of(
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH) + 1, // Calendar months are 0-based
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
     }
 }
