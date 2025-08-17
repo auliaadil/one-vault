@@ -1,8 +1,8 @@
 [versions]
 # Core Android
 agp = "8.11.0"
-kotlin = "1.9.23"
-composeCompiler = "1.5.11"
+kotlin = "2.1.0"
+composeCompiler = "1.5.15"
 coreKtx = "1.13.1"
 lifecycleRuntimeKtx = "2.8.6"
 activityCompose = "1.9.2"
@@ -118,4 +118,5 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
