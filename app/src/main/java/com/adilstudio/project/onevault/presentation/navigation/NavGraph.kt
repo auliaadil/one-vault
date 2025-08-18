@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.adilstudio.project.onevault.presentation.account.AccountsScreen
 import com.adilstudio.project.onevault.presentation.bill.AddEditBillScreen
 import com.adilstudio.project.onevault.presentation.bill.BillListScreen
 import com.adilstudio.project.onevault.presentation.bill.BillTrackerViewModel
@@ -36,6 +37,7 @@ sealed class Screen(val route: String) {
     object AddBill : Screen("add_bill")
     object EditBill : Screen("edit_bill")
     object BillCategories : Screen("bill_categories")
+    object BillAccounts : Screen("bill_accounts")
     object CredentialList : Screen("credential_list")
     object AddCredential : Screen("add_credential")
     object EditCredential : Screen("edit_credential")
@@ -66,7 +68,8 @@ fun NavGraph(
                     // Pass the bill ID through navigation arguments
                     navController.currentBackStackEntry?.savedStateHandle?.set("billId", bill.id)
                     navController.navigate(Screen.EditBill.route)
-                }
+                },
+                onManageAccounts = { navController.navigate(Screen.BillAccounts.route) }
             )
         }
         composable(Screen.AddBill.route) {
@@ -231,6 +234,11 @@ fun NavGraph(
         composable(Screen.BillCategories.route) {
             BillCategoriesScreen(
                 onNavigateBack = { navController.popBackStack() }
+            )
+        }
+        composable(Screen.BillAccounts.route) {
+            AccountsScreen(
+                onNavigateBack = { navController.popBackStack() },
             )
         }
         composable(Screen.Settings.route) {
