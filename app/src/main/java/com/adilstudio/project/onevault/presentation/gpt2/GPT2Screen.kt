@@ -40,7 +40,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import com.adilstudio.project.onevault.R
 import org.koin.androidx.compose.koinViewModel
 
@@ -226,9 +225,8 @@ fun GPT2ScreenContent(
                     }
 
                     Text(
+                        style = MaterialTheme.typography.bodyMedium,
                         text = fullText,
-                        fontSize = 16.sp,
-                        lineHeight = 22.sp
                     )
                 }
             }

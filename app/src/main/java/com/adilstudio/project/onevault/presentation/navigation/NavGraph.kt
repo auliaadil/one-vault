@@ -23,8 +23,6 @@ import com.adilstudio.project.onevault.presentation.credential.AddEditCredential
 import com.adilstudio.project.onevault.presentation.credential.CredentialListScreen
 import com.adilstudio.project.onevault.presentation.credential.PasswordManagerViewModel
 import com.adilstudio.project.onevault.presentation.filevault.FileVaultScreen
-import com.adilstudio.project.onevault.presentation.gpt2.GPT2Screen
-import com.adilstudio.project.onevault.presentation.gpt2.GPT2ViewModel
 import com.adilstudio.project.onevault.presentation.passwordgenerator.PasswordGeneratorScreen
 import com.adilstudio.project.onevault.presentation.settings.AboutScreen
 import com.adilstudio.project.onevault.presentation.settings.ImportExportScreen
@@ -264,11 +262,13 @@ fun NavGraph(
             )
         }
         composable(Screen.LLMChat.route) {
+            /*
             val viewModel: GPT2ViewModel = koinViewModel()
             GPT2Screen(
                 onNavigateBack = { navController.popBackStack() },
                 viewModel = viewModel
             )
+             */
         }
     }
 }
