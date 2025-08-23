@@ -1,3 +1,17 @@
 /build
 .github
-.idea
+
+# Default ignored files
+/shelf/
+/workspace.xml
+
+# Android/IntelliJ
+.idea/
+*.iml
+
+# Gradle
+.gradle/
+build/
+
+# Others
+*.log
