@@ -5,9 +5,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.Account
@@ -43,14 +43,14 @@ fun AddEditAccountDialog(
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_large))
             ) {
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
                     label = { Text(stringResource(R.string.account_name)) },
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("e.g., BCA Savings, Mandiri Current") }
+                    placeholder = { Text(stringResource(R.string.account_name_placeholder)) }
                 )
 
                 OutlinedTextField(
@@ -84,16 +84,16 @@ fun AddEditAccountDialog(
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("0 (can be negative)") },
-                    supportingText = { Text("Enter current account balance. Use minus sign for debt/credit accounts.") }
+                    placeholder = { Text(stringResource(R.string.balance_placeholder)) },
+                    supportingText = { Text(stringResource(R.string.balance_hint)) }
                 )
 
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text("Description (Optional)") },
+                    label = { Text(stringResource(R.string.account_description)) },
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("e.g., Primary savings account") },
+                    placeholder = { Text(stringResource(R.string.description_placeholder)) },
                     maxLines = 3
                 )
             }

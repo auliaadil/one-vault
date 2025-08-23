@@ -2,13 +2,9 @@ package com.adilstudio.project.onevault.presentation.bill
 
 import android.Manifest
 import android.net.Uri
-import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -59,9 +55,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -73,10 +69,8 @@ import com.adilstudio.project.onevault.core.util.ImageUtil
 import com.adilstudio.project.onevault.core.util.PermissionUtil
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.Bill
-import com.adilstudio.project.onevault.domain.model.BillCategory
 import com.adilstudio.project.onevault.presentation.account.AccountViewModel
 import com.adilstudio.project.onevault.presentation.bill.category.BillCategoryViewModel
-import com.adilstudio.project.onevault.presentation.bill.category.createDefaultCategories
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
@@ -84,7 +78,6 @@ import org.koin.androidx.compose.koinViewModel
 import java.io.File
 import java.time.LocalDate
 import java.util.Calendar
-import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -282,7 +275,9 @@ fun AddEditBillScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp)
+                .padding(dimensionResource(R.dimen.spacing_large))
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_large))
         ) {
             OutlinedTextField(
                 value = title,
@@ -290,7 +285,7 @@ fun AddEditBillScreen(
                 label = { Text(stringResource(R.string.title)) },
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
 
             // Category selection
             ExposedDropdownMenuBox(
@@ -350,7 +345,7 @@ fun AddEditBillScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
 
             // Account selection
             ExposedDropdownMenuBox(
@@ -415,7 +410,7 @@ fun AddEditBillScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
 
             OutlinedTextField(
                 value = amountDisplay,
@@ -440,7 +435,7 @@ fun AddEditBillScreen(
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text(stringResource(R.string.zero)) }
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
 
             OutlinedTextField(
                 value = vendor,
@@ -448,7 +443,7 @@ fun AddEditBillScreen(
                 label = { Text(stringResource(R.string.vendor)) },
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
 
             // Date picker field
             OutlinedTextField(
@@ -466,7 +461,7 @@ fun AddEditBillScreen(
                     }
                 }
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
 
             // Image upload section
             Card(
@@ -475,7 +470,7 @@ fun AddEditBillScreen(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -516,10 +511,10 @@ fun AddEditBillScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(200.dp)
-                                .clip(RoundedCornerShape(8.dp)),
+                                .clip(RoundedCornerShape(dimensionResource(R.dimen.corner_radius_small))),
                             contentScale = ContentScale.Crop
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
                     }
 
                     OutlinedButton(
@@ -527,13 +522,13 @@ fun AddEditBillScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Icon(Icons.Default.AttachFile, contentDescription = null)
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(dimensionResource(R.dimen.spacing_small)))
                         Text(stringResource(R.string.choose_image))
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_large)))
 
             // Scan Bill Button
             Button(
@@ -542,20 +537,20 @@ fun AddEditBillScreen(
                 enabled = !isScanning
             ) {
                 if (isScanning) {
-                    CircularProgressIndicator(modifier = Modifier.size(16.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
+                    CircularProgressIndicator(modifier = Modifier.size(dimensionResource(R.dimen.icon_size_small)))
+                    Spacer(modifier = Modifier.width(dimensionResource(R.dimen.spacing_small)))
                     Text(stringResource(R.string.scanning))
                 } else {
                     Text(stringResource(R.string.scan_bill))
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
 
             // Action buttons
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = if (isEditing) Arrangement.spacedBy(8.dp) else Arrangement.Center
+                horizontalArrangement = if (isEditing) Arrangement.spacedBy(dimensionResource(R.dimen.spacing_small)) else Arrangement.Center
             ) {
                 if (isEditing) {
                     OutlinedButton(
@@ -720,11 +715,11 @@ fun TextSelectionDialog(
                     stringResource(R.string.tap_text_assign),
                     style = MaterialTheme.typography.bodyMedium
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
 
                 // Show current selections
                 Card(modifier = Modifier.fillMaxWidth()) {
-                    Column(modifier = Modifier.padding(8.dp)) {
+                    Column(modifier = Modifier.padding(dimensionResource(R.dimen.spacing_small))) {
                         Text(
                             stringResource(R.string.selected),
                             style = MaterialTheme.typography.labelMedium
@@ -750,14 +745,14 @@ fun TextSelectionDialog(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
 
                 LazyColumn(modifier = Modifier.height(200.dp)) {
                     itemsIndexed(scannedTexts) { index, text ->
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 2.dp),
+                                .padding(vertical = dimensionResource(R.dimen.spacing_xs)),
                             colors = CardDefaults.cardColors(
                                 containerColor = when (text) {
                                     selectedTitle -> MaterialTheme.colorScheme.primaryContainer

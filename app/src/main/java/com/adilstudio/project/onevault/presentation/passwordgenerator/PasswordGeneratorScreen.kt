@@ -38,14 +38,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.adilstudio.project.onevault.R
 import org.koin.androidx.compose.koinViewModel
 
@@ -111,20 +110,20 @@ fun PasswordGeneratorContent(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .padding(dimensionResource(R.dimen.spacing_large)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_large))
     ) {
         // Step 1: Service Information
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_medium))
         ) {
             Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large)),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_medium))
             ) {
                 Text(
-                    text = "Step 1: Service Information",
+                    text = stringResource(R.string.step_1_service_information),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -132,24 +131,24 @@ fun PasswordGeneratorContent(
                 OutlinedTextField(
                     value = uiState.serviceName,
                     onValueChange = onServiceNameChanged,
-                    label = { Text("Service Name") },
-                    placeholder = { Text("e.g., Bitbucket, GitHub, Gmail") },
+                    label = { Text(stringResource(R.string.service_name_label)) },
+                    placeholder = { Text(stringResource(R.string.service_name_placeholder)) },
                     modifier = Modifier.fillMaxWidth(),
                     isError = !uiState.isServiceNameValid,
                     supportingText = if (!uiState.isServiceNameValid) {
-                        { Text("Service name is required") }
+                        { Text(stringResource(R.string.service_name_required)) }
                     } else null
                 )
 
                 OutlinedTextField(
                     value = uiState.userName,
                     onValueChange = onUserNameChanged,
-                    label = { Text("Username/Email") },
-                    placeholder = { Text("e.g., aulia@gmail.com") },
+                    label = { Text(stringResource(R.string.username_email_label)) },
+                    placeholder = { Text(stringResource(R.string.username_email_placeholder)) },
                     modifier = Modifier.fillMaxWidth(),
                     isError = !uiState.isUserNameValid,
                     supportingText = if (!uiState.isUserNameValid) {
-                        { Text("Username is required") }
+                        { Text(stringResource(R.string.username_required)) }
                     } else null
                 )
             }
@@ -158,11 +157,11 @@ fun PasswordGeneratorContent(
         // Step 2: Pattern Prompt
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_medium))
         ) {
             Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large)),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_medium))
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -170,7 +169,7 @@ fun PasswordGeneratorContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Step 2: Password Pattern",
+                        text = stringResource(R.string.step_2_password_pattern),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -179,12 +178,12 @@ fun PasswordGeneratorContent(
                         onClick = onUseDefaultPrompt,
                         enabled = !uiState.isGenerating
                     ) {
-                        Text("Use Default")
+                        Text(stringResource(R.string.use_default))
                     }
                 }
 
                 Text(
-                    text = "💡 This prompt will be saved as your default for future password generation",
+                    text = "💡 ${stringResource(R.string.default_prompt_hint)}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -192,19 +191,16 @@ fun PasswordGeneratorContent(
                 OutlinedTextField(
                     value = uiState.prompt,
                     onValueChange = onPromptChanged,
-                    label = { Text("Password Pattern Prompt") },
+                    label = { Text(stringResource(R.string.password_pattern_prompt)) },
                     placeholder = {
-                        Text("""Develop a password with pattern:
-- Use characters from service name
-- Use characters from username  
-- Add default suffix 123!""")
+                        Text(stringResource(R.string.password_pattern_placeholder))
                     },
                     modifier = Modifier.fillMaxWidth(),
                     minLines = 4,
                     maxLines = 8,
                     isError = !uiState.isPromptValid,
                     supportingText = if (!uiState.isPromptValid) {
-                        { Text("Pattern prompt is required") }
+                        { Text(stringResource(R.string.pattern_prompt_required)) }
                     } else null
                 )
             }
@@ -213,14 +209,14 @@ fun PasswordGeneratorContent(
         // Step 3: Generation
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_medium))
         ) {
             Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large)),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_medium))
             ) {
                 Text(
-                    text = "Step 3: Generate Password",
+                    text = stringResource(R.string.step_3_generate_password_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -230,14 +226,14 @@ fun PasswordGeneratorContent(
                     !uiState.isInitialized -> {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_small))
                         ) {
                             CircularProgressIndicator(
-                                modifier = Modifier.size(20.dp),
-                                strokeWidth = 2.dp
+                                modifier = Modifier.size(dimensionResource(R.dimen.icon_size_medium)),
+                                strokeWidth = dimensionResource(R.dimen.stroke_width_medium)
                             )
                             Text(
-                                text = "Initializing AI model...",
+                                text = stringResource(R.string.initializing_ai_model),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
@@ -246,14 +242,14 @@ fun PasswordGeneratorContent(
                     uiState.isGenerating -> {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_small))
                         ) {
                             CircularProgressIndicator(
-                                modifier = Modifier.size(20.dp),
-                                strokeWidth = 2.dp
+                                modifier = Modifier.size(dimensionResource(R.dimen.icon_size_medium)),
+                                strokeWidth = dimensionResource(R.dimen.stroke_width_medium)
                             )
                             Text(
-                                text = "Generating password...",
+                                text = stringResource(R.string.generating_password),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
@@ -262,13 +258,13 @@ fun PasswordGeneratorContent(
 
                 // Action buttons
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_small))
                 ) {
                     if (uiState.isGenerating) {
                         FilledTonalButton(
                             onClick = onStopGeneration
                         ) {
-                            Text("Stop")
+                            Text(stringResource(R.string.stop))
                         }
                     } else {
                         Button(
@@ -276,8 +272,8 @@ fun PasswordGeneratorContent(
                             enabled = uiState.canGenerate
                         ) {
                             Icon(Icons.Default.Refresh, contentDescription = null)
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text("Generate")
+                            Spacer(modifier = Modifier.width(dimensionResource(R.dimen.spacing_small)))
+                            Text(stringResource(R.string.generate))
                         }
                     }
                 }
@@ -291,11 +287,11 @@ fun PasswordGeneratorContent(
                         )
                     ) {
                         Column(
-                            modifier = Modifier.padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                            modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large)),
+                            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_small))
                         ) {
                             Text(
-                                text = "Generated Password:",
+                                text = stringResource(R.string.generated_password_colon),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
@@ -319,7 +315,7 @@ fun PasswordGeneratorContent(
                                 ) {
                                     Icon(
                                         Icons.Default.ContentCopy,
-                                        contentDescription = "Copy password",
+                                        contentDescription = stringResource(R.string.copy_password_description),
                                         tint = MaterialTheme.colorScheme.onPrimaryContainer
                                     )
                                 }
@@ -334,20 +330,20 @@ fun PasswordGeneratorContent(
         if (uiState.canSave) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_medium))
             ) {
                 Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large)),
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_medium))
                 ) {
                     Text(
-                        text = "Step 4: Save Password",
+                        text = stringResource(R.string.step_4_save_password_title),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
 
                     Text(
-                        text = "Save this password and pattern for future use. The pattern will become your default for generating similar passwords.",
+                        text = stringResource(R.string.save_password_hint),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -357,8 +353,8 @@ fun PasswordGeneratorContent(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Icon(Icons.Default.Save, contentDescription = null)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Save Password & Pattern")
+                        Spacer(modifier = Modifier.width(dimensionResource(R.dimen.spacing_small)))
+                        Text(stringResource(R.string.save_password_and_pattern))
                     }
                 }
             }
@@ -374,14 +370,14 @@ fun PasswordGeneratorContent(
             ) {
                 Text(
                     text = error,
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large)),
                     color = MaterialTheme.colorScheme.onErrorContainer,
                     textAlign = TextAlign.Center
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_large)))
     }
 }
 

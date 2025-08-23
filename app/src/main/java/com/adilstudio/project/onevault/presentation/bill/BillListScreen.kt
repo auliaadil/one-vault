@@ -13,8 +13,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.DateUtil
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
@@ -92,10 +92,10 @@ fun BillListContent(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp),
+                    .padding(vertical = dimensionResource(R.dimen.spacing_xs)),
                 onClick = { onEditBill(bill) }
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -128,13 +128,17 @@ fun BillListContent(
                         }
 
                         // Show attachment icon if image exists
-                        if (!bill.imagePath.isNullOrEmpty()) {
-                            Icon(
-                                Icons.Default.AttachFile,
-                                contentDescription = stringResource(R.string.has_attachment),
-                                modifier = Modifier.size(16.dp),
-                                tint = MaterialTheme.colorScheme.primary
-                            )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (bill.imagePath != null) {
+                                Icon(
+                                    imageVector = Icons.Default.AttachFile,
+                                    contentDescription = stringResource(R.string.has_attachment),
+                                    modifier = Modifier.size(dimensionResource(R.dimen.icon_size_small)),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
                     }
                 }

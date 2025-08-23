@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,20 +46,20 @@ fun AboutScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp)
+                .padding(dimensionResource(R.dimen.spacing_large))
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_xxxl)))
 
             // App Icon
             Image(
                 painter = painterResource(id = R.drawable.one_vault_icon),
                 contentDescription = stringResource(R.string.app_name),
-                modifier = Modifier.size(120.dp)
+                modifier = Modifier.size(dimensionResource(R.dimen.app_icon_size))
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_xxl)))
 
             // App Name
             Text(
@@ -67,7 +68,7 @@ fun AboutScreen(
                 fontWeight = FontWeight.Bold
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.width(dimensionResource(R.dimen.spacing_small)))
 
             // Version
             Text(
@@ -80,7 +81,7 @@ fun AboutScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_xxxl)))
 
             // Description
             Text(
@@ -90,14 +91,14 @@ fun AboutScreen(
                 lineHeight = MaterialTheme.typography.bodyLarge.lineHeight
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_xxxl)))
 
             // Features
             Card(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))
                 ) {
                     Text(
                         text = stringResource(R.string.key_features),
@@ -105,7 +106,7 @@ fun AboutScreen(
                         fontWeight = FontWeight.Bold
                     )
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_medium)))
 
                     FeatureItem(stringResource(R.string.feature_bill_tracker))
                     FeatureItem(stringResource(R.string.feature_password_manager))
@@ -115,14 +116,14 @@ fun AboutScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_xxxl)))
 
             // Developer Info
             Card(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))
                 ) {
                     Text(
                         text = stringResource(R.string.developer_info),
@@ -130,7 +131,7 @@ fun AboutScreen(
                         fontWeight = FontWeight.Bold
                     )
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_medium)))
 
                     Text(
                         text = stringResource(R.string.developer_name),
@@ -145,7 +146,7 @@ fun AboutScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_large)))
         }
     }
 }
@@ -155,14 +156,14 @@ private fun FeatureItem(text: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp),
+            .padding(vertical = dimensionResource(R.dimen.spacing_xs)),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "•",
+            text = stringResource(R.string.bullet_point),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(end = 8.dp)
+            modifier = Modifier.padding(end = dimensionResource(R.dimen.spacing_small))
         )
         Text(
             text = text,

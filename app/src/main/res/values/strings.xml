@@ -248,4 +248,71 @@
     <string name="account_name">Account Name</string>
     <string name="current_balance">Current Balance</string>
     <string name="account_description">Account Description</string>
+
+    <!-- Password Generator Screen -->
+    <string name="step_1_service_information">Step 1: Service Information</string>
+    <string name="step_2_password_pattern">Step 2: Password Pattern</string>
+    <string name="service_name_label">Service Name</string>
+    <string name="service_name_placeholder">e.g., Bitbucket, GitHub, Gmail</string>
+    <string name="service_name_required">Service name is required</string>
+    <string name="username_email_label">Username/Email</string>
+    <string name="username_email_placeholder">e.g., aulia@gmail.com</string>
+    <string name="use_default">Use Default</string>
+    <string name="default_prompt_hint">💡 This prompt will be saved as your default for future password generation</string>
+    <string name="generating_password">Generating Password...</string>
+    <string name="generate_password">Generate Password</string>
+    <string name="save_as_credential">Save as Credential</string>
+    <string name="generate_again">Generate Again</string>
+    <string name="copy_generated_password">Copy Generated Password</string>
+
+    <!-- GPT2 Screen -->
+    <string name="gpt2_text_generation">GPT-2 Text Generation</string>
+    <string name="shuffle_prompt">Shuffle Prompt</string>
+    <string name="generate_text">Generate Text</string>
+    <string name="stop_generation">Stop Generation</string>
+    <string name="generating">Generating...</string>
+    <string name="model_status">Model Status</string>
+    <string name="initializing">Initializing...</string>
+    <string name="ready">Ready</string>
+    <string name="not_initialized">Not initialized</string>
+    <string name="current_prompt">Current Prompt</string>
+    <string name="generated_text">Generated Text</string>
+    <string name="no_text_generated">No text generated yet</string>
+    <string name="unknown_error_occurred">Unknown error occurred</string>
+    <string name="failed_initialize_model">Failed to initialize model: %1$s</string>
+
+    <!-- About Screen -->
+    <string name="bullet_point">•</string>
+
+    <!-- Common -->
+    <string name="empty_string"></string>
+    <string name="colon">:</string>
+    <string name="space"> </string>
+
+    <!-- Password Generator Screen (additional) -->
+    <string name="initializing_ai_model">Initializing AI model...</string>
+    <string name="save_password_hint">This will save the generated password along with the pattern for future use.</string>
+    <string name="password_pattern_prompt">Password Pattern Prompt</string>
+    <string name="password_pattern_placeholder">Develop a password with pattern:\n- Use characters from service name\n- Use characters from username\n- Add default suffix 123!</string>
+    <string name="pattern_prompt_required">Pattern prompt is required</string>
+    <string name="step_3_generate_password">Step 3: Generate Password</string>
+    <string name="step_4_save_password">Step 4: Save Password</string>
+    <string name="stop">Stop</string>
+    <string name="generate">Generate</string>
+    <string name="generated_password_label">Generated Password:</string>
+    <string name="copy_password_description">Copy password</string>
+    <string name="save_password_and_pattern">Save Password &amp; Pattern</string>
+
+    <!-- GPT2 Screen (additional) -->
+    <string name="step_3_generate_password_title">Step 3: Generate Password</string>
+    <string name="step_4_save_password_title">Step 4: Save Password</string>
+    <string name="generated_password_colon">Generated Password:</string>
+    <string name="initializing_gpt2_model">Initializing GPT-2 model...</string>
+    <string name="generating_text">Generating text...</string>
+
+    <!-- Account Dialog -->
+    <string name="account_name_placeholder">e.g., BCA Savings, Mandiri Current</string>
+    <string name="balance_placeholder">0 (can be negative)</string>
+    <string name="balance_hint">Enter current account balance. Use minus sign for debt/credit accounts.</string>
+    <string name="description_placeholder">e.g., Primary savings account</string>
 </resources>

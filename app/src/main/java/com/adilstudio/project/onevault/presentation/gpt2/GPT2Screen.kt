@@ -33,13 +33,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.adilstudio.project.onevault.R
 import org.koin.androidx.compose.koinViewModel
@@ -94,7 +94,7 @@ fun GPT2ScreenContent(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("GPT-2 Text Generation") }
+                title = { Text(stringResource(R.string.gpt2_text_generation)) }
             )
         },
         modifier = modifier
@@ -103,36 +103,36 @@ fun GPT2ScreenContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
+                .padding(dimensionResource(R.dimen.spacing_large)),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_large))
         ) {
             // Action buttons
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_small))
             ) {
                 OutlinedButton(
                     onClick = onRefreshPrompt,
                     enabled = !uiState.isGenerating && uiState.isInitialized
                 ) {
                     Icon(Icons.Default.Refresh, contentDescription = null)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Shuffle Prompt")
+                    Spacer(modifier = Modifier.width(dimensionResource(R.dimen.spacing_small)))
+                    Text(stringResource(R.string.shuffle_prompt))
                 }
 
                 if (uiState.isGenerating) {
                     FilledTonalButton(
                         onClick = onStopGeneration
                     ) {
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Stop")
+                        Spacer(modifier = Modifier.width(dimensionResource(R.dimen.spacing_small)))
+                        Text(stringResource(R.string.stop_generation))
                     }
                 } else {
                     Button(
                         onClick = onGenerateText,
                         enabled = uiState.isInitialized
                     ) {
-                        Text("Generate Text")
+                        Text(stringResource(R.string.generate_text))
                     }
                 }
             }
@@ -147,15 +147,15 @@ fun GPT2ScreenContent(
                         )
                     ) {
                         Row(
-                            modifier = Modifier.padding(16.dp),
+                            modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large)),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp),
-                                strokeWidth = 2.dp
+                                modifier = Modifier.size(dimensionResource(R.dimen.icon_size_large)),
+                                strokeWidth = dimensionResource(R.dimen.stroke_width_medium)
                             )
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Text("Initializing GPT-2 model...")
+                            Spacer(modifier = Modifier.width(dimensionResource(R.dimen.spacing_medium)))
+                            Text(stringResource(R.string.initializing_gpt2_model))
                         }
                     }
                 }
@@ -168,15 +168,15 @@ fun GPT2ScreenContent(
                         )
                     ) {
                         Row(
-                            modifier = Modifier.padding(16.dp),
+                            modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large)),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp),
-                                strokeWidth = 2.dp
+                                modifier = Modifier.size(dimensionResource(R.dimen.icon_size_large)),
+                                strokeWidth = dimensionResource(R.dimen.stroke_width_medium)
                             )
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Text("Generating text...")
+                            Spacer(modifier = Modifier.width(dimensionResource(R.dimen.spacing_medium)))
+                            Text(stringResource(R.string.generating_text))
                         }
                     }
                 }
@@ -192,7 +192,7 @@ fun GPT2ScreenContent(
                 ) {
                     Text(
                         text = error,
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large)),
                         color = MaterialTheme.colorScheme.onErrorContainer
                     )
                 }
@@ -203,13 +203,13 @@ fun GPT2ScreenContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_medium))
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
-                        .padding(16.dp)
+                        .padding(dimensionResource(R.dimen.spacing_large))
                 ) {
                     val fullText = buildAnnotatedString {
                         append(uiState.prompt)
