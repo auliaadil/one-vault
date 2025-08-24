@@ -6,7 +6,6 @@ import com.adilstudio.project.onevault.presentation.credential.AddEditCredential
 import com.adilstudio.project.onevault.presentation.credential.PasswordManagerViewModel
 import com.adilstudio.project.onevault.presentation.filevault.FileVaultViewModel
 import com.adilstudio.project.onevault.presentation.gpt2.GPT2ViewModel
-import com.adilstudio.project.onevault.presentation.passwordgenerator.PasswordGeneratorViewModel
 import com.adilstudio.project.onevault.presentation.settings.SettingsViewModel
 import com.adilstudio.project.onevault.presentation.account.AccountViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -20,6 +19,5 @@ val viewModelModule = module {
     viewModel { FileVaultViewModel() }
     viewModel { SettingsViewModel(get()) }
     viewModel { GPT2ViewModel(get(), get(), get()) }
-    viewModel { PasswordGeneratorViewModel(get(), get(), get(), get(), get()) }
     viewModel { AccountViewModel(get(), get(), get(), get(), get()) }
 }
