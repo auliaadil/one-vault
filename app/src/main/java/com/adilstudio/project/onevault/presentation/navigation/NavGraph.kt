@@ -23,7 +23,6 @@ import com.adilstudio.project.onevault.presentation.credential.AddEditCredential
 import com.adilstudio.project.onevault.presentation.credential.CredentialListScreen
 import com.adilstudio.project.onevault.presentation.credential.PasswordManagerViewModel
 import com.adilstudio.project.onevault.presentation.filevault.FileVaultScreen
-import com.adilstudio.project.onevault.presentation.passwordgenerator.PasswordGeneratorScreen
 import com.adilstudio.project.onevault.presentation.settings.AboutScreen
 import com.adilstudio.project.onevault.presentation.settings.ImportExportScreen
 import com.adilstudio.project.onevault.presentation.settings.PrivacyPolicyScreen
@@ -39,7 +38,6 @@ sealed class Screen(val route: String) {
     object CredentialList : Screen("credential_list")
     object AddCredential : Screen("add_credential")
     object EditCredential : Screen("edit_credential")
-    object PasswordGenerator : Screen("password_generator")
     object VaultFileList : Screen("vault_file_list")
     object AddVaultFile : Screen("add_vault_file")
     object FileVault : Screen("file_vault")
@@ -129,32 +127,13 @@ fun NavGraph(
                         credential.id
                     )
                     navController.navigate(Screen.EditCredential.route)
-                },
-                onNavigateToPasswordGenerator = {
-                    navController.navigate(Screen.PasswordGenerator.route)
                 }
             )
         }
         composable(Screen.AddCredential.route) {
-            val viewModel: PasswordManagerViewModel = koinViewModel()
             AddEditCredentialScreen(
-                onSave = { service, username, password ->
-                    viewModel.addCredential(
-                        com.adilstudio.project.onevault.domain.model.Credential(
-                            id = System.currentTimeMillis(),
-                            serviceName = service,
-                            username = username,
-                            encryptedPassword = password
-                        )
-                    )
-                    navController.popBackStack()
-                },
-                onCancel = {
-                    navController.popBackStack()
-                },
-                onNavigateBack = {
-                    navController.popBackStack()
-                }
+                onSaveSuccess = { navController.popBackStack() },
+                onNavigateBack = { navController.popBackStack() }
             )
         }
         composable(Screen.EditCredential.route) {
@@ -184,29 +163,10 @@ fun NavGraph(
             } else {
                 AddEditCredentialScreen(
                     credential = credential,
-                    onSave = { service, username, password ->
-                        viewModel.updateCredential(
-                            credential.copy(
-                                serviceName = service,
-                                username = username,
-                                encryptedPassword = password
-                            )
-                        )
-                        navController.popBackStack()
-                    },
-                    onCancel = {
-                        navController.popBackStack()
-                    },
-                    onNavigateBack = {
-                        navController.popBackStack()
-                    }
+                    onSaveSuccess = { navController.popBackStack() },
+                    onNavigateBack = { navController.popBackStack() }
                 )
             }
-        }
-        composable(Screen.PasswordGenerator.route) {
-            PasswordGeneratorScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
         }
         composable(Screen.VaultFileList.route) {
             FileVaultScreen(

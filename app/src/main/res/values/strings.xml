@@ -248,6 +248,10 @@
     <string name="account_name">Account Name</string>
     <string name="current_balance">Current Balance</string>
     <string name="account_description">Account Description</string>
+    <string name="account_name_placeholder">e.g., Bank Account, Credit Card</string>
+    <string name="balance_placeholder">0.00</string>
+    <string name="balance_hint">Current account balance</string>
+    <string name="description_placeholder">Optional account description</string>
 
     <!-- Password Generator Screen -->
     <string name="step_1_service_information">Step 1: Service Information</string>
@@ -280,6 +284,8 @@
     <string name="no_text_generated">No text generated yet</string>
     <string name="unknown_error_occurred">Unknown error occurred</string>
     <string name="failed_initialize_model">Failed to initialize model: %1$s</string>
+    <string name="initializing_gpt2_model">Initializing GPT-2 model...</string>
+    <string name="generating_text">Generating text...</string>
 
     <!-- About Screen -->
     <string name="bullet_point">•</string>
@@ -299,20 +305,17 @@
     <string name="step_4_save_password">Step 4: Save Password</string>
     <string name="stop">Stop</string>
     <string name="generate">Generate</string>
-    <string name="generated_password_label">Generated Password:</string>
-    <string name="copy_password_description">Copy password</string>
     <string name="save_password_and_pattern">Save Password &amp; Pattern</string>
-
-    <!-- GPT2 Screen (additional) -->
+    <string name="generated_password_colon">Generated Password:</string>
+    <string name="copy_password_description">Copy password</string>
     <string name="step_3_generate_password_title">Step 3: Generate Password</string>
     <string name="step_4_save_password_title">Step 4: Save Password</string>
-    <string name="generated_password_colon">Generated Password:</string>
-    <string name="initializing_gpt2_model">Initializing GPT-2 model...</string>
-    <string name="generating_text">Generating text...</string>
 
-    <!-- Account Dialog -->
-    <string name="account_name_placeholder">e.g., BCA Savings, Mandiri Current</string>
-    <string name="balance_placeholder">0 (can be negative)</string>
-    <string name="balance_hint">Enter current account balance. Use minus sign for debt/credit accounts.</string>
-    <string name="description_placeholder">e.g., Primary savings account</string>
+    <!-- Combined Credential Screen -->
+    <string name="password_section">Password</string>
+    <string name="ai_generator">AI Generator</string>
+    <string name="enter_password">Enter your password</string>
+    <string name="ai_generation_hint">Use AI to generate secure passwords based on your service and username</string>
+    <string name="dismiss">Dismiss</string>
+
 </resources>

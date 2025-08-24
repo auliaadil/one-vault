@@ -19,8 +19,7 @@ import org.koin.androidx.compose.koinViewModel
 fun CredentialListScreen(
     viewModel: PasswordManagerViewModel = koinViewModel(),
     onAddCredential: () -> Unit,
-    onEditCredential: (Credential) -> Unit = {},
-    onNavigateToPasswordGenerator: () -> Unit
+    onEditCredential: (Credential) -> Unit = {}
 ) {
     val credentials by viewModel.credentials.collectAsState()
     val successMessage by viewModel.successMessage.collectAsState()
@@ -51,11 +50,6 @@ fun CredentialListScreen(
             TopAppBar(
                 title = {
                     Text(text = stringResource(R.string.credentials))
-                },
-                actions = {
-                    TextButton(onClick = onNavigateToPasswordGenerator) {
-                        Text(text = stringResource(R.string.password_generator)) // You'll need to add this string resource
-                    }
                 }
             )
         },
