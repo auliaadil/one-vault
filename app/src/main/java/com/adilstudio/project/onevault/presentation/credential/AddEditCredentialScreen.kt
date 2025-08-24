@@ -1,6 +1,15 @@
 package com.adilstudio.project.onevault.presentation.credential
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -11,22 +20,43 @@ import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.adilstudio.project.onevault.R
-import com.adilstudio.project.onevault.domain.model.Credential
 import com.adilstudio.project.onevault.data.security.SecurityManager
+import com.adilstudio.project.onevault.domain.model.Credential
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -47,13 +77,8 @@ fun AddEditCredentialScreen(
     // Initialize for editing if credential is provided
     LaunchedEffect(credential) {
         credential?.let { cred ->
-            val decryptedPassword = try {
-                decryptPassword(cred.encryptedPassword, securityManager)
-            } catch (_: Exception) {
-                ""
-            }
             viewModel.initializeForEdit(cred)
-            viewModel.onPasswordChanged(decryptedPassword)
+            viewModel.onPasswordChanged(cred.encryptedPassword)
         }
     }
 
@@ -205,7 +230,7 @@ fun AddEditCredentialScreen(
 
                     // AI Password Generator Section
                     if (uiState.showPasswordGenerator) {
-                        Divider()
+                        HorizontalDivider()
 
                         Column(
                             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_medium))
@@ -340,13 +365,7 @@ fun AddEditCredentialScreen(
             // Save Button
             Button(
                 onClick = {
-                    val encryptedPassword = try {
-                        encryptPassword(uiState.password, securityManager)
-                    } catch (e: Exception) {
-                        uiState.password
-                    }
-                    // Update the password with encrypted version before saving
-                    viewModel.onPasswordChanged(encryptedPassword)
+                    viewModel.onPasswordChanged(uiState.password)
                     viewModel.onSaveCredential()
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -363,26 +382,5 @@ fun AddEditCredentialScreen(
                 )
             }
         }
-    }
-}
-
-private fun decryptPassword(encryptedPassword: String, securityManager: SecurityManager): String {
-    return try {
-        val decodedBytes = android.util.Base64.decode(encryptedPassword, android.util.Base64.DEFAULT)
-        val iv = decodedBytes.sliceArray(0..11)
-        val cipherText = decodedBytes.sliceArray(12 until decodedBytes.size)
-        securityManager.decrypt(iv, cipherText)
-    } catch (e: Exception) {
-        encryptedPassword
-    }
-}
-
-private fun encryptPassword(plainPassword: String, securityManager: SecurityManager): String {
-    return try {
-        val (iv, encryptedData) = securityManager.encrypt(plainPassword)
-        val combined = iv + encryptedData
-        android.util.Base64.encodeToString(combined, android.util.Base64.DEFAULT)
-    } catch (e: Exception) {
-        plainPassword
     }
 }

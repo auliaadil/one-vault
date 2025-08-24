@@ -29,7 +29,7 @@ class CredentialRepositoryImpl(
                         id = entity.id,
                         serviceName = entity.serviceName,
                         username = entity.username,
-                        encryptedPassword = entity.encryptedPassword
+                        encryptedPassword = decryptPassword(entity.encryptedPassword)
                     )
                 }
             }
@@ -45,7 +45,7 @@ class CredentialRepositoryImpl(
                         id = it.id,
                         serviceName = it.serviceName,
                         username = it.username,
-                        encryptedPassword = it.encryptedPassword
+                        encryptedPassword = decryptPassword(it.encryptedPassword)
                     )
                 }
             }.single()
@@ -81,5 +81,21 @@ class CredentialRepositoryImpl(
 
     override suspend fun deleteCredential(id: Long) {
         queries.deleteCredential(id)
+    }
+
+    private fun decryptPassword(encrypted: String): String {
+        try {
+            // Base64 decode the encrypted string to get IV + encrypted bytes
+            val combined = android.util.Base64.decode(encrypted, android.util.Base64.DEFAULT)
+
+            // The first 16 bytes are the IV (for AES)
+            val iv = combined.sliceArray(0 until 16)
+            val encryptedBytes = combined.sliceArray(16 until combined.size)
+
+            return securityManager.decrypt(iv, encryptedBytes)
+        } catch (e: Exception) {
+            // If decryption fails, return the encrypted string as fallback
+            return encrypted
+        }
     }
 }

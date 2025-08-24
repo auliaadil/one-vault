@@ -35,12 +35,6 @@ fun CredentialDetailDialog(
     var isPasswordVisible by remember { mutableStateOf(false) }
     var showDeleteConfirmation by remember { mutableStateOf(false) }
 
-    // Decrypt the password for display
-    val decryptedPassword = try {
-        decryptPassword(credential.encryptedPassword, securityManager)
-    } catch (e: Exception) {
-        null
-    }
     val usernameLabel = stringResource(R.string.username)
     val passwordLabel = stringResource(R.string.password)
 
@@ -103,14 +97,11 @@ fun CredentialDetailDialog(
                     ) {
                         Text(
                             text = when {
-                                decryptedPassword == null -> {
-                                    stringResource(R.string.failed_decrypt_password)
-                                }
                                 isPasswordVisible -> {
-                                    decryptedPassword
+                                    credential.encryptedPassword
                                 }
                                 else -> {
-                                    "•".repeat(decryptedPassword.length)
+                                    "•".repeat(credential.encryptedPassword.length)
                                 }
                             },
                             style = MaterialTheme.typography.bodyLarge,
@@ -128,7 +119,7 @@ fun CredentialDetailDialog(
                             }
                             IconButton(
                                 onClick = {
-                                    copyToClipboard(context, passwordLabel, decryptedPassword.orEmpty())
+                                    copyToClipboard(context, passwordLabel, credential.encryptedPassword.orEmpty())
                                 }
                             ) {
                                 Icon(
@@ -218,24 +209,4 @@ private fun copyToClipboard(context: Context, label: String, text: String) {
     val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     val clipData = ClipData.newPlainText(label, text)
     clipboardManager.setPrimaryClip(clipData)
-}
-
-private fun decryptPassword(encryptedPassword: String, securityManager: SecurityManager): String {
-    return try {
-        // This assumes the encrypted password is stored in a specific format
-        // You may need to adjust this based on your actual storage format
-
-        // If the password is stored as Base64 encoded combined IV + ciphertext
-        val decodedBytes = android.util.Base64.decode(encryptedPassword, android.util.Base64.DEFAULT)
-
-        // Extract IV (first 12 bytes) and ciphertext (remaining bytes)
-        val iv = decodedBytes.sliceArray(0..11)
-        val cipherText = decodedBytes.sliceArray(12 until decodedBytes.size)
-
-        securityManager.decrypt(iv, cipherText)
-    } catch (e: Exception) {
-        // If decryption fails, return the original encrypted password
-        // This might indicate the password isn't actually encrypted or uses a different format
-        encryptedPassword
-    }
 }

@@ -48,7 +48,7 @@ class OneVaultAutofillService : AutofillService() {
 
                     val datasets = credentials.map { credential ->
                         val usernameValue = AutofillValue.forText(credential.username)
-                        val passwordValue = AutofillValue.forText(decryptPassword(credential.encryptedPassword))
+                        val passwordValue = AutofillValue.forText(credential.encryptedPassword)
                         Dataset.Builder()
                             .setValue(fields.usernameId, usernameValue, createRemoteViews(credential))
                             .setValue(fields.passwordId, passwordValue, createRemoteViews(credential))
@@ -105,22 +105,6 @@ class OneVaultAutofillService : AutofillService() {
         val remoteViews = RemoteViews(packageName, android.R.layout.simple_list_item_1)
         remoteViews.setTextViewText(android.R.id.text1, credential.serviceName)
         return remoteViews
-    }
-
-    private fun decryptPassword(encrypted: String): String {
-        try {
-            // Base64 decode the encrypted string to get IV + encrypted bytes
-            val combined = android.util.Base64.decode(encrypted, android.util.Base64.DEFAULT)
-
-            // The first 16 bytes are the IV (for AES)
-            val iv = combined.sliceArray(0 until 16)
-            val encryptedBytes = combined.sliceArray(16 until combined.size)
-
-            return securityManager.decrypt(iv, encryptedBytes)
-        } catch (e: Exception) {
-            // If decryption fails, return the encrypted string as fallback
-            return encrypted
-        }
     }
 }
 
