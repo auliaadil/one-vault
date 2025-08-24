@@ -1,6 +1,6 @@
 package com.adilstudio.project.onevault.presentation.settings
 
-import android.content.Context
+import android.app.Application
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
@@ -10,7 +10,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.adilstudio.project.onevault.R
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,12 +19,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+private val Application.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 class SettingsViewModel(
-    private val context: Context
-) : ViewModel() {
-    
+    application: Application
+) : AndroidViewModel(application) {
+
     private val _biometricEnabled = MutableStateFlow(false)
     val biometricEnabled: StateFlow<Boolean> = _biometricEnabled.asStateFlow()
 
@@ -39,7 +39,7 @@ class SettingsViewModel(
 
     private fun loadSettings() {
         viewModelScope.launch {
-            context.dataStore.data.map { preferences ->
+            getApplication<Application>().dataStore.data.map { preferences ->
                 preferences[BIOMETRIC_ENABLED_KEY] ?: false
             }.collect { enabled ->
                 _biometricEnabled.value = enabled
@@ -76,7 +76,7 @@ class SettingsViewModel(
 
     private fun setBiometricEnabled(enabled: Boolean) {
         viewModelScope.launch {
-            context.dataStore.edit { preferences ->
+            getApplication<Application>().dataStore.edit { preferences ->
                 preferences[BIOMETRIC_ENABLED_KEY] = enabled
             }
             _biometricEnabled.value = enabled
