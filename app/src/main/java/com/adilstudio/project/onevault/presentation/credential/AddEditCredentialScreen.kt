@@ -55,10 +55,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.adilstudio.project.onevault.R
-import com.adilstudio.project.onevault.data.security.SecurityManager
 import com.adilstudio.project.onevault.domain.model.Credential
 import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,7 +67,6 @@ fun AddEditCredentialScreen(
     viewModel: AddEditCredentialViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val securityManager: SecurityManager = koinInject()
     val clipboardManager = LocalClipboardManager.current
 
     var passwordVisible by remember { mutableStateOf(false) }
@@ -78,6 +75,7 @@ fun AddEditCredentialScreen(
     LaunchedEffect(credential) {
         credential?.let { cred ->
             viewModel.initializeForEdit(cred)
+            // The credential.encryptedPassword is already decrypted by the repository
             viewModel.onPasswordChanged(cred.encryptedPassword)
         }
     }
@@ -365,7 +363,6 @@ fun AddEditCredentialScreen(
             // Save Button
             Button(
                 onClick = {
-                    viewModel.onPasswordChanged(uiState.password)
                     viewModel.onSaveCredential()
                 },
                 modifier = Modifier.fillMaxWidth(),

@@ -20,6 +20,9 @@ local.properties
 .gradle/
 build/
 
+# AI Models
+app/src/main/assets/models/
+
 # Others
 *.log
 .github/

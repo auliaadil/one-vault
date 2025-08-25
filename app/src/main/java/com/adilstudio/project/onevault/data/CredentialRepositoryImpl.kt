@@ -58,7 +58,6 @@ class CredentialRepositoryImpl(
             android.util.Base64.encodeToString(iv + encrypted, android.util.Base64.DEFAULT)
 
         queries.insertCredential(
-            id = credential.id,
             serviceName = credential.serviceName,
             username = credential.username,
             encryptedPassword = encryptedPassword
