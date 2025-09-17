@@ -2,10 +2,13 @@ package com.adilstudio.project.onevault.presentation.credential
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -34,6 +37,7 @@ fun CredentialListScreen(
     // Handle success messages
     LaunchedEffect(successMessage) {
         successMessage?.let {
+            // Auto-clear success message after showing
             viewModel.clearSuccessMessage()
         }
     }
@@ -41,6 +45,7 @@ fun CredentialListScreen(
     // Handle error messages
     LaunchedEffect(error) {
         error?.let {
+            // Auto-clear error message after showing
             viewModel.clearError()
         }
     }
@@ -53,39 +58,130 @@ fun CredentialListScreen(
                 }
             )
         },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onAddCredential
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(R.string.add_credential)
+                )
+            }
+        }
     ) { paddingValues ->
-        Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(horizontal = 16.dp)
+        ) {
+            Spacer(modifier = Modifier.height(8.dp))
+
             // Success/Error message display
             successMessage?.let { message ->
                 Card(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer
                     )
                 ) {
-                    Text(
-                        text = message,
-                        modifier = Modifier.padding(16.dp),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = message,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.weight(1f)
+                        )
+                        TextButton(
+                            onClick = { viewModel.clearSuccessMessage() }
+                        ) {
+                            Text("Dismiss")
+                        }
+                    }
                 }
             }
 
-            LazyColumn(modifier = Modifier.weight(1f)) {
-                items(credentials.size) { idx ->
-                    val credential = credentials[idx]
-                    CredentialCard(
-                        credential = credential,
-                        onClick = { selectedCredential = credential },
-                        onDelete = { viewModel.deleteCredential(credential.id) }
+            error?.let { errorMessage ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = errorMessage,
+                            color = MaterialTheme.colorScheme.onErrorContainer,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.weight(1f)
+                        )
+                        TextButton(
+                            onClick = { viewModel.clearError() }
+                        ) {
+                            Text("Dismiss")
+                        }
+                    }
                 }
             }
 
-            Button(onClick = onAddCredential, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.add_credential))
+            if (credentials.isEmpty()) {
+                // Empty state
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "No credentials saved yet",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Tap the + button to add your first credential",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            } else {
+                // Credentials list
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(
+                        items = credentials,
+                        key = { it.id }
+                    ) { credential ->
+                        CredentialCard(
+                            credential = credential,
+                            onClick = { selectedCredential = credential },
+                            onEdit = { onEditCredential(credential) },
+                            onDelete = { viewModel.deleteCredential(credential.id) }
+                        )
+                    }
+                }
             }
         }
     }
@@ -112,6 +208,7 @@ fun CredentialListScreen(
 fun CredentialCard(
     credential: Credential,
     onClick: () -> Unit,
+    onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
     var showDeleteConfirmation by remember { mutableStateOf(false) }
@@ -121,33 +218,63 @@ fun CredentialCard(
         onClick = onClick,
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(16.dp)
         ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = credential.serviceName,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = credential.username,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            IconButton(
-                onClick = { showDeleteConfirmation = true }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
             ) {
-                Icon(
-                    Icons.Default.Delete,
-                    contentDescription = stringResource(R.string.delete_credential),
-                    tint = MaterialTheme.colorScheme.error
-                )
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = credential.serviceName,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = credential.username,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    // Show if it has a password template
+                    if (!credential.passwordTemplate.isNullOrBlank()) {
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer
+                            )
+                        ) {
+                            Text(
+                                text = "Template-based",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                            )
+                        }
+                    }
+                }
+
+                Row {
+                    TextButton(onClick = onEdit) {
+                        Text("Edit")
+                    }
+                    IconButton(
+                        onClick = { showDeleteConfirmation = true }
+                    ) {
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = stringResource(R.string.delete_credential),
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
             }
         }
     }

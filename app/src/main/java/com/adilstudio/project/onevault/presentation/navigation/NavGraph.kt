@@ -19,10 +19,10 @@ import com.adilstudio.project.onevault.presentation.bill.AddEditBillScreen
 import com.adilstudio.project.onevault.presentation.bill.BillListScreen
 import com.adilstudio.project.onevault.presentation.bill.BillTrackerViewModel
 import com.adilstudio.project.onevault.presentation.bill.category.BillCategoriesScreen
-import com.adilstudio.project.onevault.presentation.credential.AddEditCredentialScreen
 import com.adilstudio.project.onevault.presentation.credential.CredentialListScreen
 import com.adilstudio.project.onevault.presentation.credential.PasswordManagerViewModel
 import com.adilstudio.project.onevault.presentation.filevault.FileVaultScreen
+import com.adilstudio.project.onevault.presentation.password.PasswordManagerScreen
 import com.adilstudio.project.onevault.presentation.settings.AboutScreen
 import com.adilstudio.project.onevault.presentation.settings.ImportExportScreen
 import com.adilstudio.project.onevault.presentation.settings.PrivacyPolicyScreen
@@ -131,8 +131,8 @@ fun NavGraph(
             )
         }
         composable(Screen.AddCredential.route) {
-            AddEditCredentialScreen(
-                onSaveSuccess = { navController.popBackStack() },
+            PasswordManagerScreen(
+                credential = null, // For new credentials
                 onNavigateBack = { navController.popBackStack() }
             )
         }
@@ -161,9 +161,8 @@ fun NavGraph(
                     CircularProgressIndicator()
                 }
             } else {
-                AddEditCredentialScreen(
+                PasswordManagerScreen(
                     credential = credential,
-                    onSaveSuccess = { navController.popBackStack() },
                     onNavigateBack = { navController.popBackStack() }
                 )
             }

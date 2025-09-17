@@ -1,8 +1,5 @@
 package com.adilstudio.project.onevault.presentation.credential
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
@@ -14,15 +11,19 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.Credential
-import com.adilstudio.project.onevault.data.security.SecurityManager
-import org.koin.compose.koinInject
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CredentialDetailDialog(
     credential: Credential,
@@ -31,34 +32,95 @@ fun CredentialDetailDialog(
     onDelete: (Long) -> Unit
 ) {
     val context = LocalContext.current
-    val securityManager: SecurityManager = koinInject()
-    var isPasswordVisible by remember { mutableStateOf(false) }
+    val clipboardManager = LocalClipboardManager.current
+    var showPassword by remember { mutableStateOf(false) }
     var showDeleteConfirmation by remember { mutableStateOf(false) }
 
-    val usernameLabel = stringResource(R.string.username)
-    val passwordLabel = stringResource(R.string.password)
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(
-                text = credential.serviceName,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
-            )
-        },
-        text = {
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        ) {
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Username Section
+                // Header
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Credential Details",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Row {
+                        IconButton(onClick = { onEdit(credential) }) {
+                            Icon(
+                                Icons.Default.Edit,
+                                contentDescription = stringResource(R.string.edit_credential)
+                            )
+                        }
+                        IconButton(
+                            onClick = { showDeleteConfirmation = true }
+                        ) {
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = stringResource(R.string.delete_credential),
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    }
+                }
+
+                Divider()
+
+                // Service Name
                 Column {
                     Text(
-                        text = stringResource(R.string.username),
+                        text = "Service Name",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = credential.serviceName,
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Medium,
+                            modifier = Modifier.weight(1f)
+                        )
+                        IconButton(
+                            onClick = {
+                                clipboardManager.setText(AnnotatedString(credential.serviceName))
+                            }
+                        ) {
+                            Icon(
+                                Icons.Default.ContentCopy,
+                                contentDescription = "Copy service name",
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+                }
+
+                // Username
+                Column {
+                    Text(
+                        text = "Username",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -71,110 +133,118 @@ fun CredentialDetailDialog(
                         )
                         IconButton(
                             onClick = {
-                                copyToClipboard(context, usernameLabel, credential.username)
+                                clipboardManager.setText(AnnotatedString(credential.username))
                             }
                         ) {
                             Icon(
                                 Icons.Default.ContentCopy,
                                 contentDescription = stringResource(R.string.copy_username),
-                                tint = MaterialTheme.colorScheme.primary
+                                modifier = Modifier.size(20.dp)
                             )
                         }
                     }
                 }
 
-                // Password Section
+                // Password
                 Column {
                     Text(
-                        text = stringResource(R.string.password),
+                        text = "Password",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                    Spacer(modifier = Modifier.height(4.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = when {
-                                isPasswordVisible -> {
-                                    credential.encryptedPassword
-                                }
-                                else -> {
-                                    "•".repeat(credential.encryptedPassword.length)
-                                }
-                            },
+                            text = credential.encryptedPassword,
                             style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
+                            maxLines = if (showPassword) Int.MAX_VALUE else 1
                         )
                         Row {
                             IconButton(
-                                onClick = { isPasswordVisible = !isPasswordVisible }
+                                onClick = { showPassword = !showPassword }
                             ) {
                                 Icon(
-                                    if (isPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                                    contentDescription = if (isPasswordVisible) stringResource(R.string.hide_password) else stringResource(R.string.show_password),
-                                    tint = MaterialTheme.colorScheme.primary
+                                    if (showPassword) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                                    contentDescription = if (showPassword) stringResource(R.string.hide_password) else stringResource(R.string.show_password),
+                                    modifier = Modifier.size(20.dp)
                                 )
                             }
                             IconButton(
                                 onClick = {
-                                    copyToClipboard(context, passwordLabel, credential.encryptedPassword.orEmpty())
+                                    clipboardManager.setText(AnnotatedString(credential.encryptedPassword))
                                 }
                             ) {
                                 Icon(
                                     Icons.Default.ContentCopy,
                                     contentDescription = stringResource(R.string.copy_password),
-                                    tint = MaterialTheme.colorScheme.primary
+                                    modifier = Modifier.size(20.dp)
                                 )
                             }
                         }
                     }
                 }
-            }
-        },
-        confirmButton = {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                // Edit Button
-                TextButton(
-                    onClick = { onEdit(credential) }
-                ) {
-                    Icon(
-                        Icons.Default.Edit,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(stringResource(R.string.edit))
+
+                // Password Template Info
+                if (!credential.passwordTemplate.isNullOrBlank()) {
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(12.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "Template-based Password",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "This password was generated using a custom template. Edit to modify the generation rules.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                            )
+                        }
+                    }
                 }
 
-                // Delete Button
-                TextButton(
-                    onClick = { showDeleteConfirmation = true },
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.error
-                    )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Action Buttons
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Icon(
-                        Icons.Default.Delete,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(stringResource(R.string.delete))
+                    OutlinedButton(
+                        onClick = onDismiss,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(stringResource(R.string.close))
+                    }
+
+                    Button(
+                        onClick = { onEdit(credential) },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(stringResource(R.string.edit))
+                    }
                 }
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.close))
             }
         }
-    )
+    }
 
-    // Delete Confirmation Dialog
+    // Delete confirmation dialog
     if (showDeleteConfirmation) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirmation = false },
@@ -203,10 +273,4 @@ fun CredentialDetailDialog(
             }
         )
     }
-}
-
-private fun copyToClipboard(context: Context, label: String, text: String) {
-    val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-    val clipData = ClipData.newPlainText(label, text)
-    clipboardManager.setPrimaryClip(clipData)
 }

@@ -11,9 +11,13 @@ import org.koin.dsl.module
 val appModule = module {
     single { (app: Application) -> SecurityManager(app) }
 
-    // SQLDelight Database setup with versioning
+    // SQLDelight Database setup
     single<SqlDriver> {
-        AndroidSqliteDriver(Database.Schema, androidContext(), "onevault.db")
+        AndroidSqliteDriver(
+            schema = Database.Schema,
+            context = androidContext(),
+            name = "onevault.db"
+        )
     }
     single { Database(get()) }
 }

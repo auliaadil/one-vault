@@ -28,8 +28,11 @@ class CredentialRepositoryImpl(
                     Credential(
                         id = entity.id,
                         serviceName = entity.serviceName,
-                        username = entity.username,
-                        encryptedPassword = decryptPassword(entity.encryptedPassword)
+                        username = entity.userName, // Fixed column name
+                        encryptedPassword = decryptPassword(entity.encryptedPassword),
+                        passwordTemplate = entity.passwordTemplate,
+                        createdAt = entity.createdAt ?: System.currentTimeMillis(),
+                        updatedAt = entity.updatedAt ?: System.currentTimeMillis()
                     )
                 }
             }
@@ -44,8 +47,11 @@ class CredentialRepositoryImpl(
                     Credential(
                         id = it.id,
                         serviceName = it.serviceName,
-                        username = it.username,
-                        encryptedPassword = decryptPassword(it.encryptedPassword)
+                        username = it.userName, // Fixed column name
+                        encryptedPassword = decryptPassword(it.encryptedPassword),
+                        passwordTemplate = it.passwordTemplate,
+                        createdAt = it.createdAt ?: System.currentTimeMillis(),
+                        updatedAt = it.updatedAt ?: System.currentTimeMillis()
                     )
                 }
             }.single()
@@ -59,8 +65,9 @@ class CredentialRepositoryImpl(
 
         queries.insertCredential(
             serviceName = credential.serviceName,
-            username = credential.username,
-            encryptedPassword = encryptedPassword
+            userName = credential.username, // Fixed column name
+            encryptedPassword = encryptedPassword,
+            passwordTemplate = credential.passwordTemplate
         )
     }
 
@@ -72,8 +79,9 @@ class CredentialRepositoryImpl(
 
         queries.updateCredential(
             serviceName = credential.serviceName,
-            username = credential.username,
+            userName = credential.username, // Fixed column name
             encryptedPassword = encryptedPassword,
+            passwordTemplate = credential.passwordTemplate,
             id = credential.id
         )
     }
