@@ -1,14 +1,39 @@
 package com.adilstudio.project.onevault.presentation.password
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.adilstudio.project.onevault.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,24 +51,24 @@ fun AddRuleSection(
         )
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large)),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Password Rules",
+                text = stringResource(R.string.password_rules),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
 
             Text(
-                text = "Add rules to automatically generate passwords based on service name and user account",
+                text = stringResource(R.string.add_rules_description),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_medium)))
 
             OutlinedButton(
                 onClick = { showAddDialog = true },
@@ -54,10 +79,10 @@ fun AddRuleSection(
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = null,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(dimensionResource(R.dimen.icon_size_medium))
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Add Rule")
+                Spacer(modifier = Modifier.width(dimensionResource(R.dimen.spacing_small)))
+                Text(stringResource(R.string.add_rule))
             }
         }
     }
@@ -88,10 +113,10 @@ fun AddRuleDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add Password Rule") },
+        title = { Text(stringResource(R.string.add_password_rule)) },
         text = {
             Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_large))
             ) {
                 // Rule type selection
                 ExposedDropdownMenuBox(
@@ -101,10 +126,10 @@ fun AddRuleDialog(
                     OutlinedTextField(
                         value = selectedRuleType.displayName,
                         onValueChange = {},
-                        label = { Text("Rule Type") },
+                        label = { Text(stringResource(R.string.rule_type)) },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .menuAnchor(),
+                            .menuAnchor(MenuAnchorType.PrimaryNotEditable),
                         readOnly = true,
                         trailingIcon = {
                             ExposedDropdownMenuDefaults.TrailingIcon(expanded = showRuleTypeDropdown)
@@ -115,7 +140,7 @@ fun AddRuleDialog(
                         expanded = showRuleTypeDropdown,
                         onDismissRequest = { showRuleTypeDropdown = false }
                     ) {
-                        RuleType.values().forEach { ruleType ->
+                        RuleType.entries.forEach { ruleType ->
                             DropdownMenuItem(
                                 text = {
                                     Column {
@@ -146,7 +171,7 @@ fun AddRuleDialog(
                                     length = newLength
                                 }
                             },
-                            label = { Text("Number of characters") },
+                            label = { Text(stringResource(R.string.number_of_characters)) },
                             modifier = Modifier.fillMaxWidth(),
                             placeholder = { Text("3") }
                         )
@@ -158,10 +183,10 @@ fun AddRuleDialog(
                             OutlinedTextField(
                                 value = selectedCasing.name.lowercase().replaceFirstChar { it.uppercase() },
                                 onValueChange = {},
-                                label = { Text("Text Casing") },
+                                label = { Text(stringResource(R.string.text_casing)) },
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .menuAnchor(),
+                                    .menuAnchor(MenuAnchorType.PrimaryNotEditable),
                                 readOnly = true,
                                 trailingIcon = {
                                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = showCasingDropdown)
@@ -172,16 +197,16 @@ fun AddRuleDialog(
                                 expanded = showCasingDropdown,
                                 onDismissRequest = { showCasingDropdown = false }
                             ) {
-                                Casing.values().forEach { casing ->
+                                Casing.entries.forEach { casing ->
                                     DropdownMenuItem(
                                         text = {
                                             Column {
                                                 Text(casing.name.lowercase().replaceFirstChar { it.uppercase() })
                                                 Text(
                                                     text = when (casing) {
-                                                        Casing.LOWER -> "lowercase text"
-                                                        Casing.UPPER -> "UPPERCASE TEXT"
-                                                        Casing.CAPITALIZE -> "Capitalize first letter"
+                                                        Casing.LOWER -> stringResource(R.string.lowercase_text)
+                                                        Casing.UPPER -> stringResource(R.string.uppercase_text)
+                                                        Casing.CAPITALIZE -> stringResource(R.string.capitalize_first_letter)
                                                     },
                                                     style = MaterialTheme.typography.bodySmall,
                                                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -201,9 +226,9 @@ fun AddRuleDialog(
                         OutlinedTextField(
                             value = fixedString,
                             onValueChange = { fixedString = it },
-                            label = { Text("Fixed String") },
+                            label = { Text(stringResource(R.string.fixed_string)) },
                             modifier = Modifier.fillMaxWidth(),
-                            placeholder = { Text("e.g., #123, @, !") }
+                            placeholder = { Text(stringResource(R.string.fixed_string_placeholder)) }
                         )
                     }
                 }
@@ -232,19 +257,27 @@ fun AddRuleDialog(
                     RuleType.FIXED_STRING -> fixedString.isNotBlank()
                 }
             ) {
-                Text("Add Rule")
+                Text(stringResource(R.string.add_rule))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         }
     )
 }
 
-enum class RuleType(val displayName: String, val description: String) {
-    SERVICE_NAME("From Service Name", "Use characters from the service name"),
-    USER_ACCOUNT("From User Account", "Use characters from the user account"),
-    FIXED_STRING("Fixed String", "Add a fixed string or symbol")
+enum class RuleType(val displayNameRes: Int, val descriptionRes: Int) {
+    SERVICE_NAME(R.string.from_service_name, R.string.from_service_name_description),
+    USER_ACCOUNT(R.string.from_user_account, R.string.from_user_account_description),
+    FIXED_STRING(R.string.fixed_string_rule, R.string.fixed_string_rule_description);
+
+    val displayName: String
+        @Composable
+        get() = stringResource(displayNameRes)
+
+    val description: String
+        @Composable
+        get() = stringResource(descriptionRes)
 }

@@ -43,22 +43,12 @@
     <string name="credentials">Credentials</string>
     <string name="add_credential">Add Credential</string>
     <string name="edit_credential">Edit Credential</string>
-    <string name="service_name">Service Name</string>
-    <string name="username">Username</string>
-    <string name="username_required">Username is required</string>
-    <string name="password">Password</string>
-    <string name="password_required">Password is required</string>
-    <string name="save_credential">Save Credential</string>
     <string name="copy_username">Copy Username</string>
     <string name="copy_password">Copy Password</string>
     <string name="show_password">Show Password</string>
     <string name="hide_password">Hide Password</string>
     <string name="delete_credential">Delete Credential</string>
     <string name="delete_credential_message">Are you sure you want to delete the credential for \'%1$s\'? This action cannot be undone.</string>
-    <string name="failed_decrypt_password">Failed to decrypt password</string>
-
-    <!-- Password Manager -->
-    <string name="password_manager">Password Manager</string>
     <string name="drag_handle">Drag Handle</string>
     <string name="edit_rule">Edit Rule</string>
     <string name="delete_rule">Delete Rule</string>
@@ -109,6 +99,86 @@
     <string name="add_file">Add File</string>
     <string name="import_data">Import Data</string>
     <string name="export_data">Export Data</string>
+
+    <!-- Password Manager -->
+    <string name="password_manager">Password Manager</string>
+    <string name="service_name">Service Name</string>
+    <string name="service_name_placeholder">e.g., Google, Facebook, GitHub</string>
+    <string name="username_email">Username / Email</string>
+    <string name="username_email_placeholder">e.g., john.doe, myemail@gmail.com</string>
+    <string name="password">Password</string>
+    <string name="generate_from_template">Generate from template</string>
+    <string name="configure_rules_message">Configure rules to automatically generate your password:</string>
+    <string name="password_rules">Password Rules</string>
+    <string name="add_rules_description">Add rules to automatically generate passwords based on service name and user account</string>
+    <string name="add_rule">Add Rule</string>
+    <string name="password_rules_drag_hint">Password Rules (drag to reorder)</string>
+    <string name="generated_password">Generated Password</string>
+    <string name="password_length_format">Length: %1$d characters</string>
+    <string name="add_rules_to_generate">Add rules to generate password</string>
+    <string name="password_will_appear_here">Password will appear here</string>
+    <string name="live_preview">Live Preview</string>
+    <string name="service_preview_format">Service: \"%1$s\"</string>
+    <string name="account_preview_format">Account: \"%1$s\"</string>
+    <string name="save_credential">Save Credential</string>
+    <string name="update_credential">Update Credential</string>
+    <string name="edit_credential_title">Edit Credential</string>
+    <string name="add_credential_title">Add Credential</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="please_fill_required_fields">Please fill in all required fields</string>
+    <string name="credential_updated_successfully">Credential updated successfully</string>
+    <string name="credential_saved_successfully">Credential saved successfully</string>
+    <string name="failed_to_save_credential">Failed to save credential: %1$s</string>
+
+    <!-- Add Rule Dialog -->
+    <string name="add_password_rule">Add Password Rule</string>
+    <string name="rule_type">Rule Type</string>
+    <string name="number_of_characters">Number of characters</string>
+    <string name="text_casing">Text Casing</string>
+    <string name="fixed_string">Fixed String</string>
+    <string name="fixed_string_placeholder">e.g., #123, @, !</string>
+    <string name="add_rule_button">Add Rule</string>
+
+    <!-- Rule Types -->
+    <string name="from_service_name">From Service Name</string>
+    <string name="from_service_name_description">Use characters from the service name</string>
+    <string name="from_user_account">From User Account</string>
+    <string name="from_user_account_description">Use characters from the user account</string>
+    <string name="fixed_string_rule">Fixed String</string>
+    <string name="fixed_string_rule_description">Add a fixed string or symbol</string>
+
+    <!-- Text Casing -->
+    <string name="lower_case">Lower</string>
+    <string name="upper_case">Upper</string>
+    <string name="capitalize">Capitalize</string>
+    <string name="lowercase_text">lowercase text</string>
+    <string name="uppercase_text">UPPERCASE TEXT</string>
+    <string name="capitalize_first_letter">Capitalize first letter</string>
+
+    <!-- Edit Rule Dialog -->
+    <string name="edit_service_name_rule">Edit Service Name Rule</string>
+    <string name="edit_user_account_rule">Edit User Account Rule</string>
+    <string name="edit_fixed_string_rule">Edit Fixed String Rule</string>
+    <string name="casing">Casing</string>
+    <string name="fixed_string_label">Fixed string</string>
+
+    <!-- Rule Item Display -->
+    <string name="service_name_rule">Service Name</string>
+    <string name="user_account_rule">User Account</string>
+    <string name="fixed_string_rule_display">Fixed String</string>
+    <string name="rule_format">%1$d chars, %2$s</string>
+    <string name="fixed_string_format">\"%1$s\"</string>
+
+    <!-- Credential List -->
+    <string name="no_credentials_saved">No credentials saved yet</string>
+    <string name="tap_plus_to_add_first">Tap the + button to add your first credential</string>
+    <string name="template_based">Template-based</string>
+
+    <!-- Credential Detail Dialog -->
+    <string name="credential_details">Credential Details</string>
+    <string name="copy_service_name">Copy service name</string>
+    <string name="template_based_password">Template-based Password</string>
+    <string name="template_password_description">This password was generated using a custom template. Edit to modify the generation rules.</string>
 
     <!-- Text Selection -->
     <string name="select_scanned_text">Select Scanned Text</string>
@@ -247,70 +317,4 @@
     <string name="import_confirmation_message">This will replace your current data with the data from the backup file. This action cannot be undone.</string>
     <string name="import_text">Import</string>
 
-    <!-- LLM/AI Assistant -->
-    <string name="ai_assistant">AI Assistant</string>
-    <string name="no_model_loaded">No Model Loaded</string>
-    <string name="select_model_to_start">Select a model to start chatting</string>
-    <string name="select_model">Select Model</string>
-    <string name="no_models_available">No models available. Please add model files to the assets/models folder.</string>
-    <string name="clear_chat">Clear Chat</string>
-    <string name="type_message">Type a message...</string>
-    <string name="send">Send</string>
-
-    <!-- Password Generator Screen -->
-    <string name="ai_password_generator">AI Password Generator</string>
-    <string name="password_generator">Password Generator</string>
-    <string name="step_1_service_information">Step 1: Service Information</string>
-    <string name="step_2_password_pattern">Step 2: Password Pattern</string>
-    <string name="service_name_label">Service Name</string>
-    <string name="service_name_placeholder">e.g., Bitbucket, GitHub, Gmail</string>
-    <string name="service_name_required">Service name is required</string>
-    <string name="username_email_label">Username/Email</string>
-    <string name="username_email_placeholder">e.g., aulia@gmail.com</string>
-    <string name="use_default">Use Default</string>
-    <string name="default_prompt_hint">💡 This prompt will be saved as your default for future password generation</string>
-    <string name="generating_password">Generating Password...</string>
-    <string name="generate_password">Generate Password</string>
-    <string name="save_as_credential">Save as Credential</string>
-    <string name="generate_again">Generate Again</string>
-    <string name="copy_generated_password">Copy Generated Password</string>
-    <string name="initializing_ai_model">Initializing AI model...</string>
-    <string name="save_password_hint">This will save the generated password along with the pattern for future use.</string>
-    <string name="password_pattern_prompt">Password Pattern Prompt</string>
-    <string name="password_pattern_placeholder">Develop a password with pattern:\n- Use characters from service name\n- Use characters from username\n- Add default suffix 123!</string>
-    <string name="pattern_prompt_required">Pattern prompt is required</string>
-    <string name="step_3_generate_password">Step 3: Generate Password</string>
-    <string name="step_4_save_password">Step 4: Save Password</string>
-    <string name="stop">Stop</string>
-    <string name="generate">Generate</string>
-    <string name="save_password_and_pattern">Save Password &amp; Pattern</string>
-    <string name="generated_password_colon">Generated Password:</string>
-    <string name="copy_password_description">Copy password</string>
-    <string name="step_3_generate_password_title">Step 3: Generate Password</string>
-    <string name="step_4_save_password_title">Step 4: Save Password</string>
-
-    <!-- Combined Credential Screen -->
-    <string name="password_section">Password</string>
-    <string name="ai_generator">AI Generator</string>
-    <string name="enter_password">Enter your password</string>
-    <string name="ai_generation_hint">Use AI to generate secure passwords based on your service and username</string>
-    <string name="dismiss">Dismiss</string>
-
-    <!-- GPT2 Screen -->
-    <string name="gpt2_text_generation">GPT-2 Text Generation</string>
-    <string name="shuffle_prompt">Shuffle Prompt</string>
-    <string name="generate_text">Generate Text</string>
-    <string name="stop_generation">Stop Generation</string>
-    <string name="generating">Generating...</string>
-    <string name="model_status">Model Status</string>
-    <string name="initializing">Initializing...</string>
-    <string name="ready">Ready</string>
-    <string name="not_initialized">Not initialized</string>
-    <string name="current_prompt">Current Prompt</string>
-    <string name="generated_text">Generated Text</string>
-    <string name="no_text_generated">No text generated yet</string>
-    <string name="unknown_error_occurred">Unknown error occurred</string>
-    <string name="failed_initialize_model">Failed to initialize model: %1$s</string>
-    <string name="initializing_gpt2_model">Initializing GPT-2 model...</string>
-    <string name="generating_text">Generating text...</string>
 </resources>

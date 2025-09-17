@@ -1,6 +1,15 @@
 package com.adilstudio.project.onevault.presentation.password
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
@@ -9,19 +18,41 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.dp
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.Credential
-import org.burnoutcrew.reorderable.*
+import org.burnoutcrew.reorderable.ReorderableItem
+import org.burnoutcrew.reorderable.detectReorderAfterLongPress
+import org.burnoutcrew.reorderable.rememberReorderableLazyListState
+import org.burnoutcrew.reorderable.reorderable
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,7 +62,6 @@ fun PasswordManagerScreen(
     onNavigateBack: () -> Unit = {},
     viewModel: PasswordViewModel = koinViewModel()
 ) {
-    val context = LocalContext.current
     val serviceName by viewModel.serviceName.collectAsState()
     val userAccount by viewModel.userAccount.collectAsState()
     val password by viewModel.password.collectAsState()
@@ -69,8 +99,10 @@ fun PasswordManagerScreen(
             TopAppBar(
                 title = {
                     Text(
-                        if (credential != null) "Edit Credential"
-                        else "Add Credential"
+                        stringResource(
+                            if (credential != null) R.string.edit_credential_title
+                            else R.string.add_credential_title
+                        )
                     )
                 },
                 navigationIcon = {
@@ -88,11 +120,11 @@ fun PasswordManagerScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = dimensionResource(R.dimen.spacing_large))
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_large))
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
 
             // Error message
             error?.let { errorMessage ->
@@ -105,7 +137,7 @@ fun PasswordManagerScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(12.dp),
+                            .padding(dimensionResource(R.dimen.spacing_medium)),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -117,7 +149,7 @@ fun PasswordManagerScreen(
                         TextButton(
                             onClick = { viewModel.clearError() }
                         ) {
-                            Text("Dismiss")
+                            Text(stringResource(R.string.dismiss))
                         }
                     }
                 }
@@ -127,9 +159,9 @@ fun PasswordManagerScreen(
             OutlinedTextField(
                 value = serviceName,
                 onValueChange = viewModel::updateServiceName,
-                label = { Text("Service Name") },
+                label = { Text(stringResource(R.string.service_name)) },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("e.g., Google, Facebook, GitHub") },
+                placeholder = { Text(stringResource(R.string.service_name_placeholder)) },
                 enabled = !isLoading
             )
 
@@ -137,9 +169,9 @@ fun PasswordManagerScreen(
             OutlinedTextField(
                 value = userAccount,
                 onValueChange = viewModel::updateUserAccount,
-                label = { Text("Username / Email") },
+                label = { Text(stringResource(R.string.username_email)) },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("e.g., john.doe, myemail@gmail.com") },
+                placeholder = { Text(stringResource(R.string.username_email_placeholder)) },
                 enabled = !isLoading
             )
 
@@ -151,8 +183,8 @@ fun PasswordManagerScreen(
                 )
             ) {
                 Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large)),
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_medium))
                 ) {
                     // Toggle switch for template usage
                     Row(
@@ -161,7 +193,7 @@ fun PasswordManagerScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Generate from template",
+                            text = stringResource(R.string.generate_from_template),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Medium
                         )
@@ -175,7 +207,7 @@ fun PasswordManagerScreen(
                     if (useTemplate) {
                         // Template mode - show rules and generated password
                         Text(
-                            text = "Configure rules to automatically generate your password:",
+                            text = stringResource(R.string.configure_rules_message),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -184,14 +216,14 @@ fun PasswordManagerScreen(
                         OutlinedTextField(
                             value = password,
                             onValueChange = viewModel::updatePassword,
-                            label = { Text("Password") },
+                            label = { Text(stringResource(R.string.password)) },
                             modifier = Modifier.fillMaxWidth(),
                             visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                             trailingIcon = {
                                 IconButton(onClick = { showPassword = !showPassword }) {
                                     Icon(
                                         imageVector = if (showPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                        contentDescription = if (showPassword) "Hide password" else "Show password"
+                                        contentDescription = stringResource(if (showPassword) R.string.hide_password else R.string.show_password)
                                     )
                                 }
                             },
@@ -215,22 +247,22 @@ fun PasswordManagerScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Column(
-                            modifier = Modifier.padding(16.dp)
+                            modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))
                         ) {
                             Text(
-                                text = "Password Rules (drag to reorder)",
+                                text = stringResource(R.string.password_rules_drag_hint),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Medium,
-                                modifier = Modifier.padding(bottom = 12.dp)
+                                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.spacing_medium))
                             )
 
                             LazyColumn(
                                 state = reorderableState.listState,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(300.dp) // Fixed height for better UX
+                                    .height(dimensionResource(R.dimen.list_height_fixed)) // Fixed height for better UX
                                     .reorderable(reorderableState),
-                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_xs))
                             ) {
                                 itemsIndexed(
                                     items = viewModel.rules,
@@ -245,7 +277,9 @@ fun PasswordManagerScreen(
                                             isDragging = isDragging,
                                             onRuleUpdate = viewModel::updateRule,
                                             onRuleDelete = viewModel::removeRule,
-                                            modifier = Modifier.detectReorderAfterLongPress(reorderableState)
+                                            modifier = Modifier.detectReorderAfterLongPress(
+                                                reorderableState
+                                            )
                                         )
                                     }
                                 }
@@ -262,14 +296,14 @@ fun PasswordManagerScreen(
                     )
                 ) {
                     Column(
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))
                     ) {
                         Text(
-                            text = "Generated Password",
+                            text = stringResource(R.string.generated_password),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onTertiaryContainer,
-                            modifier = Modifier.padding(bottom = 8.dp)
+                            modifier = Modifier.padding(bottom = dimensionResource(R.dimen.spacing_small))
                         )
 
                         OutlinedTextField(
@@ -282,31 +316,37 @@ fun PasswordManagerScreen(
                                 IconButton(onClick = { showPassword = !showPassword }) {
                                     Icon(
                                         imageVector = if (showPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                        contentDescription = if (showPassword) "Hide password" else "Show password"
+                                        contentDescription = stringResource(if (showPassword) R.string.hide_password else R.string.show_password)
                                     )
                                 }
                             },
                             placeholder = {
                                 Text(
-                                    text = if (viewModel.rules.isEmpty())
-                                        "Add rules to generate password"
-                                    else
-                                        "Password will appear here",
+                                    text = stringResource(
+                                        if (viewModel.rules.isEmpty())
+                                            R.string.add_rules_to_generate
+                                        else
+                                            R.string.password_will_appear_here
+                                    ),
                                     color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.6f)
                                 )
                             },
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                                unfocusedBorderColor = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.6f),
+                                unfocusedBorderColor = MaterialTheme.colorScheme.onTertiaryContainer.copy(
+                                    alpha = 0.6f
+                                ),
                                 focusedLabelColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                                unfocusedLabelColor = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.6f)
+                                unfocusedLabelColor = MaterialTheme.colorScheme.onTertiaryContainer.copy(
+                                    alpha = 0.6f
+                                )
                             )
                         )
 
                         if (generatedPassword.isNotEmpty()) {
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
                             Text(
-                                text = "Length: ${generatedPassword.length} characters",
+                                text = stringResource(R.string.password_length_format, generatedPassword.length),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.8f)
                             )
@@ -323,10 +363,10 @@ fun PasswordManagerScreen(
                         )
                     ) {
                         Column(
-                            modifier = Modifier.padding(12.dp)
+                            modifier = Modifier.padding(dimensionResource(R.dimen.spacing_medium))
                         ) {
                             Text(
-                                text = "Live Preview",
+                                text = stringResource(R.string.live_preview),
                                 style = MaterialTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Medium,
                                 color = MaterialTheme.colorScheme.onSecondaryContainer
@@ -334,7 +374,7 @@ fun PasswordManagerScreen(
 
                             if (serviceName.isNotEmpty()) {
                                 Text(
-                                    text = "Service: \"$serviceName\"",
+                                    text = stringResource(R.string.service_preview_format, serviceName),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSecondaryContainer
                                 )
@@ -342,7 +382,7 @@ fun PasswordManagerScreen(
 
                             if (userAccount.isNotEmpty()) {
                                 Text(
-                                    text = "Account: \"$userAccount\"",
+                                    text = stringResource(R.string.account_preview_format, userAccount),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSecondaryContainer
                                 )
@@ -357,22 +397,24 @@ fun PasswordManagerScreen(
                 onClick = { viewModel.saveCredential() },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !isLoading && serviceName.isNotBlank() && userAccount.isNotBlank() &&
-                         ((useTemplate && generatedPassword.isNotBlank()) || (!useTemplate && password.isNotBlank()))
+                        ((useTemplate && generatedPassword.isNotBlank()) || (!useTemplate && password.isNotBlank()))
             ) {
                 if (isLoading) {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(16.dp),
+                        modifier = Modifier.size(dimensionResource(R.dimen.spacing_large)),
                         color = MaterialTheme.colorScheme.onPrimary
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(dimensionResource(R.dimen.spacing_small)))
                 }
                 Text(
-                    if (credential != null) "Update Credential"
-                    else "Save Credential"
+                    stringResource(
+                        if (credential != null) R.string.update_credential
+                        else R.string.save_credential
+                    )
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_large)))
         }
     }
 }

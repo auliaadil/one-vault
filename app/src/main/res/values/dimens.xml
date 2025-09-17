@@ -39,4 +39,10 @@
 
     <!-- App specific sizes -->
     <dimen name="app_icon_size">120dp</dimen>
+
+    <!-- Layout heights -->
+    <dimen name="list_height_fixed">300dp</dimen>
+
+    <!-- Text character limits -->
+    <dimen name="character_input_limit">2</dimen>
 </resources>
