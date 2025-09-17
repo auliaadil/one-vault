@@ -45,8 +45,6 @@ sealed class Screen(val route: String) {
     object Settings : Screen("settings")
     object About : Screen("about")
     object PrivacyPolicy : Screen("privacy_policy")
-    object LLMChat : Screen("llm_chat")
-    object LLMChatSettings : Screen("llm_chat_settings")
 }
 
 @Composable
@@ -219,15 +217,6 @@ fun NavGraph(
             ImportExportScreen(
                 onNavigateBack = { navController.popBackStack() }
             )
-        }
-        composable(Screen.LLMChat.route) {
-            /*
-            val viewModel: GPT2ViewModel = koinViewModel()
-            GPT2Screen(
-                onNavigateBack = { navController.popBackStack() },
-                viewModel = viewModel
-            )
-             */
         }
     }
 }
