@@ -28,7 +28,7 @@ ktor = "2.3.12"
 kotlinxSerialization = "1.6.3"
 
 # ML Kit
-mlkit = "16.0.0"
+mlkit = "16.0.1"
 
 # Image Loading
 coil = "2.6.0"

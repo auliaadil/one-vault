@@ -7,7 +7,7 @@ data class Credential(
     val id: Long = 0L,
     val serviceName: String,
     val username: String,
-    val encryptedPassword: String,
+    val password: String,
     val passwordTemplate: String? = null, // JSON string storing password generation rules
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()

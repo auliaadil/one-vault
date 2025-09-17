@@ -7,17 +7,11 @@ import android.service.autofill.FillRequest
 import android.service.autofill.FillResponse
 import android.view.autofill.AutofillId
 import android.widget.RemoteViews
-import android.content.Intent
-import android.app.PendingIntent
 import android.os.CancellationSignal
-import com.adilstudio.project.onevault.presentation.credential.CredentialListScreen
 import com.adilstudio.project.onevault.domain.model.Credential
 import com.adilstudio.project.onevault.domain.repository.CredentialRepository
 import android.service.autofill.Dataset
 import android.view.autofill.AutofillValue
-import android.content.Context
-import android.text.TextUtils
-import com.adilstudio.project.onevault.data.security.SecurityManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -30,7 +24,6 @@ import androidx.annotation.RequiresApi
 @RequiresApi(Build.VERSION_CODES.O)
 class OneVaultAutofillService : AutofillService() {
     private val credentialRepository: CredentialRepository by inject()
-    private val securityManager: SecurityManager by inject()
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onFillRequest(
@@ -48,7 +41,7 @@ class OneVaultAutofillService : AutofillService() {
 
                     val datasets = credentials.map { credential ->
                         val usernameValue = AutofillValue.forText(credential.username)
-                        val passwordValue = AutofillValue.forText(credential.encryptedPassword)
+                        val passwordValue = AutofillValue.forText(credential.password)
                         Dataset.Builder()
                             .setValue(fields.usernameId, usernameValue, createRemoteViews(credential))
                             .setValue(fields.passwordId, passwordValue, createRemoteViews(credential))

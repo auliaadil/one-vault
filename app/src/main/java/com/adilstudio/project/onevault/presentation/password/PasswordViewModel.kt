@@ -176,7 +176,7 @@ class PasswordViewModel(
                     id = currentCredentialId ?: 0L,
                     serviceName = _serviceName.value,
                     username = _userAccount.value,
-                    encryptedPassword = finalPassword,
+                    password = finalPassword,
                     passwordTemplate = passwordTemplate
                 )
 
@@ -200,7 +200,7 @@ class PasswordViewModel(
         currentCredentialId = credential.id
         _serviceName.value = credential.serviceName
         _userAccount.value = credential.username
-        _password.value = credential.encryptedPassword
+        _password.value = credential.password
 
         // Load password template if exists
         val (useTemplate, rules) = PasswordTemplateHelper.deserializeTemplate(credential.passwordTemplate)

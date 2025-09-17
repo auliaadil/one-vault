@@ -16,8 +16,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.adilstudio.project.onevault.R
@@ -159,7 +157,7 @@ fun CredentialDetailDialog(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = credential.encryptedPassword,
+                            text = credential.password,
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.weight(1f),
                             maxLines = if (showPassword) Int.MAX_VALUE else 1
@@ -176,7 +174,7 @@ fun CredentialDetailDialog(
                             }
                             IconButton(
                                 onClick = {
-                                    clipboardManager.setText(AnnotatedString(credential.encryptedPassword))
+                                    clipboardManager.setText(AnnotatedString(credential.password))
                                 }
                             ) {
                                 Icon(

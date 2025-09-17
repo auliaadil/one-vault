@@ -7,7 +7,6 @@ import com.adilstudio.project.onevault.data.CredentialRepositoryImpl
 import com.adilstudio.project.onevault.data.SettingsRepositoryImpl
 import com.adilstudio.project.onevault.data.VaultFileRepositoryImpl
 import com.adilstudio.project.onevault.data.local.PreferenceManager
-import com.adilstudio.project.onevault.data.security.SecurityManager
 import com.adilstudio.project.onevault.domain.repository.AccountRepository
 import com.adilstudio.project.onevault.domain.repository.BillCategoryRepository
 import com.adilstudio.project.onevault.domain.repository.BillRepository
@@ -18,11 +17,10 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 val repositoryModule = module {
-    single { SecurityManager(androidContext()) }
     single { PreferenceManager(androidContext()) }
 
     single<BillRepository> { BillRepositoryImpl(get()) }
-    single<CredentialRepository> { CredentialRepositoryImpl(get(), get()) }
+    single<CredentialRepository> { CredentialRepositoryImpl(get()) }
     single<VaultFileRepository> { VaultFileRepositoryImpl(get()) }
     single<BillCategoryRepository> { BillCategoryRepositoryImpl(get()) }
     single<SettingsRepository> { SettingsRepositoryImpl(get()) }

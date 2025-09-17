@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface CredentialRepository {
     fun getCredentials(): Flow<List<Credential>>
-    suspend fun getCredentialById(id: Long): Credential?
     suspend fun addCredential(credential: Credential)
     suspend fun updateCredential(credential: Credential)
     suspend fun deleteCredential(id: Long)
