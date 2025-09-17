@@ -46,13 +46,6 @@ android {
         buildConfig = true
         dataBinding = true
     }
-
-    // Configure packaging options for TensorFlow Lite
-    packaging {
-        jniLibs {
-            pickFirsts += listOf("**/libc++_shared.so", "**/libjsc.so")
-        }
-    }
 }
 
 dependencies {
@@ -104,12 +97,6 @@ dependencies {
 
     // DataStore (for settings)
     implementation(libs.androidx.datastore.preferences)
-
-    // TensorFlow Lite for Local LLM
-    implementation(libs.tensorflow.lite)
-    implementation(libs.tensorflow.lite.support)
-    implementation(libs.tensorflow.lite.gpu) // For GPU acceleration
-    implementation(libs.tensorflow.lite.select.tf.ops) // For additional ops if needed
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
