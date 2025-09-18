@@ -23,6 +23,8 @@
     <string name="remove_image">Remove Image</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="no_bills_saved">No bills saved yet</string>
+    <string name="tap_plus_to_add_first_bill">Tap the + button to add your first bill</string>
 
     <!-- Bill Categories -->
     <string name="bill_categories">Bill Categories</string>
@@ -171,7 +173,7 @@
 
     <!-- Credential List -->
     <string name="no_credentials_saved">No credentials saved yet</string>
-    <string name="tap_plus_to_add_first">Tap the + button to add your first credential</string>
+    <string name="tap_plus_to_add_first_credential">Tap the + button to add your first credential</string>
     <string name="template_based">Template-based</string>
 
     <!-- Credential Detail Dialog -->

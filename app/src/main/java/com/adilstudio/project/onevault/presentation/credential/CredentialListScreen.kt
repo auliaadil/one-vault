@@ -10,9 +10,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.Credential
 import org.koin.androidx.compose.koinViewModel
@@ -20,7 +20,7 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CredentialListScreen(
-    viewModel: PasswordManagerViewModel = koinViewModel(),
+    viewModel: CredentialListViewModel = koinViewModel(),
     onAddCredential: () -> Unit,
     onEditCredential: (Credential) -> Unit = {}
 ) {
@@ -73,16 +73,16 @@ fun CredentialListScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = dimensionResource(R.dimen.spacing_large))
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
 
             // Success/Error message display
             successMessage?.let { message ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 8.dp),
+                        .padding(bottom = dimensionResource(R.dimen.spacing_small)),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer
                     )
@@ -90,7 +90,7 @@ fun CredentialListScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(12.dp),
+                            .padding(dimensionResource(R.dimen.spacing_xxs)),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -103,7 +103,7 @@ fun CredentialListScreen(
                         TextButton(
                             onClick = { viewModel.clearSuccessMessage() }
                         ) {
-                            Text("Dismiss")
+                            Text(stringResource(R.string.dismiss))
                         }
                     }
                 }
@@ -113,7 +113,7 @@ fun CredentialListScreen(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 8.dp),
+                        .padding(bottom = dimensionResource(R.dimen.spacing_small)),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.errorContainer
                     )
@@ -121,7 +121,7 @@ fun CredentialListScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(12.dp),
+                            .padding(dimensionResource(R.dimen.spacing_xxs)),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -134,7 +134,7 @@ fun CredentialListScreen(
                         TextButton(
                             onClick = { viewModel.clearError() }
                         ) {
-                            Text("Dismiss")
+                            Text(stringResource(R.string.dismiss))
                         }
                     }
                 }
@@ -152,13 +152,13 @@ fun CredentialListScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "No credentials saved yet",
+                            text = stringResource(R.string.no_credentials_saved),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
                         Text(
-                            text = "Tap the + button to add your first credential",
+                            text = stringResource(R.string.tap_plus_to_add_first_credential),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -168,7 +168,7 @@ fun CredentialListScreen(
                 // Credentials list
                 LazyColumn(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_small))
                 ) {
                     items(
                         items = credentials,
@@ -216,12 +216,12 @@ fun CredentialCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         onClick = onClick,
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.spacing_xs))
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(dimensionResource(R.dimen.spacing_large))
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -236,7 +236,7 @@ fun CredentialCard(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_xs)))
                     Text(
                         text = credential.username,
                         style = MaterialTheme.typography.bodyMedium,
@@ -245,17 +245,20 @@ fun CredentialCard(
 
                     // Show if it has a password template
                     if (!credential.passwordTemplate.isNullOrBlank()) {
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_xs)))
                         Card(
                             colors = CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer
                             )
                         ) {
                             Text(
-                                text = "Template-based",
+                                text = stringResource(R.string.template_based),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                modifier = Modifier.padding(
+                                    horizontal = dimensionResource(R.dimen.spacing_small),
+                                    vertical = dimensionResource(R.dimen.spacing_xxs)
+                                )
                             )
                         }
                     }
@@ -263,7 +266,7 @@ fun CredentialCard(
 
                 Row {
                     TextButton(onClick = onEdit) {
-                        Text("Edit")
+                        Text(stringResource(R.string.edit))
                     }
                     IconButton(
                         onClick = { showDeleteConfirmation = true }

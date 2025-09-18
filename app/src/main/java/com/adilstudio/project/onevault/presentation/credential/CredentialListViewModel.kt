@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class PasswordManagerViewModel(
+class CredentialListViewModel(
     private val deleteCredentialUseCase: DeleteCredentialUseCase,
     private val getCredentialsUseCase: GetCredentialsUseCase
 ) : ViewModel() {

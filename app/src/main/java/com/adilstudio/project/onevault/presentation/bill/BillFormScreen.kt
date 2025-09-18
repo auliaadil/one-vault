@@ -83,7 +83,7 @@ import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddEditBillScreen(
+fun BillFormScreen(
     bill: Bill? = null, // null for add, non-null for edit
     onSave: (Bill) -> Unit,
     onDelete: ((Long) -> Unit)? = null,

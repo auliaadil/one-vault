@@ -1,4 +1,4 @@
-package com.adilstudio.project.onevault.presentation.password
+package com.adilstudio.project.onevault.presentation.credential.credentialform
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,7 +39,7 @@ import com.adilstudio.project.onevault.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddRuleSection(
-    onAddRule: (PasswordRule) -> Unit,
+    onAddRule: (CredentialRule) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showAddDialog by remember { mutableStateOf(false) }
@@ -102,7 +102,7 @@ fun AddRuleSection(
 @Composable
 fun AddRuleDialog(
     onDismiss: () -> Unit,
-    onAddRule: (PasswordRule) -> Unit
+    onAddRule: (CredentialRule) -> Unit
 ) {
     var selectedRuleType by remember { mutableStateOf(RuleType.SERVICE_NAME) }
     var length by remember { mutableStateOf("3") }
@@ -238,15 +238,15 @@ fun AddRuleDialog(
             TextButton(
                 onClick = {
                     val rule = when (selectedRuleType) {
-                        RuleType.SERVICE_NAME -> PasswordRule.FromServiceName(
+                        RuleType.SERVICE_NAME -> CredentialRule.FromServiceName(
                             length = length.toIntOrNull() ?: 3,
                             casing = selectedCasing
                         )
-                        RuleType.USER_ACCOUNT -> PasswordRule.FromUserName(
+                        RuleType.USER_ACCOUNT -> CredentialRule.FromUserName(
                             length = length.toIntOrNull() ?: 3,
                             casing = selectedCasing
                         )
-                        RuleType.FIXED_STRING -> PasswordRule.FixedString(
+                        RuleType.FIXED_STRING -> CredentialRule.FixedString(
                             value = fixedString
                         )
                     }

@@ -1,4 +1,4 @@
-package com.adilstudio.project.onevault.presentation.password
+package com.adilstudio.project.onevault.presentation.credential.credentialform
 
 /**
  * Enum representing different text casing options for password rules
@@ -12,7 +12,7 @@ enum class Casing {
 /**
  * Sealed class representing different types of password generation rules
  */
-sealed class PasswordRule {
+sealed class CredentialRule {
     abstract val id: String
 
     /**
@@ -22,7 +22,7 @@ sealed class PasswordRule {
         override val id: String = "service_${System.currentTimeMillis()}",
         val length: Int = 3,
         val casing: Casing = Casing.LOWER
-    ) : PasswordRule()
+    ) : CredentialRule()
 
     /**
      * Rule that takes X first characters from user account with specified casing
@@ -31,7 +31,7 @@ sealed class PasswordRule {
         override val id: String = "user_${System.currentTimeMillis()}",
         val length: Int = 3,
         val casing: Casing = Casing.LOWER
-    ) : PasswordRule()
+    ) : CredentialRule()
 
     /**
      * Rule that adds a fixed string to the password
@@ -39,7 +39,7 @@ sealed class PasswordRule {
     data class FixedString(
         override val id: String = "fixed_${System.currentTimeMillis()}",
         val value: String = ""
-    ) : PasswordRule()
+    ) : CredentialRule()
 }
 
 /**

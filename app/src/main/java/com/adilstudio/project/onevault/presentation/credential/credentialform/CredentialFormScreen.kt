@@ -1,4 +1,4 @@
-package com.adilstudio.project.onevault.presentation.password
+package com.adilstudio.project.onevault.presentation.credential.credentialform
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -57,10 +57,10 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PasswordManagerScreen(
+fun CredentialFormScreen(
     credential: Credential? = null, // For editing existing credentials
     onNavigateBack: () -> Unit = {},
-    viewModel: PasswordViewModel = koinViewModel()
+    viewModel: CredentialFormViewModel = koinViewModel()
 ) {
     val serviceName by viewModel.serviceName.collectAsState()
     val userAccount by viewModel.userAccount.collectAsState()

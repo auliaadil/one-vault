@@ -15,14 +15,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.adilstudio.project.onevault.presentation.account.AccountsScreen
-import com.adilstudio.project.onevault.presentation.bill.AddEditBillScreen
+import com.adilstudio.project.onevault.presentation.bill.BillFormScreen
 import com.adilstudio.project.onevault.presentation.bill.BillListScreen
 import com.adilstudio.project.onevault.presentation.bill.BillTrackerViewModel
 import com.adilstudio.project.onevault.presentation.bill.category.BillCategoriesScreen
 import com.adilstudio.project.onevault.presentation.credential.CredentialListScreen
-import com.adilstudio.project.onevault.presentation.credential.PasswordManagerViewModel
+import com.adilstudio.project.onevault.presentation.credential.CredentialListViewModel
 import com.adilstudio.project.onevault.presentation.filevault.FileVaultScreen
-import com.adilstudio.project.onevault.presentation.password.PasswordManagerScreen
+import com.adilstudio.project.onevault.presentation.credential.credentialform.CredentialFormScreen
 import com.adilstudio.project.onevault.presentation.settings.AboutScreen
 import com.adilstudio.project.onevault.presentation.settings.ImportExportScreen
 import com.adilstudio.project.onevault.presentation.settings.PrivacyPolicyScreen
@@ -68,7 +68,7 @@ fun NavGraph(
         }
         composable(Screen.AddBill.route) {
             val viewModel: BillTrackerViewModel = koinViewModel()
-            AddEditBillScreen(
+            BillFormScreen(
                 onSave = { bill ->
                     viewModel.addBill(bill)
                     navController.popBackStack()
@@ -100,7 +100,7 @@ fun NavGraph(
                     CircularProgressIndicator()
                 }
             } else {
-                AddEditBillScreen(
+                BillFormScreen(
                     bill = bill,
                     onSave = { updatedBill ->
                         viewModel.updateBill(updatedBill)
@@ -129,13 +129,13 @@ fun NavGraph(
             )
         }
         composable(Screen.AddCredential.route) {
-            PasswordManagerScreen(
+            CredentialFormScreen(
                 credential = null, // For new credentials
                 onNavigateBack = { navController.popBackStack() }
             )
         }
         composable(Screen.EditCredential.route) {
-            val viewModel: PasswordManagerViewModel = koinViewModel()
+            val viewModel: CredentialListViewModel = koinViewModel()
             // Get credential ID from previous screen
             val credentialId =
                 navController.previousBackStackEntry?.savedStateHandle?.get<Long>("credentialId")
@@ -159,7 +159,7 @@ fun NavGraph(
                     CircularProgressIndicator()
                 }
             } else {
-                PasswordManagerScreen(
+                CredentialFormScreen(
                     credential = credential,
                     onNavigateBack = { navController.popBackStack() }
                 )

@@ -72,7 +72,6 @@ fun BillListScreen(
     ) { paddingValues ->
         BillListContent(
             bills = bills,
-            onAddBill = onAddBill,
             onEditBill = onEditBill,
             modifier = Modifier.padding(paddingValues)
         )
@@ -82,62 +81,92 @@ fun BillListScreen(
 @Composable
 fun BillListContent(
     bills: List<Bill>,
-    onAddBill: () -> Unit,
     onEditBill: (Bill) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(modifier = modifier) {
-        items(bills.size) { idx ->
-            val bill = bills[idx]
-            Card(
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+    ) {
+        if (bills.isEmpty()) {
+            // Empty state
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = dimensionResource(R.dimen.spacing_xs)),
-                onClick = { onEditBill(bill) }
+                    .weight(1f),
+                contentAlignment = Alignment.Center
             ) {
-                Column(modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.Top
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(R.string.no_bills_saved),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
+                    Text(
+                        text = stringResource(R.string.tap_plus_to_add_first_bill),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        } else {
+            LazyColumn(modifier = modifier) {
+                items(bills.size) { idx ->
+                    val bill = bills[idx]
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = dimensionResource(R.dimen.spacing_xs)),
+                        onClick = { onEditBill(bill) }
                     ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(bill.title, style = MaterialTheme.typography.titleMedium)
-                            Text("${RupiahFormatter.formatWithRupiahPrefix(bill.amount.toLong())} - ${bill.vendor}")
+                        Column(modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.Top
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(bill.title, style = MaterialTheme.typography.titleMedium)
+                                    Text("${RupiahFormatter.formatWithRupiahPrefix(bill.amount.toLong())} - ${bill.vendor}")
 
-                            // Display formatted date
-                            val formattedDate =
-                                DateUtil.isoStringToLocalDate(bill.billDate)?.let { date ->
-                                    DateUtil.formatDateForDisplay(date)
-                                } ?: bill.billDate
-                            Text(
-                                stringResource(R.string.date_label, formattedDate),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                                    // Display formatted date
+                                    val formattedDate =
+                                        DateUtil.isoStringToLocalDate(bill.billDate)?.let { date ->
+                                            DateUtil.formatDateForDisplay(date)
+                                        } ?: bill.billDate
+                                    Text(
+                                        stringResource(R.string.date_label, formattedDate),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
 
-                            // Display category or "No Category" if null
-                            Text(
-                                stringResource(
-                                    R.string.category_label,
-                                    bill.category ?: stringResource(R.string.no_category)
-                                ),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
+                                    // Display category or "No Category" if null
+                                    Text(
+                                        stringResource(
+                                            R.string.category_label,
+                                            bill.category ?: stringResource(R.string.no_category)
+                                        ),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
 
-                        // Show attachment icon if image exists
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            if (bill.imagePath != null) {
-                                Icon(
-                                    imageVector = Icons.Default.AttachFile,
-                                    contentDescription = stringResource(R.string.has_attachment),
-                                    modifier = Modifier.size(dimensionResource(R.dimen.icon_size_small)),
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
+                                // Show attachment icon if image exists
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    if (bill.imagePath != null) {
+                                        Icon(
+                                            imageVector = Icons.Default.AttachFile,
+                                            contentDescription = stringResource(R.string.has_attachment),
+                                            modifier = Modifier.size(dimensionResource(R.dimen.icon_size_small)),
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+                                }
                             }
                         }
                     }

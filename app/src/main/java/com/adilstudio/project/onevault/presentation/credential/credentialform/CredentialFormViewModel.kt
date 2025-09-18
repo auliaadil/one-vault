@@ -1,4 +1,4 @@
-package com.adilstudio.project.onevault.presentation.password
+package com.adilstudio.project.onevault.presentation.credential.credentialform
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class PasswordViewModel(
+class CredentialFormViewModel(
     private val addCredentialUseCase: AddCredentialUseCase,
     private val updateCredentialUseCase: UpdateCredentialUseCase
 ) : ViewModel() {
@@ -31,8 +31,8 @@ class PasswordViewModel(
     val useTemplate: StateFlow<Boolean> = _useTemplate.asStateFlow()
 
     // Rules list - using mutableStateListOf for automatic Compose recomposition
-    private val _rules: SnapshotStateList<PasswordRule> = mutableStateListOf()
-    val rules: List<PasswordRule> = _rules
+    private val _rules: SnapshotStateList<CredentialRule> = mutableStateListOf()
+    val rules: List<CredentialRule> = _rules
 
     private val _generatedPassword = MutableStateFlow("")
     val generatedPassword: StateFlow<String> = _generatedPassword.asStateFlow()
@@ -79,7 +79,7 @@ class PasswordViewModel(
         }
     }
 
-    fun addRule(rule: PasswordRule) {
+    fun addRule(rule: CredentialRule) {
         _rules.add(rule)
         if (_useTemplate.value) {
             generatePassword()
@@ -93,7 +93,7 @@ class PasswordViewModel(
         }
     }
 
-    fun updateRule(updatedRule: PasswordRule) {
+    fun updateRule(updatedRule: CredentialRule) {
         val index = _rules.indexOfFirst { it.id == updatedRule.id }
         if (index >= 0) {
             _rules[index] = updatedRule
@@ -126,19 +126,19 @@ class PasswordViewModel(
 
         _rules.forEach { rule ->
             when (rule) {
-                is PasswordRule.FromServiceName -> {
+                is CredentialRule.FromServiceName -> {
                     if (serviceNameValue.isNotEmpty()) {
                         val chars = serviceNameValue.take(rule.length)
                         passwordBuilder.append(chars.applyCasing(rule.casing))
                     }
                 }
-                is PasswordRule.FromUserName -> {
+                is CredentialRule.FromUserName -> {
                     if (userAccountValue.isNotEmpty()) {
                         val chars = userAccountValue.take(rule.length)
                         passwordBuilder.append(chars.applyCasing(rule.casing))
                     }
                 }
-                is PasswordRule.FixedString -> {
+                is CredentialRule.FixedString -> {
                     passwordBuilder.append(rule.value)
                 }
             }

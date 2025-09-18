@@ -1,4 +1,4 @@
-package com.adilstudio.project.onevault.presentation.password
+package com.adilstudio.project.onevault.presentation.credential.credentialform
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -22,9 +21,9 @@ import com.adilstudio.project.onevault.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RuleItem(
-    rule: PasswordRule,
+    rule: CredentialRule,
     isDragging: Boolean = false,
-    onRuleUpdate: (PasswordRule) -> Unit,
+    onRuleUpdate: (CredentialRule) -> Unit,
     onRuleDelete: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -70,7 +69,7 @@ fun RuleItem(
             // Rule description
             Column(modifier = Modifier.weight(1f)) {
                 when (rule) {
-                    is PasswordRule.FromServiceName -> {
+                    is CredentialRule.FromServiceName -> {
                         Text(
                             text = "Service Name",
                             style = MaterialTheme.typography.labelMedium,
@@ -83,7 +82,7 @@ fun RuleItem(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    is PasswordRule.FromUserName -> {
+                    is CredentialRule.FromUserName -> {
                         Text(
                             text = "User Account",
                             style = MaterialTheme.typography.labelMedium,
@@ -96,7 +95,7 @@ fun RuleItem(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    is PasswordRule.FixedString -> {
+                    is CredentialRule.FixedString -> {
                         Text(
                             text = "Fixed String",
                             style = MaterialTheme.typography.labelMedium,
@@ -155,15 +154,15 @@ fun RuleItem(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditRuleDialog(
-    rule: PasswordRule,
+    rule: CredentialRule,
     onDismiss: () -> Unit,
-    onSave: (PasswordRule) -> Unit
+    onSave: (CredentialRule) -> Unit
 ) {
     var length by remember {
         mutableStateOf(
             when (rule) {
-                is PasswordRule.FromServiceName -> rule.length.toString()
-                is PasswordRule.FromUserName -> rule.length.toString()
+                is CredentialRule.FromServiceName -> rule.length.toString()
+                is CredentialRule.FromUserName -> rule.length.toString()
                 else -> "3"
             }
         )
@@ -171,8 +170,8 @@ fun EditRuleDialog(
     var selectedCasing by remember {
         mutableStateOf(
             when (rule) {
-                is PasswordRule.FromServiceName -> rule.casing
-                is PasswordRule.FromUserName -> rule.casing
+                is CredentialRule.FromServiceName -> rule.casing
+                is CredentialRule.FromUserName -> rule.casing
                 else -> Casing.LOWER
             }
         )
@@ -180,7 +179,7 @@ fun EditRuleDialog(
     var fixedString by remember {
         mutableStateOf(
             when (rule) {
-                is PasswordRule.FixedString -> rule.value
+                is CredentialRule.FixedString -> rule.value
                 else -> ""
             }
         )
@@ -192,9 +191,9 @@ fun EditRuleDialog(
         title = {
             Text(
                 text = when (rule) {
-                    is PasswordRule.FromServiceName -> "Edit Service Name Rule"
-                    is PasswordRule.FromUserName -> "Edit User Account Rule"
-                    is PasswordRule.FixedString -> "Edit Fixed String Rule"
+                    is CredentialRule.FromServiceName -> "Edit Service Name Rule"
+                    is CredentialRule.FromUserName -> "Edit User Account Rule"
+                    is CredentialRule.FixedString -> "Edit Fixed String Rule"
                 }
             )
         },
@@ -203,7 +202,7 @@ fun EditRuleDialog(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 when (rule) {
-                    is PasswordRule.FromServiceName, is PasswordRule.FromUserName -> {
+                    is CredentialRule.FromServiceName, is CredentialRule.FromUserName -> {
                         OutlinedTextField(
                             value = length,
                             onValueChange = { newLength ->
@@ -225,7 +224,7 @@ fun EditRuleDialog(
                                 label = { Text("Casing") },
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .menuAnchor(),
+                                    .menuAnchor(MenuAnchorType.PrimaryNotEditable),
                                 readOnly = true,
                                 trailingIcon = {
                                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = showCasingDropdown)
@@ -236,7 +235,7 @@ fun EditRuleDialog(
                                 expanded = showCasingDropdown,
                                 onDismissRequest = { showCasingDropdown = false }
                             ) {
-                                Casing.values().forEach { casing ->
+                                Casing.entries.forEach { casing ->
                                     DropdownMenuItem(
                                         text = {
                                             Text(casing.name.lowercase().replaceFirstChar { it.uppercase() })
@@ -250,7 +249,7 @@ fun EditRuleDialog(
                             }
                         }
                     }
-                    is PasswordRule.FixedString -> {
+                    is CredentialRule.FixedString -> {
                         OutlinedTextField(
                             value = fixedString,
                             onValueChange = { fixedString = it },
@@ -265,15 +264,15 @@ fun EditRuleDialog(
             TextButton(
                 onClick = {
                     val updatedRule = when (rule) {
-                        is PasswordRule.FromServiceName -> rule.copy(
+                        is CredentialRule.FromServiceName -> rule.copy(
                             length = length.toIntOrNull() ?: 3,
                             casing = selectedCasing
                         )
-                        is PasswordRule.FromUserName -> rule.copy(
+                        is CredentialRule.FromUserName -> rule.copy(
                             length = length.toIntOrNull() ?: 3,
                             casing = selectedCasing
                         )
-                        is PasswordRule.FixedString -> rule.copy(
+                        is CredentialRule.FixedString -> rule.copy(
                             value = fixedString
                         )
                     }

@@ -13,17 +13,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.BillCategory
 import com.adilstudio.project.onevault.domain.model.CategoryType
+import androidx.core.graphics.toColorInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddEditCategoryDialog(
+fun CategoryFormDialog(
     category: BillCategory? = null,
     onDismiss: () -> Unit,
     onSave: (name: String, icon: String, color: String, type: CategoryType) -> Unit
@@ -112,7 +112,7 @@ fun AddEditCategoryDialog(
                                 modifier = Modifier
                                     .size(32.dp)
                                     .clip(CircleShape)
-                                    .background(Color(android.graphics.Color.parseColor(color)))
+                                    .background(Color(color.toColorInt()))
                                     .clickable { selectedColor = color }
                             ) {
                                 if (selectedColor == color) {
@@ -140,7 +140,7 @@ fun AddEditCategoryDialog(
                     Text(stringResource(R.string.category_type), style = MaterialTheme.typography.labelMedium)
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    CategoryType.values().forEach { type ->
+                    CategoryType.entries.forEach { type ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -175,7 +175,7 @@ fun AddEditCategoryDialog(
                             modifier = Modifier
                                 .size(48.dp)
                                 .clip(CircleShape)
-                                .background(Color(android.graphics.Color.parseColor(selectedColor))),
+                                .background(Color(selectedColor.toColorInt())),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
