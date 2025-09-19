@@ -267,6 +267,25 @@
     <string name="biometric_error_user_cancel">Authentication was cancelled</string>
     <string name="biometric_error_generic">Authentication error occurred</string>
 
+    <!-- Biometric App Lock -->
+    <string name="biometric_unlock_title">Unlock OneVault</string>
+    <string name="biometric_unlock_subtitle">Verify your identity to continue</string>
+    <string name="biometric_unlock_description">Use your biometric credential to unlock the app</string>
+    <string name="app_locked_title">App Locked</string>
+    <string name="app_locked_description">Please authenticate to unlock OneVault and access your data</string>
+    <string name="unlock_with_biometric">Unlock with Biometric</string>
+    <string name="authenticating">Authenticating...</string>
+    <string name="biometric_not_available">Biometric authentication is not available</string>
+    <string name="exit_app">Exit App</string>
+
+    <!-- App Lock Timeout -->
+    <string name="app_lock_timeout">App Lock Timeout</string>
+    <string name="app_lock_timeout_description">Choose when the app should lock after being minimized</string>
+    <string name="timeout_5_seconds">5 seconds</string>
+    <string name="timeout_30_seconds">30 seconds</string>
+    <string name="timeout_1_minute">1 minute</string>
+    <string name="timeout_5_minutes">5 minutes</string>
+
     <!-- About Screen -->
     <string name="app_description">OneVault is a secure, local-first Android application that helps you manage your financial bills, store passwords safely, and organize your important files. All your data is stored locally on your device to ensure maximum privacy and security.</string>
     <string name="key_features">Key Features</string>

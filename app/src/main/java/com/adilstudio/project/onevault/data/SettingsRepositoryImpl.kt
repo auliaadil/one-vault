@@ -15,4 +15,12 @@ class SettingsRepositoryImpl(
     override fun getBiometricEnabled(): Flow<Boolean> {
         return preferenceManager.getBiometricEnabledFlow()
     }
+
+    override suspend fun setAppLockTimeout(timeoutMs: Long) {
+        preferenceManager.setAppLockTimeout(timeoutMs)
+    }
+
+    override fun getAppLockTimeout(): Flow<Long> {
+        return preferenceManager.getAppLockTimeoutFlow()
+    }
 }

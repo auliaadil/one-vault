@@ -3,6 +3,7 @@ package com.adilstudio.project.onevault.di
 import com.adilstudio.project.onevault.presentation.account.AccountViewModel
 import com.adilstudio.project.onevault.presentation.bill.BillTrackerViewModel
 import com.adilstudio.project.onevault.presentation.bill.category.BillCategoryViewModel
+import com.adilstudio.project.onevault.presentation.biometric.BiometricLockViewModel
 import com.adilstudio.project.onevault.presentation.credential.CredentialListViewModel
 import com.adilstudio.project.onevault.presentation.filevault.FileVaultViewModel
 import com.adilstudio.project.onevault.presentation.credential.credentialform.CredentialFormViewModel
@@ -18,4 +19,5 @@ val viewModelModule = module {
     viewModel { SettingsViewModel(get()) }
     viewModel { AccountViewModel(get(), get(), get(), get(), get()) }
     viewModel { CredentialFormViewModel(get(), get()) }
+    viewModel { BiometricLockViewModel(get()) }
 }

@@ -1,37 +1,30 @@
 package com.adilstudio.project.onevault.presentation.settings
 
-import android.app.Application
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.adilstudio.project.onevault.R
+import com.adilstudio.project.onevault.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-private val Application.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
-
 class SettingsViewModel(
-    application: Application
-) : AndroidViewModel(application) {
+    private val settingsRepository: SettingsRepository
+) : ViewModel() {
 
     private val _biometricEnabled = MutableStateFlow(false)
     val biometricEnabled: StateFlow<Boolean> = _biometricEnabled.asStateFlow()
 
+    private val _appLockTimeout = MutableStateFlow(30000L) // Default 30 seconds
+    val appLockTimeout: StateFlow<Long> = _appLockTimeout.asStateFlow()
+
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
-
-    private val BIOMETRIC_ENABLED_KEY = booleanPreferencesKey("biometric_enabled")
 
     init {
         loadSettings()
@@ -39,11 +32,21 @@ class SettingsViewModel(
 
     private fun loadSettings() {
         viewModelScope.launch {
-            getApplication<Application>().dataStore.data.map { preferences ->
-                preferences[BIOMETRIC_ENABLED_KEY] ?: false
-            }.collect { enabled ->
+            settingsRepository.getBiometricEnabled().collect { enabled ->
                 _biometricEnabled.value = enabled
             }
+        }
+        viewModelScope.launch {
+            settingsRepository.getAppLockTimeout().collect { timeout ->
+                _appLockTimeout.value = timeout
+            }
+        }
+    }
+
+    fun setAppLockTimeout(timeoutMs: Long) {
+        viewModelScope.launch {
+            settingsRepository.setAppLockTimeout(timeoutMs)
+            _appLockTimeout.value = timeoutMs
         }
     }
 
@@ -67,6 +70,11 @@ class SettingsViewModel(
             BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
                 _errorMessage.value = activity.getString(R.string.biometric_error_no_biometrics)
             }
+            BiometricManager.BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED,
+            BiometricManager.BIOMETRIC_ERROR_UNSUPPORTED,
+            BiometricManager.BIOMETRIC_STATUS_UNKNOWN -> {
+                _errorMessage.value = activity.getString(R.string.biometric_error_hw_unavailable)
+            }
         }
     }
 
@@ -76,9 +84,7 @@ class SettingsViewModel(
 
     private fun setBiometricEnabled(enabled: Boolean) {
         viewModelScope.launch {
-            getApplication<Application>().dataStore.edit { preferences ->
-                preferences[BIOMETRIC_ENABLED_KEY] = enabled
-            }
+            settingsRepository.setBiometricEnabled(enabled)
             _biometricEnabled.value = enabled
         }
     }

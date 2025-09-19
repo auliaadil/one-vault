@@ -26,7 +26,10 @@ fun SettingsScreen(
     val context = LocalContext.current
     val activity = context as? FragmentActivity
     val biometricEnabled by viewModel.biometricEnabled.collectAsState()
+    val appLockTimeout by viewModel.appLockTimeout.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
+
+    var showTimeoutDialog by remember { mutableStateOf(false) }
 
     // Show error message if any
     errorMessage?.let { message ->
@@ -34,6 +37,17 @@ fun SettingsScreen(
             // You can show a Snackbar or Toast here
             // For now, we'll just clear the error after showing it
             viewModel.clearErrorMessage()
+        }
+    }
+
+    // Helper function to get timeout display text
+    fun getTimeoutDisplayText(timeoutMs: Long): String {
+        return when (timeoutMs) {
+            0L -> context.getString(R.string.timeout_5_seconds)
+            30_000L -> context.getString(R.string.timeout_30_seconds)
+            60_000L -> context.getString(R.string.timeout_1_minute)
+            300_000L -> context.getString(R.string.timeout_5_minutes)
+            else -> context.getString(R.string.timeout_30_seconds)
         }
     }
 
@@ -105,6 +119,16 @@ fun SettingsScreen(
                 }
             )
 
+            // App Lock Timeout (only show if biometric is enabled)
+            if (biometricEnabled) {
+                SettingsClickableItem(
+                    icon = Icons.Default.Timer,
+                    title = stringResource(R.string.app_lock_timeout),
+                    subtitle = getTimeoutDisplayText(appLockTimeout),
+                    onClick = { showTimeoutDialog = true }
+                )
+            }
+
             Spacer(modifier = Modifier.weight(1f))
 
             // App Version
@@ -127,6 +151,18 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
         }
+    }
+
+    // Show timeout selection dialog
+    if (showTimeoutDialog) {
+        AppLockTimeoutDialog(
+            currentTimeout = appLockTimeout,
+            onTimeoutSelected = { timeout ->
+                viewModel.setAppLockTimeout(timeout)
+                showTimeoutDialog = false
+            },
+            onDismiss = { showTimeoutDialog = false }
+        )
     }
 }
 
@@ -159,6 +195,51 @@ private fun SettingsItem(
                 style = MaterialTheme.typography.bodyLarge
             )
             Spacer(modifier = Modifier.weight(1f))
+            Icon(
+                imageVector = Icons.Default.ChevronRight,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun SettingsClickableItem(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    title: String,
+    subtitle: String,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        onClick = onClick
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
             Icon(
                 imageVector = Icons.Default.ChevronRight,
                 contentDescription = null,
