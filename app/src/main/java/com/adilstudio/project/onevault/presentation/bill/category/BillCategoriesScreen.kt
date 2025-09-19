@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.dp
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.BillCategory
 import com.adilstudio.project.onevault.domain.model.CategoryType
+import com.adilstudio.project.onevault.presentation.component.BackNavigationIcon
+import com.adilstudio.project.onevault.presentation.component.GenericScaffold
 import org.koin.androidx.compose.koinViewModel
 
 @Preview
@@ -44,7 +46,6 @@ fun BillCategoriesScreen(
     // Handle error messages
     LaunchedEffect(error) {
         error?.let {
-            // Handle error display - you could show a snackbar here
             viewModel.clearError()
         }
     }
@@ -52,65 +53,20 @@ fun BillCategoriesScreen(
     // Handle success messages
     LaunchedEffect(successMessage) {
         successMessage?.let {
-            // Handle success display - you could show a snackbar here
             viewModel.clearSuccessMessage()
         }
     }
 
-    // Success/Error message display
-    successMessage?.let { message ->
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
-            )
-        ) {
-            Text(
-                text = message,
-                modifier = Modifier.padding(16.dp),
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
-    }
-
-    error?.let { message ->
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.errorContainer
-            )
-        ) {
-            Text(
-                text = message,
-                modifier = Modifier.padding(16.dp),
-                color = MaterialTheme.colorScheme.onErrorContainer,
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        // Header
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                stringResource(R.string.bill_categories),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
-
+    GenericScaffold(
+        title = stringResource(R.string.bill_categories),
+        navigationIcon = {
+            BackNavigationIcon(onNavigateBack = onNavigateBack)
+        },
+        successMessage = successMessage,
+        errorMessage = error,
+        onClearSuccess = { viewModel.clearSuccessMessage() },
+        onClearError = { viewModel.clearError() },
+        floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAddDialog = true },
                 modifier = Modifier.size(56.dp)
@@ -118,9 +74,7 @@ fun BillCategoriesScreen(
                 Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_category))
             }
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
+    ) { _ ->
         if (isLoading) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -163,7 +117,7 @@ fun BillCategoriesScreen(
 
     // Add/Edit Category Dialog
     if (showAddDialog || editingCategory != null) {
-        AddEditCategoryDialog(
+        CategoryFormDialog(
             category = editingCategory,
             onDismiss = {
                 showAddDialog = false

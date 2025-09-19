@@ -1,25 +1,47 @@
 package com.adilstudio.project.onevault.presentation.account
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.Account
+import com.adilstudio.project.onevault.presentation.component.BackNavigationIcon
+import com.adilstudio.project.onevault.presentation.component.GenericScaffold
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,22 +78,15 @@ fun AccountsScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(stringResource(R.string.accounts))
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back)
-                        )
-                    }
-                }
-            )
+    GenericScaffold(
+        title = stringResource(R.string.accounts),
+        navigationIcon = {
+            BackNavigationIcon(onNavigateBack = onNavigateBack)
         },
+        successMessage = successMessage,
+        errorMessage = error,
+        onClearSuccess = { viewModel.clearSuccessMessage() },
+        onClearError = { viewModel.clearError() },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAddDialog = true }
@@ -79,68 +94,24 @@ fun AccountsScreen(
                 Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_account))
             }
         }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(dimensionResource(R.dimen.spacing_large))
-        ) {
-            // Success/Error message display
-            successMessage?.let { message ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = dimensionResource(R.dimen.spacing_small)),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
-                    )
-                ) {
-                    Text(
-                        text = message,
-                        modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large)),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
+    ) { _ ->
+        if (isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
-
-            error?.let { message ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = dimensionResource(R.dimen.spacing_small)),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.errorContainer
+        } else {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_small))
+            ) {
+                items(accounts) { account ->
+                    AccountCard(
+                        account = account,
+                        onEdit = { editingAccount = it },
+                        onDelete = { accountToDelete = it }
                     )
-                ) {
-                    Text(
-                        text = message,
-                        modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large)),
-                        color = MaterialTheme.colorScheme.onErrorContainer,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
-
-            if (isLoading) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            } else {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_small))
-                ) {
-                    items(accounts) { account ->
-                        AccountCard(
-                            account = account,
-                            onEdit = { editingAccount = it },
-                            onDelete = { accountToDelete = it }
-                        )
-                    }
                 }
             }
         }

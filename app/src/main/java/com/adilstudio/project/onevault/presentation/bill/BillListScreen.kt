@@ -21,6 +21,8 @@ import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.Bill
 import com.adilstudio.project.onevault.presentation.bill.category.BillCategoryViewModel
 import com.adilstudio.project.onevault.presentation.bill.category.createDefaultCategories
+import com.adilstudio.project.onevault.presentation.component.EmptyState
+import com.adilstudio.project.onevault.presentation.component.SimpleGenericScaffold
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,25 +43,21 @@ fun BillListScreen(
         categoryViewModel.checkAndInitializeDefaultCategories(defaultCategories)
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.bills)) },
-                actions = {
-                    OutlinedButton(onClick = onManageCategories) {
-                        Icon(
-                            Icons.Default.Category,
-                            contentDescription = stringResource(R.string.manage_categories)
-                        )
-                    }
-                    OutlinedButton(onClick = onManageAccounts) {
-                        Icon(
-                            Icons.Default.AccountBalanceWallet,
-                            contentDescription = stringResource(R.string.accounts)
-                        )
-                    }
-                }
-            )
+    SimpleGenericScaffold(
+        title = stringResource(R.string.bills),
+        actions = {
+            OutlinedButton(onClick = onManageCategories) {
+                Icon(
+                    Icons.Default.Category,
+                    contentDescription = stringResource(R.string.manage_categories)
+                )
+            }
+            OutlinedButton(onClick = onManageAccounts) {
+                Icon(
+                    Icons.Default.AccountBalanceWallet,
+                    contentDescription = stringResource(R.string.accounts)
+                )
+            }
         },
         floatingActionButton = {
             FloatingActionButton(onClick = onAddBill) {
@@ -89,38 +87,23 @@ fun BillListContent(
             .fillMaxSize()
     ) {
         if (bills.isEmpty()) {
-            // Empty state
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = stringResource(R.string.no_bills_saved),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
-                    Text(
-                        text = stringResource(R.string.tap_plus_to_add_first_bill),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
+            EmptyState(
+                title = stringResource(R.string.no_bills_saved),
+                description = stringResource(R.string.tap_plus_to_add_first_bill),
+                modifier = modifier
+            )
         } else {
-            LazyColumn(modifier = modifier) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_small))
+            ) {
                 items(bills.size) { idx ->
                     val bill = bills[idx]
                     Card(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = dimensionResource(R.dimen.spacing_xs)),
-                        onClick = { onEditBill(bill) }
+                            .fillMaxWidth(),
+                        onClick = { onEditBill(bill) },
+                        elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.spacing_xs))
                     ) {
                         Column(modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))) {
                             Row(

@@ -15,6 +15,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.Credential
+import com.adilstudio.project.onevault.presentation.component.EmptyState
+import com.adilstudio.project.onevault.presentation.component.GenericScaffold
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,14 +52,12 @@ fun CredentialListScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = stringResource(R.string.credentials))
-                }
-            )
-        },
+    GenericScaffold(
+        title = stringResource(R.string.credentials),
+        successMessage = successMessage,
+        errorMessage = error,
+        onClearSuccess = { viewModel.clearSuccessMessage() },
+        onClearError = { viewModel.clearError() },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddCredential
@@ -69,118 +69,28 @@ fun CredentialListScreen(
             }
         }
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = dimensionResource(R.dimen.spacing_large))
-        ) {
-            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
-
-            // Success/Error message display
-            successMessage?.let { message ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = dimensionResource(R.dimen.spacing_small)),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
+        if (credentials.isEmpty()) {
+            EmptyState(
+                title = stringResource(R.string.no_credentials_saved),
+                description = stringResource(R.string.tap_plus_to_add_first_credential),
+                modifier = Modifier.padding(paddingValues)
+            )
+        } else {
+            // Credentials list
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_small))
+            ) {
+                items(
+                    items = credentials,
+                    key = { it.id }
+                ) { credential ->
+                    CredentialCard(
+                        credential = credential,
+                        onClick = { selectedCredential = credential },
+                        onEdit = { onEditCredential(credential) },
+                        onDelete = { viewModel.deleteCredential(credential.id) }
                     )
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(dimensionResource(R.dimen.spacing_xxs)),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = message,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.weight(1f)
-                        )
-                        TextButton(
-                            onClick = { viewModel.clearSuccessMessage() }
-                        ) {
-                            Text(stringResource(R.string.dismiss))
-                        }
-                    }
-                }
-            }
-
-            error?.let { errorMessage ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = dimensionResource(R.dimen.spacing_small)),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.errorContainer
-                    )
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(dimensionResource(R.dimen.spacing_xxs)),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = errorMessage,
-                            color = MaterialTheme.colorScheme.onErrorContainer,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.weight(1f)
-                        )
-                        TextButton(
-                            onClick = { viewModel.clearError() }
-                        ) {
-                            Text(stringResource(R.string.dismiss))
-                        }
-                    }
-                }
-            }
-
-            if (credentials.isEmpty()) {
-                // Empty state
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = stringResource(R.string.no_credentials_saved),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
-                        Text(
-                            text = stringResource(R.string.tap_plus_to_add_first_credential),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            } else {
-                // Credentials list
-                LazyColumn(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_small))
-                ) {
-                    items(
-                        items = credentials,
-                        key = { it.id }
-                    ) { credential ->
-                        CredentialCard(
-                            credential = credential,
-                            onClick = { selectedCredential = credential },
-                            onEdit = { onEditCredential(credential) },
-                            onDelete = { viewModel.deleteCredential(credential.id) }
-                        )
-                    }
                 }
             }
         }
