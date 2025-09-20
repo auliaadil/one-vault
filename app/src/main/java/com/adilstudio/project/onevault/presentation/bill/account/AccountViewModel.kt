@@ -1,4 +1,4 @@
-package com.adilstudio.project.onevault.presentation.account
+package com.adilstudio.project.onevault.presentation.bill.account
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -106,20 +106,6 @@ class AccountViewModel(
                 _successMessage.value = "Account deleted successfully"
             } catch (e: Exception) {
                 _error.value = "Failed to delete account: ${e.message}"
-            }
-        }
-    }
-
-    fun updateAccountBalance(accountId: String, newBalance: Double) {
-        viewModelScope.launch {
-            try {
-                val account = _accounts.value.find { it.id == accountId }
-                account?.let {
-                    updateAccount(it.copy(amount = newBalance))
-                    _successMessage.value = "Account balance updated successfully"
-                }
-            } catch (e: Exception) {
-                _error.value = "Failed to update account balance: ${e.message}"
             }
         }
     }

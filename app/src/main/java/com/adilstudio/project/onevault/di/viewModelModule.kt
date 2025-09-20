@@ -1,6 +1,6 @@
 package com.adilstudio.project.onevault.di
 
-import com.adilstudio.project.onevault.presentation.account.AccountViewModel
+import com.adilstudio.project.onevault.presentation.bill.account.AccountViewModel
 import com.adilstudio.project.onevault.presentation.bill.BillTrackerViewModel
 import com.adilstudio.project.onevault.presentation.bill.category.BillCategoryViewModel
 import com.adilstudio.project.onevault.presentation.biometric.BiometricLockViewModel

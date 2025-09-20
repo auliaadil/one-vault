@@ -14,7 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.adilstudio.project.onevault.presentation.account.AccountsScreen
+import com.adilstudio.project.onevault.presentation.bill.account.AccountsScreen
 import com.adilstudio.project.onevault.presentation.bill.BillFormScreen
 import com.adilstudio.project.onevault.presentation.bill.BillListScreen
 import com.adilstudio.project.onevault.presentation.bill.BillTrackerViewModel

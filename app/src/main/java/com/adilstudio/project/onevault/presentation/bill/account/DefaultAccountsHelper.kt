@@ -1,4 +1,4 @@
-package com.adilstudio.project.onevault.presentation.account
+package com.adilstudio.project.onevault.presentation.bill.account
 
 import com.adilstudio.project.onevault.domain.model.Account
 import java.util.UUID

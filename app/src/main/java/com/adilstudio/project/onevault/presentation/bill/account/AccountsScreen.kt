@@ -1,4 +1,4 @@
-package com.adilstudio.project.onevault.presentation.account
+package com.adilstudio.project.onevault.presentation.bill.account
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

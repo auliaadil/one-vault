@@ -1,11 +1,11 @@
 package com.adilstudio.project.onevault.di
 
-import com.adilstudio.project.onevault.data.AccountRepositoryImpl
-import com.adilstudio.project.onevault.data.BillCategoryRepositoryImpl
-import com.adilstudio.project.onevault.data.BillRepositoryImpl
-import com.adilstudio.project.onevault.data.CredentialRepositoryImpl
-import com.adilstudio.project.onevault.data.SettingsRepositoryImpl
-import com.adilstudio.project.onevault.data.VaultFileRepositoryImpl
+import com.adilstudio.project.onevault.data.repository.AccountRepositoryImpl
+import com.adilstudio.project.onevault.data.repository.BillCategoryRepositoryImpl
+import com.adilstudio.project.onevault.data.repository.BillRepositoryImpl
+import com.adilstudio.project.onevault.data.repository.CredentialRepositoryImpl
+import com.adilstudio.project.onevault.data.repository.SettingsRepositoryImpl
+import com.adilstudio.project.onevault.data.repository.VaultFileRepositoryImpl
 import com.adilstudio.project.onevault.data.local.PreferenceManager
 import com.adilstudio.project.onevault.domain.repository.AccountRepository
 import com.adilstudio.project.onevault.domain.repository.BillCategoryRepository

@@ -1,4 +1,4 @@
-package com.adilstudio.project.onevault.data
+package com.adilstudio.project.onevault.data.repository
 
 import com.adilstudio.project.onevault.data.local.PreferenceManager
 import com.adilstudio.project.onevault.domain.repository.SettingsRepository

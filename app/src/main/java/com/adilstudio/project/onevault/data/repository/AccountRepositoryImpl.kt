@@ -1,4 +1,4 @@
-package com.adilstudio.project.onevault.data
+package com.adilstudio.project.onevault.data.repository
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.single
 
-class AccountRepositoryImpl(private val database: Database) : AccountRepository {
+class AccountRepositoryImpl(database: Database) : AccountRepository {
 
     private val queries = database.accountEntityQueries
 

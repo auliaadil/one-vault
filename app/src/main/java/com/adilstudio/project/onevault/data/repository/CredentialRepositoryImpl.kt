@@ -1,4 +1,4 @@
-package com.adilstudio.project.onevault.data
+package com.adilstudio.project.onevault.data.repository
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList

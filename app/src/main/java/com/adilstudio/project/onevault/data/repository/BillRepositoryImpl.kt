@@ -1,4 +1,4 @@
-package com.adilstudio.project.onevault.data
+package com.adilstudio.project.onevault.data.repository
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.single
 
-class BillRepositoryImpl(private val database: Database) : BillRepository {
+class BillRepositoryImpl(database: Database) : BillRepository {
 
     private val queries = database.billEntityQueries
 

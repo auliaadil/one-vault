@@ -40,6 +40,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -71,7 +72,7 @@ import com.adilstudio.project.onevault.core.util.ImageUtil
 import com.adilstudio.project.onevault.core.util.PermissionUtil
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.Bill
-import com.adilstudio.project.onevault.presentation.account.AccountViewModel
+import com.adilstudio.project.onevault.presentation.bill.account.AccountViewModel
 import com.adilstudio.project.onevault.presentation.bill.category.BillCategoryViewModel
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
@@ -300,7 +301,7 @@ fun BillFormScreen(
                     label = { Text(stringResource(R.string.category_optional)) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .menuAnchor(),
+                        .menuAnchor(MenuAnchorType.PrimaryNotEditable),
                     readOnly = true,
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = showCategoryDropdown)
@@ -360,7 +361,7 @@ fun BillFormScreen(
                     label = { Text(stringResource(R.string.account_optional)) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .menuAnchor(),
+                        .menuAnchor(MenuAnchorType.PrimaryNotEditable),
                     readOnly = true,
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = showAccountDropdown)
