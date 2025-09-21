@@ -12,12 +12,12 @@ import androidx.compose.ui.res.stringResource
 import com.adilstudio.project.onevault.R
 
 /**
- * Generic Scaffold wrapper that provides consistent layout structure
+ * Generic Screen wrapper that provides consistent layout structure
  * with optional topBar, floatingActionButton, and message handling
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GenericScaffold(
+fun GenericScreen(
     title: String,
     modifier: Modifier = Modifier,
     navigationIcon: @Composable () -> Unit = {},
@@ -29,25 +29,50 @@ fun GenericScaffold(
     onClearError: () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit
 ) {
-    Scaffold(
-        modifier = modifier,
-        topBar = {
+    Box(modifier = modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            // Top App Bar
             TopAppBar(
                 title = { Text(text = title) },
                 navigationIcon = navigationIcon,
                 actions = actions
             )
-        },
-        floatingActionButton = floatingActionButton
-    ) { paddingValues ->
+
+            // Content area
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
+
+                // Content
+                Box(modifier = Modifier.fillMaxSize()) {
+                    content(PaddingValues())
+
+                    // Floating Action Button positioned at bottom right
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.BottomEnd
+                    ) {
+                        Box(
+                            modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))
+                        ) {
+                            floatingActionButton()
+                        }
+                    }
+                }
+            }
+        }
+
+        // Messages positioned at bottom like Snackbar
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = dimensionResource(R.dimen.spacing_large))
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .padding(dimensionResource(R.dimen.spacing_large))
         ) {
-            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
-
             // Success message
             successMessage?.let { message ->
                 MessageCard(
@@ -65,9 +90,6 @@ fun GenericScaffold(
                     onDismiss = onClearError
                 )
             }
-
-            // Content
-            content(PaddingValues(top = if (successMessage != null || errorMessage != null) dimensionResource(R.dimen.spacing_small) else dimensionResource(R.dimen.spacing_none)))
         }
     }
 }

@@ -8,11 +8,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
 import com.adilstudio.project.onevault.BuildConfig
 import com.adilstudio.project.onevault.R
+import com.adilstudio.project.onevault.presentation.component.GenericScreen
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,15 +33,6 @@ fun SettingsScreen(
 
     var showTimeoutDialog by remember { mutableStateOf(false) }
 
-    // Show error message if any
-    errorMessage?.let { message ->
-        LaunchedEffect(message) {
-            // You can show a Snackbar or Toast here
-            // For now, we'll just clear the error after showing it
-            viewModel.clearErrorMessage()
-        }
-    }
-
     // Helper function to get timeout display text
     fun getTimeoutDisplayText(timeoutMs: Long): String {
         return when (timeoutMs) {
@@ -51,33 +44,15 @@ fun SettingsScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = stringResource(R.string.settings))
-                }
-            )
-        },
-        snackbarHost = {
-            errorMessage?.let { message ->
-                Snackbar(
-                    action = {
-                        TextButton(onClick = { viewModel.clearErrorMessage() }) {
-                            Text(stringResource(R.string.ok))
-                        }
-                    }
-                ) {
-                    Text(message)
-                }
-            }
-        }
+    GenericScreen(
+        title = stringResource(R.string.settings),
+        errorMessage = errorMessage,
+        onClearError = { viewModel.clearErrorMessage() },
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 16.dp)
         ) {
             // About Us
             SettingsItem(
@@ -149,7 +124,7 @@ fun SettingsScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_large)))
         }
     }
 
@@ -181,7 +156,7 @@ private fun SettingsItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(dimensionResource(R.dimen.spacing_large)),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -189,7 +164,7 @@ private fun SettingsItem(
                 contentDescription = null,
                 modifier = Modifier.size(24.dp)
             )
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(dimensionResource(R.dimen.spacing_large)))
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge
@@ -220,7 +195,7 @@ private fun SettingsClickableItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(dimensionResource(R.dimen.spacing_large)),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -228,7 +203,7 @@ private fun SettingsClickableItem(
                 contentDescription = null,
                 modifier = Modifier.size(24.dp)
             )
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(dimensionResource(R.dimen.spacing_large)))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
@@ -264,7 +239,7 @@ private fun SettingsToggleItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(dimensionResource(R.dimen.spacing_large)),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -272,7 +247,7 @@ private fun SettingsToggleItem(
                 contentDescription = null,
                 modifier = Modifier.size(24.dp)
             )
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(dimensionResource(R.dimen.spacing_large)))
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,

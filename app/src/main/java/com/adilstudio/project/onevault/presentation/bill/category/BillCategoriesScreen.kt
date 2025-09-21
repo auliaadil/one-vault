@@ -24,7 +24,7 @@ import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.BillCategory
 import com.adilstudio.project.onevault.domain.model.CategoryType
 import com.adilstudio.project.onevault.presentation.component.BackNavigationIcon
-import com.adilstudio.project.onevault.presentation.component.GenericScaffold
+import com.adilstudio.project.onevault.presentation.component.GenericScreen
 import org.koin.androidx.compose.koinViewModel
 
 @Preview
@@ -57,7 +57,7 @@ fun BillCategoriesScreen(
         }
     }
 
-    GenericScaffold(
+    GenericScreen(
         title = stringResource(R.string.bill_categories),
         navigationIcon = {
             BackNavigationIcon(onNavigateBack = onNavigateBack)

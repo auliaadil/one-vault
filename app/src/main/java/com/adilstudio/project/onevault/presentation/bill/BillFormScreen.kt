@@ -43,10 +43,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -74,6 +72,7 @@ import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.Bill
 import com.adilstudio.project.onevault.presentation.bill.account.AccountViewModel
 import com.adilstudio.project.onevault.presentation.bill.category.BillCategoryViewModel
+import com.adilstudio.project.onevault.presentation.component.GenericScreen
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
@@ -243,42 +242,32 @@ fun BillFormScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = if (isEditing) stringResource(R.string.edit_bill)
-                               else stringResource(R.string.add_bill)
+    GenericScreen(
+        title = if (isEditing) stringResource(R.string.edit_bill) else stringResource(R.string.add_bill),
+        navigationIcon = {
+            IconButton(onClick = onNavigateBack) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.back)
+                )
+            }
+        },
+        actions = {
+            if (isEditing && onDelete != null) {
+                IconButton(onClick = { showDeleteDialog = true }) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = stringResource(R.string.delete),
+                        tint = MaterialTheme.colorScheme.error
                     )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back)
-                        )
-                    }
-                },
-                actions = {
-                    if (isEditing && onDelete != null) {
-                        IconButton(onClick = { showDeleteDialog = true }) {
-                            Icon(
-                                imageVector = Icons.Default.Delete,
-                                contentDescription = stringResource(R.string.delete),
-                                tint = MaterialTheme.colorScheme.error
-                            )
-                        }
-                    }
                 }
-            )
+            }
         }
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = dimensionResource(R.dimen.spacing_large))
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_large))
         ) {

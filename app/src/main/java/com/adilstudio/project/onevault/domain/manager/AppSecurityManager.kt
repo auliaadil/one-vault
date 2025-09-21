@@ -18,7 +18,7 @@ class AppSecurityManager(
 
     private var lastPauseTime: Long = 0
 
-    suspend fun onAppPaused() {
+    fun onAppPaused() {
         lastPauseTime = System.currentTimeMillis()
     }
 
