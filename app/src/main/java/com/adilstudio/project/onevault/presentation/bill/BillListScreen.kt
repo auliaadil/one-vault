@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.DateUtil
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
@@ -22,7 +23,7 @@ import com.adilstudio.project.onevault.domain.model.Bill
 import com.adilstudio.project.onevault.presentation.bill.category.BillCategoryViewModel
 import com.adilstudio.project.onevault.presentation.bill.category.createDefaultCategories
 import com.adilstudio.project.onevault.presentation.component.EmptyState
-import com.adilstudio.project.onevault.presentation.component.SimpleGenericScaffold
+import com.adilstudio.project.onevault.presentation.component.GenericScaffold
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,7 +44,7 @@ fun BillListScreen(
         categoryViewModel.checkAndInitializeDefaultCategories(defaultCategories)
     }
 
-    SimpleGenericScaffold(
+    GenericScaffold(
         title = stringResource(R.string.bills),
         actions = {
             OutlinedButton(onClick = onManageCategories) {
@@ -156,5 +157,48 @@ fun BillListContent(
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun BillListScreenPreview() {
+    // Create mock bills for preview
+    val mockBills = listOf(
+        Bill(
+            id = 1,
+            title = "Electric Bill",
+            vendor = "PLN",
+            amount = 500000.0,
+            billDate = "2024-01-15",
+            category = "Utilities",
+            imagePath = null
+        ),
+        Bill(
+            id = 2,
+            title = "Internet Bill",
+            vendor = "Telkom",
+            amount = 300000.0,
+            billDate = "2024-01-10",
+            category = "Utilities",
+            imagePath = "/path/to/image"
+        )
+    )
+
+    GenericScaffold(
+        title = stringResource(R.string.bills),
+        floatingActionButton = {
+            FloatingActionButton(onClick = {}) {
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = stringResource(R.string.add_bill)
+                )
+            }
+        }
+    ) {
+        BillListContent(
+            bills = mockBills,
+            onEditBill = {}
+        )
     }
 }

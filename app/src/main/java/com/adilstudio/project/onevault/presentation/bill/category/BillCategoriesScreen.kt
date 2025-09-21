@@ -74,7 +74,7 @@ fun BillCategoriesScreen(
                 Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_category))
             }
         }
-    ) { _ ->
+    ) { paddingValues ->
         if (isLoading) {
             Box(
                 modifier = Modifier.fillMaxSize(),

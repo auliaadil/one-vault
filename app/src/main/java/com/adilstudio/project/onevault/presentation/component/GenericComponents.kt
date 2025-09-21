@@ -9,7 +9,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import com.adilstudio.project.onevault.R
 
 /**
@@ -164,31 +163,4 @@ fun BackNavigationIcon(
             contentDescription = stringResource(R.string.back)
         )
     }
-}
-
-/**
- * Alternative Scaffold for screens without standard padding
- */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SimpleGenericScaffold(
-    title: String,
-    modifier: Modifier = Modifier,
-    navigationIcon: @Composable () -> Unit = {},
-    actions: @Composable (RowScope.() -> Unit) = {},
-    floatingActionButton: @Composable () -> Unit = {},
-    content: @Composable (PaddingValues) -> Unit
-) {
-    Scaffold(
-        modifier = modifier,
-        topBar = {
-            TopAppBar(
-                title = { Text(text = title) },
-                navigationIcon = navigationIcon,
-                actions = actions
-            )
-        },
-        floatingActionButton = floatingActionButton,
-        content = content
-    )
 }

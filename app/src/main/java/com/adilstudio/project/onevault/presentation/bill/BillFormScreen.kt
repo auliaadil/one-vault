@@ -278,7 +278,7 @@ fun BillFormScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(dimensionResource(R.dimen.spacing_large))
+                .padding(horizontal = dimensionResource(R.dimen.spacing_large))
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_large))
         ) {
@@ -286,9 +286,9 @@ fun BillFormScreen(
                 value = title,
                 onValueChange = { title = it },
                 label = { Text(stringResource(R.string.title)) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text(stringResource(R.string.title_placeholder)) }
             )
-            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
 
             // Category selection
             ExposedDropdownMenuBox(
@@ -347,8 +347,6 @@ fun BillFormScreen(
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
 
             // Account selection
             ExposedDropdownMenuBox(
@@ -413,8 +411,6 @@ fun BillFormScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
-
             OutlinedTextField(
                 value = amountDisplay,
                 onValueChange = { newValue ->
@@ -438,15 +434,14 @@ fun BillFormScreen(
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text(stringResource(R.string.zero)) }
             )
-            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
 
             OutlinedTextField(
                 value = vendor,
                 onValueChange = { vendor = it },
                 label = { Text(stringResource(R.string.vendor)) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text(stringResource(R.string.vendor_placeholder)) }
             )
-            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
 
             // Date picker field
             OutlinedTextField(
@@ -464,7 +459,6 @@ fun BillFormScreen(
                     }
                 }
             )
-            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
 
             // Image upload section
             Card(
@@ -517,7 +511,6 @@ fun BillFormScreen(
                                 .clip(RoundedCornerShape(dimensionResource(R.dimen.corner_radius_small))),
                             contentScale = ContentScale.Crop
                         )
-                        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
                     }
 
                     OutlinedButton(
@@ -530,8 +523,6 @@ fun BillFormScreen(
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_large)))
 
             // Scan Bill Button
             Button(
@@ -547,8 +538,6 @@ fun BillFormScreen(
                     Text(stringResource(R.string.scan_bill))
                 }
             }
-
-            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
 
             // Action buttons
             Row(

@@ -8,11 +8,14 @@
     <string name="delete_bill">Delete Bill</string>
     <string name="delete_bill_message">Are you sure you want to delete \'%1$s\'? This action cannot be undone.</string>
     <string name="title">Title</string>
+    <string name="title_placeholder">e.g., Electric Bill, Internet Bill</string>
     <string name="category_optional">Category (Optional)</string>
     <string name="no_category_selected">No category selected</string>
     <string name="no_category">No Category</string>
     <string name="amount">Amount</string>
+    <string name="amount_placeholder">Enter bill amount</string>
     <string name="vendor">Vendor</string>
+    <string name="vendor_placeholder">e.g., PLN, Telkom, Shopee</string>
     <string name="bill_date">Bill Date</string>
     <string name="attachment_optional">Attachment (Optional)</string>
     <string name="choose_image">Choose Image</string>

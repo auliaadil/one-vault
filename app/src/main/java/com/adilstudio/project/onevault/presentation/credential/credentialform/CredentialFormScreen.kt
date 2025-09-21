@@ -124,8 +124,6 @@ fun CredentialFormScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_large))
         ) {
-            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
-
             // Error message
             error?.let { errorMessage ->
                 Card(
