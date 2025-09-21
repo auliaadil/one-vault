@@ -80,7 +80,7 @@ class BillCategoryRepositoryImpl(database: Database) : BillCategoryRepository {
             type = category.type.name,
             parentCategoryId = category.parentCategoryId,
             isEditable = if (category.isEditable) 1L else 0L,
-            updatedAt = System.currentTimeMillis(),
+            updatedAt = category.updatedAt,
             id = category.id
         )
     }

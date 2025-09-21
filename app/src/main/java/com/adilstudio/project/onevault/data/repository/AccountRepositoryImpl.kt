@@ -71,7 +71,7 @@ class AccountRepositoryImpl(database: Database) : AccountRepository {
             amount = account.amount,
             description = account.description,
             isEditable = if (account.isEditable) 1L else 0L,
-            updatedAt = System.currentTimeMillis(),
+            updatedAt = account.updatedAt,
             id = account.id
         )
     }
