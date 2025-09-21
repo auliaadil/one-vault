@@ -97,6 +97,7 @@ dependencies {
 
     // DataStore (for settings)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.junit.ktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
