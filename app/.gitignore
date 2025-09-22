@@ -1,9 +1,2 @@
 /build
 .github
-
-# Keystore files
-*.jks
-*.keystore
-
-# Local Gradle properties (contains secrets)
-gradle.properties

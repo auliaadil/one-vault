@@ -26,3 +26,10 @@ app/src/main/assets/models/
 # Others
 *.log
 .github/
+
+# Keystore files
+*.jks
+*.keystore
+
+# Local Gradle properties (contains secrets)
+gradle.properties
