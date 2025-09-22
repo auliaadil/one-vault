@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.release
+
 plugins {
     id("app.cash.sqldelight")
     alias(libs.plugins.android.application)
@@ -25,15 +27,23 @@ android {
         }
     }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+    signingConfigs {
+        create("release") {
+            storeFile = file(findProperty("ONEVAULT_STORE_FILE") ?: "")
+            storePassword = findProperty("ONEVAULT_STORE_PASSWORD") as String? ?: ""
+            keyAlias = findProperty("ONEVAULT_KEY_ALIAS") as String? ?: ""
+            keyPassword = findProperty("ONEVAULT_KEY_PASSWORD") as String? ?: ""
         }
     }
+
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = false
+            isShrinkResources = false
+            signingConfig = signingConfigs.getByName("release")
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
