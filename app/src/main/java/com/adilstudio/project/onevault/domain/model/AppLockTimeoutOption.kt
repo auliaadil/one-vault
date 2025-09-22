@@ -5,7 +5,7 @@ data class AppLockTimeoutOption(
     val valueMs: Long
 ) {
     companion object {
-        const val FIVE_SECONDS = 5000L
+        const val FIVE_SECONDS = 5_000L
         const val THIRTY_SECONDS = 30_000L
         const val ONE_MINUTE = 60_000L
         const val FIVE_MINUTES = 300_000L

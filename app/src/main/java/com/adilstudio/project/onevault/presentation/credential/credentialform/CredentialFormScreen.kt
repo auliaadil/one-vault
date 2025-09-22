@@ -49,6 +49,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.Credential
+import com.adilstudio.project.onevault.presentation.component.GenericScreen
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
@@ -94,26 +95,18 @@ fun CredentialFormScreen(
         }
     )
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        stringResource(
-                            if (credential != null) R.string.edit_credential_title
-                            else R.string.add_credential_title
-                        )
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back)
-                        )
-                    }
-                }
-            )
+    GenericScreen(
+        title = stringResource(
+            if (credential != null) R.string.edit_credential_title
+            else R.string.add_credential_title
+        ),
+        navigationIcon = {
+            IconButton(onClick = onNavigateBack) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.back)
+                )
+            }
         }
     ) { paddingValues ->
         Column(

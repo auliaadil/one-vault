@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -177,8 +178,12 @@ fun CredentialCard(
                 }
 
                 Row {
-                    TextButton(onClick = onEdit) {
-                        Text(stringResource(R.string.edit))
+                    IconButton(onClick = onEdit) {
+                        Icon(
+                            Icons.Default.Edit,
+                            contentDescription = stringResource(R.string.edit),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                     }
                     IconButton(
                         onClick = { showDeleteConfirmation = true }

@@ -29,7 +29,6 @@ fun CredentialDetailDialog(
     onEdit: (Credential) -> Unit,
     onDelete: (Long) -> Unit
 ) {
-    val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
     var showPassword by remember { mutableStateOf(false) }
     var showDeleteConfirmation by remember { mutableStateOf(false) }
