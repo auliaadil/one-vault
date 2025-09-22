@@ -80,7 +80,8 @@ fun BillListScreen(
                     contentDescription = stringResource(R.string.add_bill)
                 )
             }
-        }
+        },
+        defaultPaddingHorizontal = R.dimen.spacing_none
     ) { paddingValues ->
         BillListContent(
             bills = bills,
@@ -108,7 +109,8 @@ fun BillListContent(
             )
         } else {
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize()
+                    .padding(horizontal = dimensionResource(R.dimen.spacing_large)),
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_small))
             ) {
                 items(bills.size) { idx ->
@@ -207,7 +209,8 @@ fun BillListScreenPreview() {
                     contentDescription = stringResource(R.string.add_bill)
                 )
             }
-        }
+        },
+        defaultPaddingHorizontal = R.dimen.spacing_none
     ) {
         BillListContent(
             bills = mockBills,

@@ -93,7 +93,8 @@ fun AccountsScreen(
             ) {
                 Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_account))
             }
-        }
+        },
+        defaultPaddingHorizontal = R.dimen.spacing_none
     ) { _ ->
         if (isLoading) {
             Box(
@@ -104,6 +105,8 @@ fun AccountsScreen(
             }
         } else {
             LazyColumn(
+                modifier = Modifier.fillMaxSize()
+                    .padding(horizontal = dimensionResource(R.dimen.spacing_large)),
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_small))
             ) {
                 items(accounts) { account ->

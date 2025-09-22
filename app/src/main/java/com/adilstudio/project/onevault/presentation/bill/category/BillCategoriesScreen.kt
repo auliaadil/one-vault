@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -73,7 +74,8 @@ fun BillCategoriesScreen(
             ) {
                 Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_category))
             }
-        }
+        },
+        defaultPaddingHorizontal = R.dimen.spacing_none
     ) { paddingValues ->
         if (isLoading) {
             Box(
@@ -87,7 +89,8 @@ fun BillCategoriesScreen(
             val groupedCategories = categories.groupBy { it.type }
 
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize()
+                    .padding(horizontal = dimensionResource(R.dimen.spacing_large)),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 CategoryType.entries.forEach { type ->

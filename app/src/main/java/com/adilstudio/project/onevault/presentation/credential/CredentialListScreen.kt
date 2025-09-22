@@ -67,7 +67,8 @@ fun CredentialListScreen(
                     contentDescription = stringResource(R.string.add_credential)
                 )
             }
-        }
+        },
+        defaultPaddingHorizontal = R.dimen.spacing_none
     ) { paddingValues ->
         if (credentials.isEmpty()) {
             EmptyState(
@@ -78,8 +79,9 @@ fun CredentialListScreen(
         } else {
             // Credentials list
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_small))
+                modifier = Modifier.fillMaxSize()
+                    .padding(horizontal = dimensionResource(R.dimen.spacing_large)),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_small)),
             ) {
                 items(
                     items = credentials,

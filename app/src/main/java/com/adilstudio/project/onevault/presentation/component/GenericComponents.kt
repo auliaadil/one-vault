@@ -1,5 +1,6 @@
 package com.adilstudio.project.onevault.presentation.component
 
+import androidx.annotation.DimenRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -27,6 +28,7 @@ fun GenericScreen(
     errorMessage: String? = null,
     onClearSuccess: () -> Unit = {},
     onClearError: () -> Unit = {},
+    @DimenRes defaultPaddingHorizontal: Int = R.dimen.spacing_large,
     content: @Composable (PaddingValues) -> Unit
 ) {
     Box(modifier = modifier.fillMaxSize()) {
@@ -44,6 +46,7 @@ fun GenericScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .padding(horizontal = dimensionResource(defaultPaddingHorizontal))
             ) {
                 Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
 
