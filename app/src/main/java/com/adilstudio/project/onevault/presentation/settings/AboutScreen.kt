@@ -46,7 +46,7 @@ fun AboutScreen(
 
             // App Icon
             Image(
-                painter = painterResource(id = R.drawable.one_vault_icon),
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
                 contentDescription = stringResource(R.string.app_name),
                 modifier = Modifier.size(dimensionResource(R.dimen.app_icon_size))
             )
