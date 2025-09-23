@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">One Vault</string>
     <string name="autofill_service_description">One Vault Autofill Service</string>
 
@@ -20,7 +20,7 @@
     <string name="attachment_optional">Attachment (Optional)</string>
     <string name="choose_image">Choose Image</string>
     <string name="scan_bill">Scan Bill</string>
-    <string name="scanning">Scanning...</string>
+    <string name="scanning">Scanning…</string>
     <string name="save_bill">Save Bill</string>
     <string name="select_date">Select Date</string>
     <string name="remove_image">Remove Image</string>
@@ -95,7 +95,7 @@
     <string name="zero">0</string>
     <string name="rupiah_prefix">Rp</string>
     <string name="required_field">*</string>
-    <string name="empty_string"></string>
+    <string name="empty_string" />
     <string name="colon">:</string>
     <string name="space"> </string>
     <string name="bullet_point">•</string>
@@ -188,7 +188,7 @@
     <!-- Text Selection -->
     <string name="select_scanned_text">Select Scanned Text</string>
     <string name="tap_text_assign">Tap on text to assign to fields:</string>
-    <string name="selected">Selected:</string>
+    <string name="selected_colon" tools:override="true">Selected:</string>
     <string name="title_field">Title: %1$s</string>
     <string name="amount_field">Amount: %1$s</string>
     <string name="vendor_field">Vendor: %1$s</string>
@@ -277,7 +277,7 @@
     <string name="app_locked_title">App Locked</string>
     <string name="app_locked_description">Please authenticate to unlock OneVault and access your data</string>
     <string name="unlock_with_biometric">Unlock with Biometric</string>
-    <string name="authenticating">Authenticating...</string>
+    <string name="authenticating">Authenticating…</string>
     <string name="biometric_not_available">Biometric authentication is not available</string>
     <string name="exit_app">Exit App</string>
 
@@ -294,12 +294,12 @@
     <string name="key_features">Key Features</string>
     <string name="feature_bill_tracker">Bill Tracker: Track and manage your bills with OCR scanning capability</string>
     <string name="feature_password_manager">Password Manager: Securely store and manage your credentials</string>
-    <string name="feature_file_vault">File Vault: Organize and store your important documents</string>
+    <string name="feature_password_generator">Template-Based Password Generation: Create complex passwords using custom rules</string>
     <string name="feature_biometric_security">Biometric Security: Protect your app with fingerprint or face authentication</string>
     <string name="feature_data_encryption">Advanced encryption for all your data</string>
     <string name="developer_info">Developer Information</string>
     <string name="developer_name">Adil Studio</string>
-    <string name="developer_email">support@adilstudio.com</string>
+    <string name="developer_email">aulia.techstudio@gmail.com</string>
 
     <!-- Privacy Policy Screen -->
     <string name="privacy_introduction_title">Introduction</string>

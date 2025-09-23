@@ -702,7 +702,7 @@ fun TextSelectionDialog(
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.padding(dimensionResource(R.dimen.spacing_small))) {
                         Text(
-                            stringResource(R.string.selected),
+                            stringResource(R.string.selected_colon),
                             style = MaterialTheme.typography.labelMedium
                         )
                         Text(
