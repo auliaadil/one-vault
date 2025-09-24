@@ -36,7 +36,7 @@ fun SettingsScreen(
     // Helper function to get timeout display text
     fun getTimeoutDisplayText(timeoutMs: Long): String {
         return when (timeoutMs) {
-            0L -> context.getString(R.string.timeout_5_seconds)
+            5_000L -> context.getString(R.string.timeout_5_seconds)
             30_000L -> context.getString(R.string.timeout_30_seconds)
             60_000L -> context.getString(R.string.timeout_1_minute)
             300_000L -> context.getString(R.string.timeout_5_minutes)
