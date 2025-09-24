@@ -11,6 +11,7 @@ navigation = "2.8.1"
 
 # Compose Reorderable
 composeReorderable = "0.9.6"
+reorderable = "3.0.0"
 
 # Koin
 koin = "4.1.1"
@@ -66,6 +67,7 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 
 # Reorderable
 compose-reorderable = { group = "org.burnoutcrew.composereorderable", name = "reorderable", version.ref = "composeReorderable" }
+reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 
 # Koin
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }

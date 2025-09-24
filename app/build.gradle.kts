@@ -98,7 +98,7 @@ dependencies {
     implementation(libs.androidx.biometric)
 
     // Compose Reorderable for drag and drop
-    implementation(libs.compose.reorderable)
+    implementation(libs.reorderable)
 
     // DataStore (for settings)
     implementation(libs.androidx.datastore.preferences)

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -28,11 +29,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,6 +41,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -50,11 +51,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.Credential
 import com.adilstudio.project.onevault.presentation.component.GenericScreen
-import org.burnoutcrew.reorderable.ReorderableItem
-import org.burnoutcrew.reorderable.detectReorderAfterLongPress
-import org.burnoutcrew.reorderable.rememberReorderableLazyListState
-import org.burnoutcrew.reorderable.reorderable
 import org.koin.androidx.compose.koinViewModel
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -89,11 +88,12 @@ fun CredentialFormScreen(
     }
 
     // Reorderable state for drag and drop
-    val reorderableState = rememberReorderableLazyListState(
-        onMove = { from, to ->
-            viewModel.moveRule(from.index, to.index)
-        }
-    )
+    val hapticFeedback = LocalHapticFeedback.current
+    val lazyListState = rememberLazyListState()
+    val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
+        viewModel.moveRule(from.index, to.index)
+        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+    }
 
     GenericScreen(
         title = stringResource(
@@ -248,19 +248,18 @@ fun CredentialFormScreen(
                             )
 
                             LazyColumn(
-                                state = reorderableState.listState,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(dimensionResource(R.dimen.list_height_fixed)) // Fixed height for better UX
-                                    .reorderable(reorderableState),
-                                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_xs))
+                                    .height(dimensionResource(R.dimen.list_height_fixed)),
+                                state = lazyListState,
+                                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_xs)),
                             ) {
                                 itemsIndexed(
                                     items = viewModel.rules,
                                     key = { _, rule -> rule.id }
                                 ) { index, rule ->
                                     ReorderableItem(
-                                        reorderableState = reorderableState,
+                                        state = reorderableLazyListState,
                                         key = rule.id
                                     ) { isDragging ->
                                         RuleItem(
@@ -268,9 +267,14 @@ fun CredentialFormScreen(
                                             isDragging = isDragging,
                                             onRuleUpdate = viewModel::updateRule,
                                             onRuleDelete = viewModel::removeRule,
-                                            modifier = Modifier.detectReorderAfterLongPress(
-                                                reorderableState
-                                            )
+                                            modifier = Modifier.draggableHandle(
+                                                onDragStarted = {
+                                                    hapticFeedback.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
+                                                },
+                                                onDragStopped = {
+                                                    hapticFeedback.performHapticFeedback(HapticFeedbackType.GestureEnd)
+                                                },
+                                            ),
                                         )
                                     }
                                 }

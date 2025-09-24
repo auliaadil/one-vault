@@ -28,6 +28,7 @@
     <dimen name="stroke_width_thick">4dp</dimen>
 
     <!-- Elevation -->
+    <dimen name="elevation_none">0dp</dimen>
     <dimen name="elevation_small">4dp</dimen>
     <dimen name="elevation_medium">8dp</dimen>
     <dimen name="elevation_large">16dp</dimen>
