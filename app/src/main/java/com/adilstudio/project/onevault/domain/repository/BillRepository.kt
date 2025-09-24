@@ -10,4 +10,3 @@ interface BillRepository {
     suspend fun updateBill(bill: Bill)
     suspend fun deleteBill(id: Long)
 }
-

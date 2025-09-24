@@ -5,7 +5,8 @@ CREATE TABLE BillEntity (
     amount REAL NOT NULL,
     vendor TEXT NOT NULL,
     billDate TEXT NOT NULL,
-    imagePath TEXT
+    imagePath TEXT,
+    accountId TEXT
 );
 
 selectAll:
@@ -15,11 +16,11 @@ selectById:
 SELECT * FROM BillEntity WHERE id = ?;
 
 insertBill:
-INSERT INTO BillEntity(id, title, category, amount, vendor, billDate, imagePath)
-VALUES (?, ?, ?, ?, ?, ?, ?);
+INSERT INTO BillEntity(id, title, category, amount, vendor, billDate, imagePath, accountId)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 
 updateBill:
-UPDATE BillEntity SET title = ?, category = ?, amount = ?, vendor = ?, billDate = ?, imagePath = ? WHERE id = ?;
+UPDATE BillEntity SET title = ?, category = ?, amount = ?, vendor = ?, billDate = ?, imagePath = ?, accountId = ? WHERE id = ?;
 
 deleteBill:
 DELETE FROM BillEntity WHERE id = ?;
