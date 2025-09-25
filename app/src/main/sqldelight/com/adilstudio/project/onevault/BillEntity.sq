@@ -6,7 +6,7 @@ CREATE TABLE BillEntity (
     vendor TEXT NOT NULL,
     billDate TEXT NOT NULL,
     imagePath TEXT,
-    accountId TEXT
+    accountId INTEGER
 );
 
 selectAll:

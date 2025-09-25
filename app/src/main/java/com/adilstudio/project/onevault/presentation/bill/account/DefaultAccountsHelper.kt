@@ -1,14 +1,13 @@
 package com.adilstudio.project.onevault.presentation.bill.account
 
 import com.adilstudio.project.onevault.domain.model.Account
-import java.util.UUID
 
 fun createDefaultAccounts(): List<Account> {
     val currentTime = System.currentTimeMillis()
 
     return listOf(
         Account(
-            id = UUID.randomUUID().toString(),
+            id = 1L,
             name = "Cash",
             amount = 0.0,
             description = "Physical cash wallet",
@@ -17,7 +16,7 @@ fun createDefaultAccounts(): List<Account> {
             updatedAt = currentTime
         ),
         Account(
-            id = UUID.randomUUID().toString(),
+            id = 2L,
             name = "BCA Savings",
             amount = 0.0,
             description = "BCA Bank savings account",
@@ -26,7 +25,7 @@ fun createDefaultAccounts(): List<Account> {
             updatedAt = currentTime
         ),
         Account(
-            id = UUID.randomUUID().toString(),
+            id = 3L,
             name = "Mandiri Current",
             amount = 0.0,
             description = "Mandiri Bank current account",
@@ -35,7 +34,7 @@ fun createDefaultAccounts(): List<Account> {
             updatedAt = currentTime
         ),
         Account(
-            id = UUID.randomUUID().toString(),
+            id = 4L,
             name = "BNI Savings",
             amount = 0.0,
             description = "BNI Bank savings account",
@@ -44,7 +43,7 @@ fun createDefaultAccounts(): List<Account> {
             updatedAt = currentTime
         ),
         Account(
-            id = UUID.randomUUID().toString(),
+            id = 5L,
             name = "BRI Savings",
             amount = 0.0,
             description = "BRI Bank savings account",
@@ -53,7 +52,7 @@ fun createDefaultAccounts(): List<Account> {
             updatedAt = currentTime
         ),
         Account(
-            id = UUID.randomUUID().toString(),
+            id = 6L,
             name = "Digital Wallet",
             amount = 0.0,
             description = "GoPay, OVO, DANA, ShopeePay, etc.",
@@ -62,7 +61,7 @@ fun createDefaultAccounts(): List<Account> {
             updatedAt = currentTime
         ),
         Account(
-            id = UUID.randomUUID().toString(),
+            id = 7L,
             name = "Credit Card",
             amount = 0.0,
             description = "Credit card account (can have negative balance)",

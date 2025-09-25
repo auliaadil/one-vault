@@ -57,6 +57,10 @@ fun BillListScreen(
         categoryViewModel.checkAndInitializeDefaultCategories(defaultCategories)
     }
 
+    LaunchedEffect(Unit) {
+        billTrackerViewModel.loadBills()
+    }
+
     GenericScreen(
         title = stringResource(R.string.bills),
         actions = {

@@ -5,10 +5,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface AccountRepository {
     fun getAccounts(): Flow<List<Account>>
-    suspend fun getAccountById(id: String): Account?
+    suspend fun getAccountById(id: Long): Account?
     suspend fun addAccount(account: Account)
     suspend fun updateAccount(account: Account)
-    suspend fun deleteAccount(id: String)
+    suspend fun deleteAccount(id: Long)
     suspend fun getAccountsCount(): Int
-    suspend fun updateAccountBalance(accountId: String, newBalance: Double)
+    suspend fun updateAccountBalance(accountId: Long, newBalance: Double)
 }

@@ -27,10 +27,6 @@ class BillTrackerViewModel(
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error.asStateFlow()
 
-    init {
-        loadBills()
-    }
-
     fun loadBills() {
         viewModelScope.launch {
             try {
@@ -46,6 +42,7 @@ class BillTrackerViewModel(
             try {
                 addBillUseCase(bill)
                 _successMessage.value = "Bill added successfully"
+                loadBills() // Reload bills to update the UI
             } catch (e: Exception) {
                 _error.value = "Failed to add bill: ${e.message}"
             }

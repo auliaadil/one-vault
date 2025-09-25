@@ -34,7 +34,7 @@ class AccountRepositoryImpl(database: Database) : AccountRepository {
             }
     }
 
-    override suspend fun getAccountById(id: String): Account? {
+    override suspend fun getAccountById(id: Long): Account? {
         return queries.selectById(id)
             .asFlow()
             .mapToOneOrNull(Dispatchers.IO)
@@ -76,7 +76,7 @@ class AccountRepositoryImpl(database: Database) : AccountRepository {
         )
     }
 
-    override suspend fun deleteAccount(id: String) {
+    override suspend fun deleteAccount(id: Long) {
         queries.deleteAccount(id)
     }
 
@@ -84,7 +84,7 @@ class AccountRepositoryImpl(database: Database) : AccountRepository {
         return queries.selectAll().executeAsList().size
     }
 
-    override suspend fun updateAccountBalance(accountId: String, newBalance: Double) {
+    override suspend fun updateAccountBalance(accountId: Long, newBalance: Double) {
         queries.updateAccountBalance(
             amount = newBalance,
             updatedAt = System.currentTimeMillis(),

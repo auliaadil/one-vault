@@ -158,7 +158,7 @@ class BillRepositoryImpl(private val database: Database) : BillRepository {
     }
 
     // Private helper methods for account balance management
-    private fun deductFromAccount(accountId: String, amount: Double) {
+    private fun deductFromAccount(accountId: Long, amount: Double) {
         val account = accountQueries.selectById(accountId).executeAsOneOrNull()
         account?.let {
             val newBalance = it.amount - amount
@@ -170,7 +170,7 @@ class BillRepositoryImpl(private val database: Database) : BillRepository {
         }
     }
 
-    private fun restoreToAccount(accountId: String, amount: Double) {
+    private fun restoreToAccount(accountId: Long, amount: Double) {
         val account = accountQueries.selectById(accountId).executeAsOneOrNull()
         account?.let {
             val newBalance = it.amount + amount

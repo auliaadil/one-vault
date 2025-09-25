@@ -41,6 +41,7 @@ import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.Account
 import com.adilstudio.project.onevault.presentation.component.BackNavigationIcon
+import com.adilstudio.project.onevault.presentation.component.EmptyState
 import com.adilstudio.project.onevault.presentation.component.GenericScreen
 import org.koin.androidx.compose.koinViewModel
 
@@ -58,11 +59,6 @@ fun AccountsScreen(
     var showAddDialog by remember { mutableStateOf(false) }
     var editingAccount by remember { mutableStateOf<Account?>(null) }
     var accountToDelete by remember { mutableStateOf<Account?>(null) }
-
-    // Initialize default accounts on first launch
-    LaunchedEffect(Unit) {
-        viewModel.checkAndInitializeDefaultAccounts(createDefaultAccounts())
-    }
 
     // Handle error messages
     LaunchedEffect(error) {
@@ -95,10 +91,16 @@ fun AccountsScreen(
             }
         },
         defaultPaddingHorizontal = R.dimen.spacing_none
-    ) { _ ->
-        if (isLoading) {
+    ) { paddingValues ->
+        if (accounts.isEmpty()) {
+            EmptyState(
+                title = stringResource(R.string.no_accounts_saved),
+                description = stringResource(R.string.tap_plus_to_add_first_account),
+                modifier = Modifier.padding(paddingValues)
+            )
+        } else if (isLoading) {
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().padding(paddingValues),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
@@ -249,7 +251,7 @@ fun AccountCardPreview() {
     MaterialTheme {
         AccountCard(
             account = Account(
-                id = "1",
+                id = 1L,
                 name = "BCA Savings",
                 amount = 5000000.0,
                 description = "Primary savings account"

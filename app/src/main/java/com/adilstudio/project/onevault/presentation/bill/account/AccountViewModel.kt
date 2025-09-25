@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.util.UUID
 
 class AccountViewModel(
     private val getAccountsUseCase: GetAccountsUseCase,
@@ -72,7 +71,7 @@ class AccountViewModel(
             try {
                 val currentTime = System.currentTimeMillis()
                 val account = Account(
-                    id = UUID.randomUUID().toString(),
+                    id = currentTime, // Use timestamp as unique Long ID
                     name = name,
                     amount = amount,
                     description = description.takeIf { it.isNotBlank() },
@@ -99,7 +98,7 @@ class AccountViewModel(
         }
     }
 
-    fun deleteAccount(accountId: String) {
+    fun deleteAccount(accountId: Long) {
         viewModelScope.launch {
             try {
                 deleteAccountUseCase(accountId)

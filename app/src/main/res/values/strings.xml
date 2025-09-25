@@ -79,11 +79,13 @@
     <string name="delete_account_message">Are you sure you want to delete \'%1$s\'? This action cannot be undone.</string>
     <string name="account_name">Account Name</string>
     <string name="current_balance">Current Balance</string>
-    <string name="account_description">Account Description</string>
+    <string name="account_description">Account Description (optional)</string>
     <string name="account_name_placeholder">e.g., Bank Account, Credit Card</string>
     <string name="balance_placeholder">0.00</string>
     <string name="balance_hint">Current account balance</string>
-    <string name="description_placeholder">Optional account description</string>
+    <string name="description_placeholder">Account description</string>
+    <string name="no_accounts_saved">No accounts saved yet</string>
+    <string name="tap_plus_to_add_first_account">Tap the + button to add your first account</string>
 
     <!-- Common -->
     <string name="save">Save</string>
