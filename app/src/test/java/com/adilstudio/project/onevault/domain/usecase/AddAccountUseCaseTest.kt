@@ -26,7 +26,7 @@ class AddAccountUseCaseTest {
     fun `invoke calls repository addAccount with correct account`() = runTest {
         // Given
         val account = Account(
-            id = "account-123",
+            id = 123L,
             name = "Test Account",
             amount = 1000.0,
             description = "Test description"
@@ -43,7 +43,7 @@ class AddAccountUseCaseTest {
     fun `invoke handles account with null description`() = runTest {
         // Given
         val account = Account(
-            id = "account-123",
+            id = 123L,
             name = "Test Account",
             amount = 1000.0,
             description = null
@@ -60,7 +60,7 @@ class AddAccountUseCaseTest {
     fun `invoke handles account with default values`() = runTest {
         // Given
         val account = Account(
-            id = "account-123",
+            id = 123L,
             name = "Test Account"
         )
 

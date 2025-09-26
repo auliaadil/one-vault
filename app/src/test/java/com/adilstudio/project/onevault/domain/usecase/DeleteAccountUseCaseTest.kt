@@ -24,7 +24,7 @@ class DeleteAccountUseCaseTest {
     @Test
     fun `invoke calls repository deleteAccount with correct id`() = runTest {
         // Given
-        val accountId = "account-123"
+        val accountId = 123L
 
         // When
         deleteAccountUseCase(accountId)

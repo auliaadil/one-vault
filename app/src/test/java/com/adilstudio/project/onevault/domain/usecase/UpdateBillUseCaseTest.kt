@@ -33,7 +33,7 @@ class UpdateBillUseCaseTest {
             vendor = "PLN",
             billDate = "2024-01-15",
             imagePath = "/path/to/updated_image.jpg",
-            accountId = "account-123"
+            accountId = 123L
         )
 
         // When

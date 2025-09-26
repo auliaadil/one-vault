@@ -26,7 +26,7 @@ class UpdateAccountUseCaseTest {
     fun `invoke calls repository updateAccount with correct account`() = runTest {
         // Given
         val account = Account(
-            id = "account-123",
+            id = 123L,
             name = "Updated Account",
             amount = 1500.0,
             description = "Updated description"

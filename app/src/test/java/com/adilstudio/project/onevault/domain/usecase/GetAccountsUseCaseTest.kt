@@ -28,8 +28,8 @@ class GetAccountsUseCaseTest {
     fun `invoke returns flow of accounts from repository`() = runTest {
         // Given
         val accounts = listOf(
-            Account(id = "1", name = "Bank Account", amount = 1000.0),
-            Account(id = "2", name = "Credit Card", amount = 500.0)
+            Account(id = 1, name = "Bank Account", amount = 1000.0),
+            Account(id = 2, name = "Credit Card", amount = 500.0)
         )
         whenever(accountRepository.getAccounts()).thenReturn(flowOf(accounts))
 

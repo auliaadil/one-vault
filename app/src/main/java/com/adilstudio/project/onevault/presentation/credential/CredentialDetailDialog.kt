@@ -1,20 +1,43 @@
 package com.adilstudio.project.onevault.presentation.credential
 
-import androidx.compose.foundation.layout.*
+import android.content.ClipData
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DividerDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -29,7 +52,7 @@ fun CredentialDetailDialog(
     onEdit: (Credential) -> Unit,
     onDelete: (Long) -> Unit
 ) {
-    val clipboardManager = LocalClipboardManager.current
+    val clipboard = LocalClipboard.current
     var showPassword by remember { mutableStateOf(false) }
     var showDeleteConfirmation by remember { mutableStateOf(false) }
 
@@ -75,7 +98,7 @@ fun CredentialDetailDialog(
                     }
                 }
 
-                Divider()
+                HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
 
                 // Service Name
                 Column {
@@ -98,7 +121,8 @@ fun CredentialDetailDialog(
                         )
                         IconButton(
                             onClick = {
-                                clipboardManager.setText(AnnotatedString(credential.serviceName))
+                                val clipData = ClipData.newPlainText("Service Name", credential.serviceName)
+                                clipboard.nativeClipboard.setPrimaryClip(clipData)
                             }
                         ) {
                             Icon(
@@ -130,7 +154,8 @@ fun CredentialDetailDialog(
                         )
                         IconButton(
                             onClick = {
-                                clipboardManager.setText(AnnotatedString(credential.username))
+                                val clipData = ClipData.newPlainText("Username", credential.username)
+                                clipboard.nativeClipboard.setPrimaryClip(clipData)
                             }
                         ) {
                             Icon(
@@ -145,7 +170,7 @@ fun CredentialDetailDialog(
                 // Password
                 Column {
                     Text(
-                        text = "Password",
+                        text = stringResource(R.string.password),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -173,7 +198,8 @@ fun CredentialDetailDialog(
                             }
                             IconButton(
                                 onClick = {
-                                    clipboardManager.setText(AnnotatedString(credential.password))
+                                    val clipData = ClipData.newPlainText("Password", credential.password)
+                                    clipboard.nativeClipboard.setPrimaryClip(clipData)
                                 }
                             ) {
                                 Icon(

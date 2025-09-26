@@ -35,7 +35,7 @@ class AccountRepositoryImplTest {
     fun `getAccounts returns mapped accounts from database`() = runTest {
         // Create expected test data
         val expectedAccount = Account(
-            id = "account-123",
+            id = 123L,
             name = "Bank Account",
             amount = 1000.0,
             description = "Main bank account",
@@ -51,7 +51,7 @@ class AccountRepositoryImplTest {
         testFlow.collect { accounts ->
             assertEquals(1, accounts.size)
             val account = accounts[0]
-            assertEquals("account-123", account.id)
+            assertEquals(123L, account.id)
             assertEquals("Bank Account", account.name)
             assertEquals(1000.0, account.amount, 0.0)
             assertEquals("Main bank account", account.description)
@@ -68,7 +68,7 @@ class AccountRepositoryImplTest {
     fun `addAccount calls insert with correct parameters`() = runTest {
         // Given
         val account = Account(
-            id = "account-123",
+            id = 123L,
             name = "Bank Account",
             amount = 1000.0,
             description = "Main bank account",
@@ -82,7 +82,7 @@ class AccountRepositoryImplTest {
 
         // Then
         verify(accountEntityQueries).insertAccount(
-            id = "account-123",
+            id = 123L,
             name = "Bank Account",
             amount = 1000.0,
             description = "Main bank account",
@@ -96,7 +96,7 @@ class AccountRepositoryImplTest {
     fun `updateAccount calls update with correct parameters`() = runTest {
         // Given
         val account = Account(
-            id = "account-123",
+            id = 123L,
             name = "Updated Bank Account",
             amount = 1500.0,
             description = "Updated description",
@@ -115,14 +115,14 @@ class AccountRepositoryImplTest {
             description = "Updated description",
             isEditable = 0L,
             updatedAt = 1632921600000L,
-            id = "account-123"
+            id = 123L
         )
     }
 
     @Test
     fun `deleteAccount calls deleteById with correct id`() = runTest {
         // Given
-        val accountId = "account-123"
+        val accountId = 123L
 
         // When
         accountRepository.deleteAccount(accountId)
