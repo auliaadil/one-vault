@@ -2,10 +2,33 @@ package com.adilstudio.project.onevault.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// Logo Colors
+val LogoLight = Color(0xFFFEFEFD) // Off-white for balance
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+// Primary Colors (dark, strong neutral)
+val Primary = Color(0xFF222222)        // main brand color from icon
+val PrimaryLight = Color(0xFF444444)   // lighter shade for hover/pressed
+val PrimaryVariant = Color(0xFF000000) // variant, pure black for depth
+
+// Secondary Colors (warm, soft contrast)
+val Secondary = Color(0xFFFFE9C4)        // from your icon
+val SecondaryVariant = Color(0xFFFAD9A1) // slightly deeper warm tone
+
+// Surface Colors (UI backgrounds & cards)
+val Surface = Color(0xFFFEFEFD)    // almost white
+val SurfaceVariant = Color(0xFFF5F5F5) // neutral gray for cards
+val Background = Color(0xFFFEFEFD) // same as surface for flat design
+
+// Text Colors
+val OnPrimary = Color(0xFFFFFFFF) // white text on dark primary
+val OnSecondary = Color(0xFF222222) // dark text on warm secondary
+val OnSurface = Color(0xFF222222)   // primary dark for readability
+val OnBackground = Color(0xFF222222)
+
+// Accent Colors (optional highlights – subtle blues to balance warmth)
+val Accent = Color(0xFF4A90E2)       // modern soft blue
+val AccentLight = Color(0xFF8FB8F0)  // lighter blue for hover/focus
+
+// Error Colors
+val Error = Color(0xFFB00020)     // standard Material error red
+val OnError = Color(0xFFFFFFFF)
