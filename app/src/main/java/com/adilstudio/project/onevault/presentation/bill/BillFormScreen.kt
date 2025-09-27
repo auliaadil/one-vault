@@ -57,7 +57,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.DateUtil
@@ -225,8 +224,7 @@ fun BillFormScreen(
                 IconButton(onClick = { showDeleteDialog = true }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = stringResource(R.string.delete),
-                        tint = MaterialTheme.colorScheme.error
+                        contentDescription = stringResource(R.string.delete)
                     )
                 }
             }
@@ -291,7 +289,7 @@ fun BillFormScreen(
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Text(
                                         text = category.icon,
-                                        modifier = Modifier.padding(end = 8.dp)
+                                        modifier = Modifier.padding(end = dimensionResource(R.dimen.spacing_small))
                                     )
                                     Text(category.name)
                                 }
@@ -420,9 +418,6 @@ fun BillFormScreen(
             // Image upload section
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                )
             ) {
                 Column(modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))) {
                     Row(
@@ -464,7 +459,7 @@ fun BillFormScreen(
                             contentDescription = "Bill Image",
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(200.dp)
+                                .height(dimensionResource(R.dimen.height_fixed_medium))
                                 .clip(RoundedCornerShape(dimensionResource(R.dimen.corner_radius_small))),
                             contentScale = ContentScale.Crop
                         )

@@ -2,10 +2,13 @@ package com.adilstudio.project.onevault.presentation.bill
 
 import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -75,12 +78,6 @@ fun BillListScreen(
     GenericScreen(
         title = stringResource(R.string.bills),
         actions = {
-            OutlinedButton(onClick = { showScannerDialog = true }) {
-                Icon(
-                    Icons.Default.DocumentScanner,
-                    contentDescription = stringResource(R.string.scan_bill)
-                )
-            }
             OutlinedButton(onClick = onManageCategories) {
                 Icon(
                     Icons.Default.Category,
@@ -95,11 +92,22 @@ fun BillListScreen(
             }
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = onAddBill) {
-                Icon(
-                    Icons.Default.Add,
-                    contentDescription = stringResource(R.string.add_bill)
-                )
+            Column {
+                FloatingActionButton(onClick = { showScannerDialog = true }) {
+                    Icon(
+                        Icons.Default.DocumentScanner,
+                        contentDescription = stringResource(R.string.scan_bill)
+                    )
+                }
+                // Spacer to separate the two FABs
+                Spacer(modifier = Modifier.size(dimensionResource(R.dimen.spacing_xs)))
+
+                FloatingActionButton(onClick = onAddBill) {
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = stringResource(R.string.add_bill)
+                    )
+                }
             }
         },
         defaultPaddingHorizontal = R.dimen.spacing_none
@@ -194,8 +202,7 @@ fun BillListContent(
                                         Icon(
                                             imageVector = Icons.Default.AttachFile,
                                             contentDescription = stringResource(R.string.has_attachment),
-                                            modifier = Modifier.size(dimensionResource(R.dimen.icon_size_small)),
-                                            tint = MaterialTheme.colorScheme.primary
+                                            modifier = Modifier.size(dimensionResource(R.dimen.icon_size_small))
                                         )
                                     }
                                 }

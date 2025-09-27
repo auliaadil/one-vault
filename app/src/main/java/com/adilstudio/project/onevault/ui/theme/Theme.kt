@@ -18,7 +18,7 @@ import androidx.core.view.WindowCompat
 private val DarkColorScheme = darkColorScheme(
     primary = Accent,
     onPrimary = Primary,
-    primaryContainer = PrimaryLight,
+    primaryContainer = Primary,
     onPrimaryContainer = LogoLight,
     secondary = AccentLight,
     onSecondary = Primary,
@@ -28,7 +28,7 @@ private val DarkColorScheme = darkColorScheme(
     onTertiary = LogoLight,
     background = Primary,
     onBackground = LogoLight,
-    surface = PrimaryLight,
+    surface = Primary,
     onSurface = LogoLight,
     surfaceVariant = PrimaryLight,
     onSurfaceVariant = AccentLight,
@@ -65,7 +65,7 @@ private val LightColorScheme = lightColorScheme(
 fun OneVaultTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

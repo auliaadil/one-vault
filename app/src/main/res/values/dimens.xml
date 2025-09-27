@@ -54,7 +54,8 @@
     <dimen name="scanner_item_padding">8dp</dimen>
 
     <!-- Layout heights -->
-    <dimen name="list_height_fixed">300dp</dimen>
+    <dimen name="height_fixed_medium">200dp</dimen>
+    <dimen name="height_fixed_large">300dp</dimen>
 
     <!-- Text character limits -->
     <dimen name="character_input_limit">2</dimen>

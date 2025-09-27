@@ -91,8 +91,7 @@ fun CredentialDetailDialog(
                         ) {
                             Icon(
                                 Icons.Default.Delete,
-                                contentDescription = stringResource(R.string.delete_credential),
-                                tint = MaterialTheme.colorScheme.error
+                                contentDescription = stringResource(R.string.delete_credential)
                             )
                         }
                     }

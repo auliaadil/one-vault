@@ -181,8 +181,7 @@ fun CredentialCard(
                     IconButton(onClick = onEdit) {
                         Icon(
                             Icons.Default.Edit,
-                            contentDescription = stringResource(R.string.edit),
-                            tint = MaterialTheme.colorScheme.primary
+                            contentDescription = stringResource(R.string.edit)
                         )
                     }
                     IconButton(
@@ -190,8 +189,7 @@ fun CredentialCard(
                     ) {
                         Icon(
                             Icons.Default.Delete,
-                            contentDescription = stringResource(R.string.delete_credential),
-                            tint = MaterialTheme.colorScheme.error
+                            contentDescription = stringResource(R.string.delete_credential)
                         )
                     }
                 }

@@ -11,8 +11,8 @@ val PrimaryLight = Color(0xFF444444)   // lighter shade for hover/pressed
 val PrimaryVariant = Color(0xFF000000) // variant, pure black for depth
 
 // Secondary Colors (warm, soft contrast)
-val Secondary = Color(0xFFFFE9C4)        // from your icon
-val SecondaryVariant = Color(0xFFFAD9A1) // slightly deeper warm tone
+val Secondary = Color(0xFFFDAD29)
+val SecondaryVariant = Color(0xFFFFE9C4) // from icon
 
 // Surface Colors (UI backgrounds & cards)
 val Surface = Color(0xFFFEFEFD)    // almost white
@@ -26,8 +26,8 @@ val OnSurface = Color(0xFF222222)   // primary dark for readability
 val OnBackground = Color(0xFF222222)
 
 // Accent Colors (optional highlights – subtle blues to balance warmth)
-val Accent = Color(0xFF4A90E2)       // modern soft blue
-val AccentLight = Color(0xFF8FB8F0)  // lighter blue for hover/focus
+val Accent = Color(0xFFFDAD29)       // slightly deeper warm tone
+val AccentLight = Color(0xFFFFE9C4)  // slightly deeper warm tone
 
 // Error Colors
 val Error = Color(0xFFB00020)     // standard Material error red

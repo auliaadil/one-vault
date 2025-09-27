@@ -225,15 +225,13 @@ fun CategoryCard(
                     IconButton(onClick = { onEdit(category) }) {
                         Icon(
                             Icons.Default.Edit,
-                            contentDescription = stringResource(R.string.edit),
-                            tint = MaterialTheme.colorScheme.primary
+                            contentDescription = stringResource(R.string.edit)
                         )
                     }
                     IconButton(onClick = { onDelete(category) }) {
                         Icon(
                             Icons.Default.Delete,
-                            contentDescription = stringResource(R.string.delete),
-                            tint = MaterialTheme.colorScheme.error
+                            contentDescription = stringResource(R.string.delete)
                         )
                     }
                 }

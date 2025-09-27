@@ -113,7 +113,6 @@ fun CredentialFormScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = dimensionResource(R.dimen.spacing_large))
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_large))
         ) {
@@ -250,7 +249,7 @@ fun CredentialFormScreen(
                             LazyColumn(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(dimensionResource(R.dimen.list_height_fixed)),
+                                    .height(dimensionResource(R.dimen.height_fixed_large)),
                                 state = lazyListState,
                                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_xs)),
                             ) {
