@@ -58,7 +58,11 @@ fun NavGraph(
     NavHost(navController, startDestination = startDestination, modifier = modifier) {
         composable(Screen.BillList.route) {
             BillListScreen(
-                onAddBill = { navController.navigate(Screen.AddBill.route) },
+                onAddBill = {
+                    // Clear any existing scanned image URI when using regular add button
+                    navController.currentBackStackEntry?.savedStateHandle?.remove<Uri>("scannedImageUri")
+                    navController.navigate(Screen.AddBill.route)
+                },
                 onManageCategories = { navController.navigate(Screen.BillCategories.route) },
                 onEditBill = { bill ->
                     // Pass the bill ID through navigation arguments
@@ -78,6 +82,13 @@ fun NavGraph(
 
             // Get scanned image URI from previous screen if available
             val scannedImageUri = navController.previousBackStackEntry?.savedStateHandle?.get<Uri>("scannedImageUri")
+
+            // Clear the scanned image URI after retrieving it to prevent reuse
+            LaunchedEffect(scannedImageUri) {
+                if (scannedImageUri != null) {
+                    navController.previousBackStackEntry?.savedStateHandle?.remove<Uri>("scannedImageUri")
+                }
+            }
 
             BillFormScreen(
                 scannedImageUri = scannedImageUri,
