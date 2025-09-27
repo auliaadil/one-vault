@@ -1,6 +1,5 @@
 package com.adilstudio.project.onevault.presentation.bill
 
-import android.Manifest
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,8 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -27,7 +24,6 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -62,12 +58,10 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.core.content.FileProvider
 import coil.compose.AsyncImage
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.DateUtil
 import com.adilstudio.project.onevault.core.util.ImageUtil
-import com.adilstudio.project.onevault.core.util.PermissionUtil
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.Bill
 import com.adilstudio.project.onevault.presentation.bill.account.AccountViewModel
@@ -77,7 +71,6 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import org.koin.androidx.compose.koinViewModel
-import java.io.File
 import java.time.LocalDate
 import java.util.Calendar
 
@@ -85,6 +78,7 @@ import java.util.Calendar
 @Composable
 fun BillFormScreen(
     bill: Bill? = null, // null for add, non-null for edit
+    scannedImageUri: Uri? = null, // Scanned image to process and attach
     onSave: (Bill) -> Unit,
     onDelete: ((Long) -> Unit)? = null,
     onNavigateBack: () -> Unit,
@@ -96,6 +90,11 @@ fun BillFormScreen(
     val categories by categoryViewModel.categories.collectAsState()
     val accounts by accountViewModel.accounts.collectAsState()
     val isEditing = bill != null
+
+    // ML Kit scanning state for scanned image
+    var scannedTexts by remember { mutableStateOf<List<String>>(emptyList()) }
+    var showTextSelectionDialog by remember { mutableStateOf(false) }
+    var scanningProgress by remember { mutableStateOf(false) }
 
     // Initialize form state from existing bill or defaults
     var title by remember { mutableStateOf(bill?.title ?: "") }
@@ -143,21 +142,46 @@ fun BillFormScreen(
         initialSelectedDateMillis = selectedDateMillis
     )
 
-    // Image handling state
+    // Image handling state - auto-attach scanned image
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
-    var savedImagePath by remember { mutableStateOf(bill?.imagePath) }
+    var savedImagePath by remember {
+        mutableStateOf(
+            bill?.imagePath ?: scannedImageUri?.let {
+                ImageUtil.saveImageToInternalStorage(context, it)
+            }
+        )
+    }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
-    // MLKit scanning state
-    var scannedTexts by remember { mutableStateOf<List<String>>(emptyList()) }
-    var showTextSelectionDialog by remember { mutableStateOf(false) }
-    var cameraImageUri by remember { mutableStateOf<Uri?>(null) }
-    var isScanning by remember { mutableStateOf(false) }
+    // Process scanned image with ML Kit when provided
+    LaunchedEffect(scannedImageUri) {
+        scannedImageUri?.let { uri ->
+            scanningProgress = true
+            try {
+                val image = InputImage.fromFilePath(context, uri)
+                val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
-    // Permission state
-    var showPermissionDialog by remember { mutableStateOf(false) }
-    var hasCameraPermission by remember {
-        mutableStateOf(PermissionUtil.isCameraPermissionGranted(context))
+                recognizer.process(image)
+                    .addOnSuccessListener { visionText ->
+                        val texts = visionText.textBlocks
+                            .flatMap { it.lines }
+                            .map { it.text.trim() }
+                            .filter { it.isNotEmpty() }
+
+                        scannedTexts = texts
+                        scanningProgress = false
+
+                        if (texts.isNotEmpty()) {
+                            showTextSelectionDialog = true
+                        }
+                    }
+                    .addOnFailureListener {
+                        scanningProgress = false
+                    }
+            } catch (e: Exception) {
+                scanningProgress = false
+            }
+        }
     }
 
     // Update selectedCategory when categories are loaded
@@ -176,69 +200,6 @@ fun BillFormScreen(
             // Save image to internal storage
             val imagePath = ImageUtil.saveImageToInternalStorage(context, it)
             savedImagePath = imagePath
-        }
-    }
-
-    // Camera launcher
-    val cameraLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.TakePicture()
-    ) { success ->
-        if (success && cameraImageUri != null) {
-            isScanning = true
-            val image = InputImage.fromFilePath(context, cameraImageUri!!)
-            val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-
-            recognizer.process(image)
-                .addOnSuccessListener { visionText ->
-                    val texts = visionText.textBlocks
-                        .flatMap { it.lines }
-                        .map { it.text.trim() }
-                        .filter { it.isNotEmpty() }
-
-                    scannedTexts = texts
-                    isScanning = false
-
-                    if (texts.isNotEmpty()) {
-                        showTextSelectionDialog = true
-                    }
-                }
-                .addOnFailureListener {
-                    isScanning = false
-                }
-        }
-    }
-
-    // Function to launch camera
-    fun launchCamera() {
-        val imageFile = File(context.cacheDir, "camera_image_${System.currentTimeMillis()}.jpg")
-        cameraImageUri = FileProvider.getUriForFile(
-            context,
-            "${context.packageName}.fileprovider",
-            imageFile
-        )
-        cameraImageUri?.let { uri ->
-            cameraLauncher.launch(uri)
-        }
-    }
-
-    // Permission launcher
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        hasCameraPermission = isGranted
-        if (isGranted) {
-            launchCamera()
-        } else {
-            showPermissionDialog = true
-        }
-    }
-
-    // Function to handle scan button click
-    fun handleScanButtonClick() {
-        if (hasCameraPermission) {
-            launchCamera()
-        } else {
-            permissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }
 
@@ -513,21 +474,6 @@ fun BillFormScreen(
                 }
             }
 
-            // Scan Bill Button
-            Button(
-                onClick = { handleScanButtonClick() },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !isScanning
-            ) {
-                if (isScanning) {
-                    CircularProgressIndicator(modifier = Modifier.size(dimensionResource(R.dimen.icon_size_small)))
-                    Spacer(modifier = Modifier.width(dimensionResource(R.dimen.spacing_small)))
-                    Text(stringResource(R.string.scanning))
-                } else {
-                    Text(stringResource(R.string.scan_bill))
-                }
-            }
-
             // Action buttons
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -631,189 +577,44 @@ fun BillFormScreen(
         )
     }
 
-    // Permission explanation dialog
-    if (showPermissionDialog) {
-        AlertDialog(
-            onDismissRequest = { showPermissionDialog = false },
-            title = { Text(stringResource(R.string.camera_permission_required)) },
-            text = {
-                Text(stringResource(R.string.camera_permission_message))
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        showPermissionDialog = false
-                        permissionLauncher.launch(Manifest.permission.CAMERA)
-                    }
-                ) {
-                    Text(stringResource(R.string.grant_permission))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showPermissionDialog = false }) {
-                    Text(stringResource(R.string.cancel))
-                }
-            }
-        )
-    }
-
-    // Text Selection Dialog
+    // Text selection dialog for scanned data
     if (showTextSelectionDialog) {
         TextSelectionDialog(
             scannedTexts = scannedTexts,
             onTextSelected = { selectedTitle, selectedAmount, selectedVendor ->
-                if (selectedTitle.isNotEmpty()) title = selectedTitle
-                if (selectedAmount.isNotEmpty()) {
-                    val extractedAmount =
-                        RupiahFormatter.extractNumberFromRupiahText(selectedAmount)
-                    amountValue = extractedAmount
-                    amountDisplay = RupiahFormatter.formatRupiahDisplay(extractedAmount)
+                // Apply selected text to form fields
+                if (selectedTitle.isNotBlank()) title = selectedTitle
+                if (selectedVendor.isNotBlank()) vendor = selectedVendor
+                if (selectedAmount.isNotBlank()) {
+                    val extractedAmount = BillFormUtils.extractAmountFromText(selectedAmount)
+                    if (extractedAmount > 0) {
+                        amountValue = extractedAmount.toLong()
+                        amountDisplay = BillFormUtils.getFormattedAmountDisplay(extractedAmount)
+                    }
                 }
-                if (selectedVendor.isNotEmpty()) vendor = selectedVendor
                 showTextSelectionDialog = false
             },
             onDismiss = { showTextSelectionDialog = false }
         )
     }
-}
 
-@Composable
-fun TextSelectionDialog(
-    scannedTexts: List<String>,
-    onTextSelected: (title: String, amount: String, vendor: String) -> Unit,
-    onDismiss: () -> Unit
-) {
-    var selectedTitle by remember { mutableStateOf("") }
-    var selectedAmount by remember { mutableStateOf("") }
-    var selectedVendor by remember { mutableStateOf("") }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.select_scanned_text)) },
-        text = {
-            Column {
-                Text(
-                    stringResource(R.string.tap_text_assign),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
-
-                // Show current selections
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Column(modifier = Modifier.padding(dimensionResource(R.dimen.spacing_small))) {
-                        Text(
-                            stringResource(R.string.selected_colon),
-                            style = MaterialTheme.typography.labelMedium
-                        )
-                        Text(
-                            stringResource(
-                                R.string.title_field,
-                                selectedTitle.ifEmpty { stringResource(R.string.none) }),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                        Text(
-                            stringResource(
-                                R.string.amount_field,
-                                selectedAmount.ifEmpty { stringResource(R.string.none) }),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                        Text(
-                            stringResource(
-                                R.string.vendor_field,
-                                selectedVendor.ifEmpty { stringResource(R.string.none) }),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
+    // Scanning progress indicator
+    if (scanningProgress) {
+        AlertDialog(
+            onDismissRequest = { },
+            title = { Text(stringResource(R.string.scanning)) },
+            text = {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.size(dimensionResource(R.dimen.scanner_dialog_progress_size)))
+                    Spacer(modifier = Modifier.width(dimensionResource(R.dimen.scanner_dialog_progress_spacing)))
+                    Text(stringResource(R.string.processing_image))
                 }
-
-                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
-
-                LazyColumn(modifier = Modifier.height(200.dp)) {
-                    itemsIndexed(scannedTexts) { index, text ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = dimensionResource(R.dimen.spacing_xs)),
-                            colors = CardDefaults.cardColors(
-                                containerColor = when (text) {
-                                    selectedTitle -> MaterialTheme.colorScheme.primaryContainer
-                                    selectedAmount -> MaterialTheme.colorScheme.secondaryContainer
-                                    selectedVendor -> MaterialTheme.colorScheme.tertiaryContainer
-                                    else -> MaterialTheme.colorScheme.surface
-                                }
-                            )
-                        ) {
-                            Column(modifier = Modifier.padding(8.dp)) {
-                                Text(text, style = MaterialTheme.typography.bodyMedium)
-
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                                ) {
-                                    Button(
-                                        onClick = { selectedTitle = text },
-                                        modifier = Modifier.weight(1f),
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = if (selectedTitle == text)
-                                                MaterialTheme.colorScheme.primary
-                                            else MaterialTheme.colorScheme.outline
-                                        )
-                                    ) {
-                                        Text(
-                                            stringResource(R.string.title),
-                                            style = MaterialTheme.typography.labelSmall
-                                        )
-                                    }
-
-                                    Button(
-                                        onClick = { selectedAmount = text },
-                                        modifier = Modifier.weight(1f),
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = if (selectedAmount == text)
-                                                MaterialTheme.colorScheme.secondary
-                                            else MaterialTheme.colorScheme.outline
-                                        )
-                                    ) {
-                                        Text(
-                                            stringResource(R.string.amount),
-                                            style = MaterialTheme.typography.labelSmall
-                                        )
-                                    }
-
-                                    Button(
-                                        onClick = { selectedVendor = text },
-                                        modifier = Modifier.weight(1f),
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = if (selectedVendor == text)
-                                                MaterialTheme.colorScheme.tertiary
-                                            else MaterialTheme.colorScheme.outline
-                                        )
-                                    ) {
-                                        Text(
-                                            stringResource(R.string.vendor),
-                                            style = MaterialTheme.typography.labelSmall
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = {
-                    onTextSelected(selectedTitle, selectedAmount, selectedVendor)
-                }
-            ) {
-                Text(stringResource(R.string.apply))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.cancel))
-            }
-        }
-    )
+            },
+            confirmButton = {}
+        )
+    }
 }

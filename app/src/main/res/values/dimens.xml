@@ -43,6 +43,16 @@
     <!-- App specific sizes -->
     <dimen name="app_icon_size">120dp</dimen>
 
+    <!-- Scanner dialog specific -->
+    <dimen name="scanner_dialog_spacing">16dp</dimen>
+    <dimen name="scanner_dialog_icon_size">20dp</dimen>
+    <dimen name="scanner_dialog_icon_spacing">8dp</dimen>
+    <dimen name="scanner_dialog_progress_spacing">16dp</dimen>
+    <dimen name="scanner_dialog_progress_size">24dp</dimen>
+    <dimen name="scanner_text_selection_height">200dp</dimen>
+    <dimen name="scanner_button_spacing">4dp</dimen>
+    <dimen name="scanner_item_padding">8dp</dimen>
+
     <!-- Layout heights -->
     <dimen name="list_height_fixed">300dp</dimen>
 

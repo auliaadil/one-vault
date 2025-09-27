@@ -195,6 +195,14 @@
     <string name="amount_field">Amount: %1$s</string>
     <string name="vendor_field">Vendor: %1$s</string>
 
+    <!-- Scanner Dialog -->
+    <string name="choose_scan_method">Choose how you want to scan your bill:</string>
+    <string name="scan_with_camera">Scan with Camera</string>
+    <string name="scan_from_gallery">Scan from Gallery</string>
+    <string name="processing_image">Processing image…</string>
+    <string name="scanned_data">Scanned Data</string>
+    <string name="auto_fill">Auto Fill</string>
+
     <!-- Permissions -->
     <string name="camera_permission_required">Camera Permission Required</string>
     <string name="camera_permission_message">This app needs camera permission to scan bills and extract text information. Please grant camera permission to use this feature.</string>

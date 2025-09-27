@@ -1,5 +1,6 @@
 package com.adilstudio.project.onevault.presentation.navigation
 
+import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -18,6 +19,7 @@ import com.adilstudio.project.onevault.presentation.bill.account.AccountsScreen
 import com.adilstudio.project.onevault.presentation.bill.BillFormScreen
 import com.adilstudio.project.onevault.presentation.bill.BillListScreen
 import com.adilstudio.project.onevault.presentation.bill.BillTrackerViewModel
+import com.adilstudio.project.onevault.presentation.bill.ScannedBillData
 import com.adilstudio.project.onevault.presentation.bill.category.BillCategoriesScreen
 import com.adilstudio.project.onevault.presentation.credential.CredentialListScreen
 import com.adilstudio.project.onevault.presentation.credential.CredentialListViewModel
@@ -63,12 +65,22 @@ fun NavGraph(
                     navController.currentBackStackEntry?.savedStateHandle?.set("billId", bill.id)
                     navController.navigate(Screen.EditBill.route)
                 },
-                onManageAccounts = { navController.navigate(Screen.BillAccounts.route) }
+                onManageAccounts = { navController.navigate(Screen.BillAccounts.route) },
+                onAddBillWithScannedImage = { imageUri ->
+                    // Pass scanned image URI through savedStateHandle and navigate to AddBill
+                    navController.currentBackStackEntry?.savedStateHandle?.set("scannedImageUri", imageUri)
+                    navController.navigate(Screen.AddBill.route)
+                }
             )
         }
         composable(Screen.AddBill.route) {
             val viewModel: BillTrackerViewModel = koinViewModel()
+
+            // Get scanned image URI from previous screen if available
+            val scannedImageUri = navController.previousBackStackEntry?.savedStateHandle?.get<Uri>("scannedImageUri")
+
             BillFormScreen(
+                scannedImageUri = scannedImageUri,
                 onSave = { bill ->
                     viewModel.addBill(bill)
                     navController.popBackStack()

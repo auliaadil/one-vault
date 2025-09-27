@@ -1,5 +1,6 @@
 package com.adilstudio.project.onevault.presentation.bill
 
+import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.DocumentScanner
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,6 +26,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -37,6 +43,7 @@ import com.adilstudio.project.onevault.presentation.bill.category.BillCategoryVi
 import com.adilstudio.project.onevault.presentation.bill.category.createDefaultCategories
 import com.adilstudio.project.onevault.presentation.component.EmptyState
 import com.adilstudio.project.onevault.presentation.component.GenericScreen
+import com.adilstudio.project.onevault.ui.theme.OneVaultTheme
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,8 +55,12 @@ fun BillListScreen(
     onManageCategories: () -> Unit = {},
     onEditBill: (Bill) -> Unit = {},
     onManageAccounts: () -> Unit = {},
+    onAddBillWithScannedImage: (Uri) -> Unit = {} // Changed to pass image URI
 ) {
     val bills = billTrackerViewModel.bills.collectAsState().value
+
+    // Scanner dialog state
+    var showScannerDialog by remember { mutableStateOf(false) }
 
     // Initialize default categories if needed
     val defaultCategories = createDefaultCategories()
@@ -64,6 +75,12 @@ fun BillListScreen(
     GenericScreen(
         title = stringResource(R.string.bills),
         actions = {
+            OutlinedButton(onClick = { showScannerDialog = true }) {
+                Icon(
+                    Icons.Default.DocumentScanner,
+                    contentDescription = stringResource(R.string.scan_bill)
+                )
+            }
             OutlinedButton(onClick = onManageCategories) {
                 Icon(
                     Icons.Default.Category,
@@ -93,6 +110,17 @@ fun BillListScreen(
             modifier = Modifier.padding(paddingValues)
         )
     }
+
+    // Scanner Dialog
+    if (showScannerDialog) {
+        BillScannerDialog(
+            onDismiss = { showScannerDialog = false },
+            onImageCaptured = { imageUri ->
+                showScannerDialog = false
+                onAddBillWithScannedImage(imageUri)
+            }
+        )
+    }
 }
 
 @Composable
@@ -113,7 +141,8 @@ fun BillListContent(
             )
         } else {
             LazyColumn(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
                     .padding(horizontal = dimensionResource(R.dimen.spacing_large)),
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_small))
             ) {
@@ -204,21 +233,45 @@ fun BillListScreenPreview() {
         )
     )
 
-    GenericScreen(
-        title = stringResource(R.string.bills),
-        floatingActionButton = {
-            FloatingActionButton(onClick = {}) {
-                Icon(
-                    Icons.Default.Add,
-                    contentDescription = stringResource(R.string.add_bill)
-                )
-            }
-        },
-        defaultPaddingHorizontal = R.dimen.spacing_none
+    OneVaultTheme(
+        darkTheme = true
     ) {
-        BillListContent(
-            bills = mockBills,
-            onEditBill = {}
-        )
+        GenericScreen(
+            title = stringResource(R.string.bills),
+            actions = {
+                OutlinedButton(onClick = { }) {
+                    Icon(
+                        Icons.Default.DocumentScanner,
+                        contentDescription = stringResource(R.string.scan_bill)
+                    )
+                }
+                OutlinedButton(onClick = { }) {
+                    Icon(
+                        Icons.Default.Category,
+                        contentDescription = stringResource(R.string.manage_categories)
+                    )
+                }
+                OutlinedButton(onClick = {}) {
+                    Icon(
+                        Icons.Default.AccountBalanceWallet,
+                        contentDescription = stringResource(R.string.accounts)
+                    )
+                }
+            },
+            floatingActionButton = {
+                FloatingActionButton(onClick = {}) {
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = stringResource(R.string.add_bill)
+                    )
+                }
+            },
+            defaultPaddingHorizontal = R.dimen.spacing_none
+        ) {
+            BillListContent(
+                bills = mockBills,
+                onEditBill = {}
+            )
+        }
     }
 }
