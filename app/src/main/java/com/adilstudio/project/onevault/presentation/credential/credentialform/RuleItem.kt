@@ -60,7 +60,6 @@ fun RuleItem(
             Icon(
                 imageVector = Icons.Default.DragHandle,
                 contentDescription = stringResource(R.string.drag_handle),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(24.dp)
             )
 
@@ -119,8 +118,7 @@ fun RuleItem(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Edit,
-                        contentDescription = stringResource(R.string.edit_rule),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        contentDescription = stringResource(R.string.edit_rule)
                     )
                 }
 
@@ -130,8 +128,7 @@ fun RuleItem(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = stringResource(R.string.delete_rule),
-                        tint = MaterialTheme.colorScheme.error
+                        contentDescription = stringResource(R.string.delete_rule)
                     )
                 }
             }
