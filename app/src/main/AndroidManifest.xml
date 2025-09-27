@@ -48,8 +48,20 @@
         <service
             android:name=".service.AddBillTileService"
             android:exported="true"
-            android:icon="@drawable/ic_document_scanner"
+            android:icon="@drawable/ic_add_notes"
             android:label="Add Bill"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <!-- Quick Settings Tile Service for Scan Bill -->
+        <service
+            android:name=".service.ScanBillTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_document_scanner"
+            android:label="Scan Bill"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />

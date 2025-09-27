@@ -19,7 +19,6 @@ import com.adilstudio.project.onevault.presentation.bill.account.AccountsScreen
 import com.adilstudio.project.onevault.presentation.bill.BillFormScreen
 import com.adilstudio.project.onevault.presentation.bill.BillListScreen
 import com.adilstudio.project.onevault.presentation.bill.BillTrackerViewModel
-import com.adilstudio.project.onevault.presentation.bill.ScannedBillData
 import com.adilstudio.project.onevault.presentation.bill.category.BillCategoriesScreen
 import com.adilstudio.project.onevault.presentation.credential.CredentialListScreen
 import com.adilstudio.project.onevault.presentation.credential.CredentialListViewModel
@@ -53,7 +52,8 @@ sealed class Screen(val route: String) {
 fun NavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    startDestination: String = Screen.BillList.route
+    startDestination: String = Screen.BillList.route,
+    showScanner: Boolean = false
 ) {
     NavHost(navController, startDestination = startDestination, modifier = modifier) {
         composable(Screen.BillList.route) {
@@ -74,7 +74,8 @@ fun NavGraph(
                     // Pass scanned image URI through savedStateHandle and navigate to AddBill
                     navController.currentBackStackEntry?.savedStateHandle?.set("scannedImageUri", imageUri)
                     navController.navigate(Screen.AddBill.route)
-                }
+                },
+                showScannerDialog = showScanner,
             )
         }
         composable(Screen.AddBill.route) {

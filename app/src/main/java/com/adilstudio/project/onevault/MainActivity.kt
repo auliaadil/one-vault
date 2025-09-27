@@ -46,6 +46,10 @@ class MainActivity : FragmentActivity() {
 
         // Check if launched from TileService
         val navigateTo = intent.getStringExtra("navigate_to")
+        val showScanner = intent.getBooleanExtra("show_scanner", false)
+        val startScreenCapture = intent.getBooleanExtra("start_screen_capture", false)
+        val scannedImageUri = intent.getStringExtra("scanned_image_uri")
+
         val initialRoute = when (navigateTo) {
             Screen.AddBill.route -> Screen.AddBill.route
             else -> null
@@ -54,6 +58,9 @@ class MainActivity : FragmentActivity() {
         setContent {
             MainApp(
                 initialRoute = initialRoute,
+                showScanner = showScanner,
+                startScreenCapture = startScreenCapture,
+                scannedImageUri = scannedImageUri,
                 appSecurityManager = appSecurityManager,
                 onAppExit = { finishAffinity() }
             )
@@ -84,6 +91,9 @@ class MainActivity : FragmentActivity() {
 @Composable
 fun MainApp(
     initialRoute: String? = null,
+    showScanner: Boolean = false,
+    startScreenCapture: Boolean = false,
+    scannedImageUri: String? = null,
     appSecurityManager: AppSecurityManager? = null,
     onAppExit: () -> Unit = {}
 ) {
@@ -130,7 +140,12 @@ fun MainApp(
                     }
                 },
             ) { innerPadding ->
-                NavGraph(navController = navController, modifier = Modifier.padding(innerPadding), startDestination = initialRoute ?: Screen.BillList.route)
+                NavGraph(
+                    navController = navController,
+                    modifier = Modifier.padding(innerPadding),
+                    startDestination = initialRoute ?: Screen.BillList.route,
+                    showScanner = showScanner
+                )
             }
         }
     }

@@ -2,13 +2,11 @@ package com.adilstudio.project.onevault.presentation.bill
 
 import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -58,12 +56,13 @@ fun BillListScreen(
     onManageCategories: () -> Unit = {},
     onEditBill: (Bill) -> Unit = {},
     onManageAccounts: () -> Unit = {},
-    onAddBillWithScannedImage: (Uri) -> Unit = {} // Changed to pass image URI
+    onAddBillWithScannedImage: (Uri) -> Unit = {}, // Changed to pass image URI
+    showScannerDialog: Boolean = false // New parameter for tile service
 ) {
     val bills = billTrackerViewModel.bills.collectAsState().value
 
     // Scanner dialog state
-    var showScannerDialog by remember { mutableStateOf(false) }
+    var showScannerDialogState by remember { mutableStateOf(showScannerDialog) }
 
     // Initialize default categories if needed
     val defaultCategories = createDefaultCategories()
@@ -93,7 +92,7 @@ fun BillListScreen(
         },
         floatingActionButton = {
             Column {
-                FloatingActionButton(onClick = { showScannerDialog = true }) {
+                FloatingActionButton(onClick = { showScannerDialogState = true }) {
                     Icon(
                         Icons.Default.DocumentScanner,
                         contentDescription = stringResource(R.string.scan_bill)
@@ -120,11 +119,11 @@ fun BillListScreen(
     }
 
     // Scanner Dialog
-    if (showScannerDialog) {
+    if (showScannerDialogState) {
         BillScannerDialog(
-            onDismiss = { showScannerDialog = false },
+            onDismiss = { showScannerDialogState = false },
             onImageCaptured = { imageUri ->
-                showScannerDialog = false
+                showScannerDialogState = false
                 onAddBillWithScannedImage(imageUri)
             }
         )

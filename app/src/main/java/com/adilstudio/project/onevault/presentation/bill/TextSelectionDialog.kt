@@ -27,12 +27,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.adilstudio.project.onevault.R
 
-data class ScannedBillData(
-    val title: String = "",
-    val amount: String = "",
-    val vendor: String = ""
-)
-
 @Composable
 fun TextSelectionDialog(
     scannedTexts: List<String>,
