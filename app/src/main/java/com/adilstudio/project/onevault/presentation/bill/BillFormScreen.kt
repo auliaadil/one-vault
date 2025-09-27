@@ -191,6 +191,13 @@ fun BillFormScreen(
         }
     }
 
+    // Update selectedCategory when categories are loaded
+    LaunchedEffect(accounts, bill) {
+        if (bill != null && selectedAccount == null) {
+            selectedAccount = accounts.find { it.id == bill.accountId }
+        }
+    }
+
     // Image picker launcher
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -498,7 +505,7 @@ fun BillFormScreen(
                             vendor = vendor,
                             billDate = DateUtil.localDateToIsoString(selectedDate),
                             imagePath = savedImagePath,
-                            accountId = selectedAccount?.id // Include account ID
+                            accountId = selectedAccount?.id
                         )
                         onSave(billToSave)
                     },
