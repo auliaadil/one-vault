@@ -24,6 +24,6 @@ val appModule = module {
     single { PreferenceManager(androidContext()) }
 
     // Security Managers
-    single { AppSecurityManager(get()) }
+    single { AppSecurityManager() }
     single { BiometricAuthManager(get()) }
 }

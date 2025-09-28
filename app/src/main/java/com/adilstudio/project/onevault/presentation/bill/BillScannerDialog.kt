@@ -77,9 +77,6 @@ fun BillScannerDialog(
 
     // Function to launch camera
     fun launchCamera() {
-        // Skip biometric lock check when returning from camera
-        appSecurityManager?.skipNextLockCheck()
-
         val imageFile = File(context.cacheDir, "camera_image_${System.currentTimeMillis()}.jpg")
         cameraImageUri = FileProvider.getUriForFile(
             context,
@@ -108,15 +105,12 @@ fun BillScannerDialog(
         if (hasCameraPermission) {
             launchCamera()
         } else {
-            appSecurityManager?.skipNextLockCheck()
             permissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }
 
     // Function to handle gallery button click
     fun handleGalleryClick() {
-        // Skip biometric lock check when returning from gallery
-        appSecurityManager?.skipNextLockCheck()
         imagePickerLauncher.launch("image/*")
     }
 

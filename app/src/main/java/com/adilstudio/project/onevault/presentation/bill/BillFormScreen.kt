@@ -469,8 +469,6 @@ fun BillFormScreen(
 
                     OutlinedButton(
                         onClick = {
-                            // Skip biometric lock check when returning from gallery
-                            appSecurityManager?.skipNextLockCheck()
                             imagePickerLauncher.launch("image/*")
                         },
                         modifier = Modifier.fillMaxWidth()

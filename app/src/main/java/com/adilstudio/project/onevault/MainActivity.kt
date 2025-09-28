@@ -57,6 +57,13 @@ class MainActivity : FragmentActivity() {
             else -> null
         }
 
+        // Only check and lock app on launch
+        lifecycleScope.launch {
+            if (biometricAuthManager.isBiometricEnabled()) {
+                appSecurityManager.checkAndLockOnLaunch()
+            }
+        }
+
         setContent {
             MainApp(
                 initialRoute = initialRoute,
@@ -64,26 +71,6 @@ class MainActivity : FragmentActivity() {
                 appSecurityManager = appSecurityManager,
                 onAppExit = { finishAffinity() }
             )
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        lifecycleScope.launch {
-            // Check if biometric is enabled and if we should lock the app
-            if (biometricAuthManager.isBiometricEnabled()) {
-                appSecurityManager.onAppResumed()
-            }
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        lifecycleScope.launch {
-            // Only track pause time if biometric is enabled
-            if (biometricAuthManager.isBiometricEnabled()) {
-                appSecurityManager.onAppPaused()
-            }
         }
     }
 }

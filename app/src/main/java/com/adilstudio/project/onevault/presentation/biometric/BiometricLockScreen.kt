@@ -1,19 +1,37 @@
 package com.adilstudio.project.onevault.presentation.biometric
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
 import com.adilstudio.project.onevault.R
 import org.koin.androidx.compose.koinViewModel
@@ -50,26 +68,35 @@ fun BiometricLockScreen(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(32.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                .padding(dimensionResource(R.dimen.spacing_xxxl)),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = dimensionResource(
+                    R.dimen.spacing_small
+                )
+            )
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(24.dp),
+                    .padding(dimensionResource(R.dimen.spacing_xxl)),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(
+                    space = dimensionResource(
+                        R.dimen.spacing_large
+                    )
+                )
             ) {
                 Icon(
                     imageVector = Icons.Default.Lock,
                     contentDescription = null,
-                    modifier = Modifier.size(64.dp),
+                    modifier = Modifier.size(dimensionResource(R.dimen.icon_size_xxl)),
                     tint = MaterialTheme.colorScheme.primary
                 )
 
                 Text(
                     text = stringResource(R.string.app_locked_title),
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -93,17 +120,17 @@ fun BiometricLockScreen(
                     ) {
                         if (uiState.isAuthenticating) {
                             CircularProgressIndicator(
-                                modifier = Modifier.size(20.dp),
-                                strokeWidth = 2.dp
+                                modifier = Modifier.size(dimensionResource(R.dimen.spacing_xl)),
+                                strokeWidth = dimensionResource(R.dimen.spacing_xl)
                             )
                         } else {
                             Icon(
                                 imageVector = Icons.Default.Fingerprint,
                                 contentDescription = null,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(dimensionResource(R.dimen.spacing_xl))
                             )
                         }
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(dimensionResource(R.dimen.spacing_small)))
                         Text(
                             text = if (uiState.isAuthenticating) {
                                 stringResource(R.string.authenticating)

@@ -16,6 +16,7 @@
     <dimen name="icon_size_medium">20dp</dimen>
     <dimen name="icon_size_large">24dp</dimen>
     <dimen name="icon_size_xl">32dp</dimen>
+    <dimen name="icon_size_xxl">64dp</dimen>
 
     <!-- Corner radius -->
     <dimen name="corner_radius_small">8dp</dimen>

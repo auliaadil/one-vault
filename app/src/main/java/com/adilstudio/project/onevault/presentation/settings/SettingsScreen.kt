@@ -28,21 +28,7 @@ fun SettingsScreen(
     val context = LocalContext.current
     val activity = context as? FragmentActivity
     val biometricEnabled by viewModel.biometricEnabled.collectAsState()
-    val appLockTimeout by viewModel.appLockTimeout.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
-
-    var showTimeoutDialog by remember { mutableStateOf(false) }
-
-    // Helper function to get timeout display text
-    fun getTimeoutDisplayText(timeoutMs: Long): String {
-        return when (timeoutMs) {
-            5_000L -> context.getString(R.string.timeout_5_seconds)
-            30_000L -> context.getString(R.string.timeout_30_seconds)
-            60_000L -> context.getString(R.string.timeout_1_minute)
-            300_000L -> context.getString(R.string.timeout_5_minutes)
-            else -> context.getString(R.string.timeout_30_seconds)
-        }
-    }
 
     GenericScreen(
         title = stringResource(R.string.settings),
@@ -95,16 +81,6 @@ fun SettingsScreen(
                 }
             )
 
-            // App Lock Timeout (only show if biometric is enabled)
-            if (biometricEnabled) {
-                SettingsClickableItem(
-                    icon = Icons.Default.Timer,
-                    title = stringResource(R.string.app_lock_timeout),
-                    subtitle = getTimeoutDisplayText(appLockTimeout),
-                    onClick = { showTimeoutDialog = true }
-                )
-            }
-
             Spacer(modifier = Modifier.weight(1f))
 
             // App Version
@@ -127,18 +103,6 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_large)))
         }
-    }
-
-    // Show timeout selection dialog
-    if (showTimeoutDialog) {
-        AppLockTimeoutDialog(
-            currentTimeout = appLockTimeout,
-            onTimeoutSelected = { timeout ->
-                viewModel.setAppLockTimeout(timeout)
-                showTimeoutDialog = false
-            },
-            onDismiss = { showTimeoutDialog = false }
-        )
     }
 }
 

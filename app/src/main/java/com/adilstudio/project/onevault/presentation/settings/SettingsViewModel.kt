@@ -20,9 +20,6 @@ class SettingsViewModel(
     private val _biometricEnabled = MutableStateFlow(false)
     val biometricEnabled: StateFlow<Boolean> = _biometricEnabled.asStateFlow()
 
-    private val _appLockTimeout = MutableStateFlow(30000L) // Default 30 seconds
-    val appLockTimeout: StateFlow<Long> = _appLockTimeout.asStateFlow()
-
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
@@ -35,18 +32,6 @@ class SettingsViewModel(
             settingsRepository.getBiometricEnabled().collect { enabled ->
                 _biometricEnabled.value = enabled
             }
-        }
-        viewModelScope.launch {
-            settingsRepository.getAppLockTimeout().collect { timeout ->
-                _appLockTimeout.value = timeout
-            }
-        }
-    }
-
-    fun setAppLockTimeout(timeoutMs: Long) {
-        viewModelScope.launch {
-            settingsRepository.setAppLockTimeout(timeoutMs)
-            _appLockTimeout.value = timeoutMs
         }
     }
 
