@@ -2,6 +2,7 @@ package com.adilstudio.project.onevault
 
 import android.app.Application
 import com.adilstudio.project.onevault.di.appModule
+import com.adilstudio.project.onevault.di.loggingModule
 import com.adilstudio.project.onevault.di.repositoryModule
 import com.adilstudio.project.onevault.di.useCaseModule
 import com.adilstudio.project.onevault.di.viewModelModule
@@ -26,6 +27,7 @@ class OneVaultApp : Application() {
             androidContext(this@OneVaultApp)
             modules(
                 appModule,
+                loggingModule,
                 repositoryModule,
                 useCaseModule,
                 viewModelModule
@@ -33,4 +35,3 @@ class OneVaultApp : Application() {
         }
     }
 }
-
