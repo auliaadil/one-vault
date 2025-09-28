@@ -1,11 +1,11 @@
-import org.gradle.kotlin.dsl.release
-
 plugins {
     id("app.cash.sqldelight")
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 android {
@@ -60,6 +60,7 @@ android {
 
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
+    implementation(platform(libs.firebase.bom))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -106,6 +107,10 @@ dependencies {
     // DataStore (for settings)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.junit.ktx)
+
+    // Firebase
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.analytics)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockito.core)
