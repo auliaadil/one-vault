@@ -201,7 +201,8 @@
     <string name="scan_from_gallery">Scan from Gallery</string>
     <string name="processing_image">Processing image…</string>
     <string name="scanned_data">Scanned Data</string>
-    <string name="auto_fill">Auto Fill</string>
+    <string name="adjust_auto_fill">Adjust Auto Fill</string>
+    <string name="text_items_detected">%d text items detected</string>
 
     <!-- Permissions -->
     <string name="camera_permission_required">Camera Permission Required</string>

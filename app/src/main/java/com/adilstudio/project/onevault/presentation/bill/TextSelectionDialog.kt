@@ -86,9 +86,7 @@ fun TextSelectionDialog(
                                 .padding(vertical = dimensionResource(R.dimen.spacing_xs)),
                             colors = CardDefaults.cardColors(
                                 containerColor = when (text) {
-                                    selectedTitle -> MaterialTheme.colorScheme.primaryContainer
-                                    selectedAmount -> MaterialTheme.colorScheme.secondaryContainer
-                                    selectedVendor -> MaterialTheme.colorScheme.tertiaryContainer
+                                    selectedTitle, selectedAmount, selectedVendor -> MaterialTheme.colorScheme.tertiaryContainer
                                     else -> MaterialTheme.colorScheme.surface
                                 }
                             )
@@ -105,7 +103,7 @@ fun TextSelectionDialog(
                                         modifier = Modifier.weight(1f),
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = if (selectedTitle == text)
-                                                MaterialTheme.colorScheme.primary
+                                                MaterialTheme.colorScheme.tertiary
                                             else MaterialTheme.colorScheme.outline
                                         )
                                     ) {
@@ -120,7 +118,7 @@ fun TextSelectionDialog(
                                         modifier = Modifier.weight(1f),
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = if (selectedAmount == text)
-                                                MaterialTheme.colorScheme.secondary
+                                                MaterialTheme.colorScheme.tertiary
                                             else MaterialTheme.colorScheme.outline
                                         )
                                     ) {

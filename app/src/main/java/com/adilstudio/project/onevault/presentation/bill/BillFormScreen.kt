@@ -476,6 +476,40 @@ fun BillFormScreen(
                 }
             }
 
+            // Scanned data section - show when scanned texts are available
+            if (scannedTexts.isNotEmpty()) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                    )
+                ) {
+                    Column(modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))) {
+                        Text(
+                            stringResource(R.string.scanned_data),
+                            style = MaterialTheme.typography.labelLarge
+                        )
+
+                        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
+
+                        Text(
+                            stringResource(R.string.text_items_detected, scannedTexts.size),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer
+                        )
+
+                        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
+
+                        Button(
+                            onClick = { showTextSelectionDialog = true },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(stringResource(R.string.adjust_auto_fill))
+                        }
+                    }
+                }
+            }
+
             // Action buttons
             Row(
                 modifier = Modifier.fillMaxWidth(),
