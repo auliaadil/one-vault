@@ -64,6 +64,10 @@ fun BillListScreen(
     // Scanner dialog state
     var showScannerDialogState by remember { mutableStateOf(showScannerDialog) }
 
+    // Bottom sheet state
+    var selectedBill by remember { mutableStateOf<Bill?>(null) }
+    var showBillDetailSheet by remember { mutableStateOf(false) }
+
     // Initialize default categories if needed
     val defaultCategories = createDefaultCategories()
     LaunchedEffect(Unit) {
@@ -98,9 +102,7 @@ fun BillListScreen(
                         contentDescription = stringResource(R.string.scan_bill)
                     )
                 }
-                // Spacer to separate the two FABs
-                Spacer(modifier = Modifier.size(dimensionResource(R.dimen.spacing_xs)))
-
+                Spacer(modifier = Modifier.size(dimensionResource(R.dimen.spacing_small)))
                 FloatingActionButton(onClick = onAddBill) {
                     Icon(
                         Icons.Default.Add,
@@ -113,8 +115,32 @@ fun BillListScreen(
     ) { paddingValues ->
         BillListContent(
             bills = bills,
-            onEditBill = onEditBill,
+            onEditBill = { bill ->
+                selectedBill = bill
+                showBillDetailSheet = true
+            },
             modifier = Modifier.padding(paddingValues)
+        )
+    }
+
+    // Bill Detail Bottom Sheet
+    if (showBillDetailSheet && selectedBill != null) {
+        BillDetailBottomSheet(
+            bill = selectedBill!!,
+            onDismiss = {
+                showBillDetailSheet = false
+                selectedBill = null
+            },
+            onEdit = { bill ->
+                showBillDetailSheet = false
+                selectedBill = null
+                onEditBill(bill)
+            },
+            onDelete = { billId ->
+                showBillDetailSheet = false
+                selectedBill = null
+                billTrackerViewModel.deleteBill(billId)
+            }
         )
     }
 
@@ -159,7 +185,11 @@ fun BillListContent(
                         modifier = Modifier
                             .fillMaxWidth(),
                         onClick = { onEditBill(bill) },
-                        elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.spacing_xs))
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = dimensionResource(
+                                R.dimen.spacing_xs
+                            )
+                        )
                     ) {
                         Column(modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))) {
                             Row(
@@ -169,7 +199,12 @@ fun BillListContent(
                             ) {
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(bill.title, style = MaterialTheme.typography.titleMedium)
-                                    Text("${RupiahFormatter.formatWithRupiahPrefix(bill.amount.toLong())} - ${bill.vendor}")
+                                    Text(RupiahFormatter.formatWithRupiahPrefix(bill.amount.toLong()))
+                                    Text(
+                                        stringResource(R.string.vendor_field, bill.vendor),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
 
                                     // Display formatted date
                                     val formattedDate =

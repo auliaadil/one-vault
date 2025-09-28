@@ -3,12 +3,14 @@
     <string name="autofill_service_description">One Vault Autofill Service</string>
 
     <!-- Bill Management -->
+    <string name="bill_details">Bill Details</string>
     <string name="add_bill">Add Bill</string>
     <string name="edit_bill">Edit Bill</string>
     <string name="delete_bill">Delete Bill</string>
     <string name="delete_bill_message">Are you sure you want to delete \'%1$s\'? This action cannot be undone.</string>
     <string name="title">Title</string>
     <string name="title_placeholder">e.g., Electric Bill, Internet Bill</string>
+    <string name="category">Category</string>
     <string name="category_optional">Category (Optional)</string>
     <string name="no_category_selected">No category selected</string>
     <string name="no_category">No Category</string>
@@ -17,6 +19,7 @@
     <string name="vendor">Vendor</string>
     <string name="vendor_placeholder">e.g., PLN, Telkom, Shopee</string>
     <string name="bill_date">Bill Date</string>
+    <string name="attachment">Attachment</string>
     <string name="attachment_optional">Attachment (Optional)</string>
     <string name="choose_image">Choose Image</string>
     <string name="scan_bill">Scan Bill</string>
@@ -186,6 +189,7 @@
     <string name="copy_service_name">Copy service name</string>
     <string name="template_based_password">Template-based Password</string>
     <string name="template_password_description">This password was generated using a custom template. Edit to modify the generation rules.</string>
+    <string name="has_been_copied">%s has been copied</string>
 
     <!-- Text Selection -->
     <string name="select_scanned_text">Select Scanned Text</string>

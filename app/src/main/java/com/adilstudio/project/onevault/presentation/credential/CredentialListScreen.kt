@@ -80,7 +80,8 @@ fun CredentialListScreen(
         } else {
             // Credentials list
             LazyColumn(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
                     .padding(horizontal = dimensionResource(R.dimen.spacing_large)),
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_small)),
             ) {
@@ -101,7 +102,7 @@ fun CredentialListScreen(
 
     // Show credential detail dialog
     selectedCredential?.let { credential ->
-        CredentialDetailDialog(
+        CredentialDetailBottomSheet(
             credential = credential,
             onDismiss = { selectedCredential = null },
             onEdit = {
@@ -210,10 +211,7 @@ fun CredentialCard(
                     onClick = {
                         onDelete()
                         showDeleteConfirmation = false
-                    },
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.error
-                    )
+                    }
                 ) {
                     Text(stringResource(R.string.delete))
                 }
