@@ -13,8 +13,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.BillCategory
@@ -40,14 +42,17 @@ fun CategoryFormDialog(
     val availableIcons = listOf(
         "⚡", "💧", "🌐", "🔥", "🛒", "🚗", "🎬", "🍽️", "🛍️", "📋",
         "🏠", "📱", "💊", "🎓", "💰", "🎵", "🏋️", "✈️", "🐕", "🌟",
-        "📚", "🎨", "☕", "🍕", "🚀", "💻", "📺", "🎮", "🧘", "🏆"
+        "📚", "🎨", "☕", "🍕", "🚀", "💻", "📺", "🎮", "🧘", "🏆",
+        "🧑‍💻", "🧑‍🎓", "🧑‍🔬", "🧑‍⚕️", "🧑‍🍳", "🧑‍🌾", "🧑‍🔧", "🧑‍🏫", "🧑‍🎤", "🧑‍🚀",
+        "🧑‍✈️", "🧑‍🚒", "🧑‍⚖️", "🧑‍🎨", "🧑‍🏭", "🧑‍🔬", "🧑‍🏭", "🧑‍⚖️", "🧑‍🎨", "🧑‍🏫"
     )
 
     // Predefined colors for selection
     val availableColors = listOf(
         "#F44336", "#E91E63", "#9C27B0", "#673AB7", "#3F51B5", "#2196F3",
         "#03A9F4", "#00BCD4", "#009688", "#4CAF50", "#8BC34A", "#CDDC39",
-        "#FFEB3B", "#FFC107", "#FF9800", "#FF5722", "#795548", "#607D8B"
+        "#FFEB3B", "#FFC107", "#FF9800", "#FF5722", "#795548", "#607D8B",
+        "#000000", "#FFFFFF", "#BDBDBD", "#212121", "#FAFAFA", "#FFFAFA"
     )
 
     AlertDialog(
@@ -73,14 +78,14 @@ fun CategoryFormDialog(
                 // Icon selection
                 Column {
                     Text(stringResource(R.string.select_icon), style = MaterialTheme.typography.labelMedium)
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
                     LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_xs))
                     ) {
                         items(availableIcons) { icon ->
                             Box(
                                 modifier = Modifier
-                                    .size(48.dp)
+                                    .size(dimensionResource(R.dimen.icon_size_xl))
                                     .clip(CircleShape)
                                     .background(
                                         if (selectedIcon == icon)
@@ -93,7 +98,8 @@ fun CategoryFormDialog(
                             ) {
                                 Text(
                                     text = icon,
-                                    style = MaterialTheme.typography.titleMedium
+                                    style = MaterialTheme.typography.titleMedium,
+                                    textAlign = TextAlign.Center
                                 )
                             }
                         }
@@ -103,14 +109,14 @@ fun CategoryFormDialog(
                 // Color selection
                 Column {
                     Text(stringResource(R.string.select_color), style = MaterialTheme.typography.labelMedium)
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
                     LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_xs))
                     ) {
                         items(availableColors) { color ->
                             Box(
                                 modifier = Modifier
-                                    .size(32.dp)
+                                    .size(dimensionResource(R.dimen.icon_size_medium))
                                     .clip(CircleShape)
                                     .background(Color(color.toColorInt()))
                                     .clickable { selectedColor = color }
@@ -138,7 +144,7 @@ fun CategoryFormDialog(
                 // Type selection
                 Column {
                     Text(stringResource(R.string.category_type), style = MaterialTheme.typography.labelMedium)
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
 
                     CategoryType.entries.forEach { type ->
                         Row(
@@ -168,24 +174,28 @@ fun CategoryFormDialog(
                     )
                 ) {
                     Row(
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large)),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        val previewBgColor = Color(selectedColor.toColorInt())
+                        val iconTextColor = if (
+                            (previewBgColor.red + previewBgColor.green + previewBgColor.blue) / 3 < 0.5
+                        ) Color.White else Color.Black
                         Box(
                             modifier = Modifier
-                                .size(48.dp)
+                                .size(dimensionResource(R.dimen.icon_size_xl))
                                 .clip(CircleShape)
-                                .background(Color(selectedColor.toColorInt())),
+                                .background(previewBgColor),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
                                 text = selectedIcon,
-                                style = MaterialTheme.typography.titleLarge
+                                style = MaterialTheme.typography.titleLarge,
+                                color = iconTextColor,
+                                textAlign = TextAlign.Center
                             )
                         }
-
-                        Spacer(modifier = Modifier.width(16.dp))
-
+                        Spacer(modifier = Modifier.width(dimensionResource(R.dimen.spacing_large)))
                         Column {
                             Text(
                                 text = name.ifEmpty { stringResource(R.string.category_name) },
