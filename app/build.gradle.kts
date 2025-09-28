@@ -8,6 +8,54 @@ plugins {
     alias(libs.plugins.firebase.crashlytics)
 }
 
+// Git versioning functions using providers for configuration cache compatibility
+fun getGitTag(): Provider<String> = providers.exec {
+    commandLine("git", "describe", "--tags", "--abbrev=0")
+    isIgnoreExitValue = true
+}.standardOutput.asText.map { output ->
+    val result = output.trim()
+    if (result.isNotEmpty()) result else "v0.0.0"
+}.orElse("v0.0.0")
+
+fun getGitCommitCount(): Provider<Int> = providers.exec {
+    commandLine("git", "rev-list", "--count", "HEAD")
+    isIgnoreExitValue = true
+}.standardOutput.asText.map { output ->
+    val result = output.trim()
+    if (result.isNotEmpty()) result.toIntOrNull() ?: 1 else 1
+}.orElse(1)
+
+fun getGitHash(): Provider<String> = providers.exec {
+    commandLine("git", "rev-parse", "--short", "HEAD")
+    isIgnoreExitValue = true
+}.standardOutput.asText.map { output ->
+    val result = output.trim()
+    if (result.isNotEmpty()) result else "unknown"
+}.orElse("unknown")
+
+fun isGitDirty(): Provider<Boolean> = providers.exec {
+    commandLine("git", "status", "--porcelain")
+    isIgnoreExitValue = true
+}.standardOutput.asText.map { output ->
+    output.trim().isNotEmpty()
+}.orElse(false)
+
+// Generate version name and code using providers
+val appVersionName: Provider<String> = getGitTag().zip(isGitDirty()) { tag, isDirty ->
+    // Remove 'v' prefix if present
+    val cleanTag = if (tag.startsWith("v")) tag.substring(1) else tag
+
+    if (isDirty) {
+        "$cleanTag-dirty"
+    } else {
+        cleanTag
+    }
+}
+
+val appVersionCode: Provider<Int> = getGitCommitCount().map { commitCount ->
+    maxOf(commitCount, 1)
+}
+
 android {
     namespace = "com.adilstudio.project.onevault"
     compileSdk = 36
@@ -16,8 +64,8 @@ android {
         applicationId = "com.adilstudio.project.onevault"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = appVersionCode.get()
+        versionName = appVersionName.get()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -123,4 +171,18 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+// Custom task to display version information
+tasks.register("printVersionInfo") {
+    doLast {
+        println("=== OneVault Version Information ===")
+        println("Version Name: ${appVersionName.get()}")
+        println("Version Code: ${appVersionCode.get()}")
+        println("Git Tag: ${getGitTag().get()}")
+        println("Git Hash: ${getGitHash().get()}")
+        println("Git Commit Count: ${getGitCommitCount().get()}")
+        println("Git Dirty: ${isGitDirty().get()}")
+        println("=====================================")
+    }
 }
