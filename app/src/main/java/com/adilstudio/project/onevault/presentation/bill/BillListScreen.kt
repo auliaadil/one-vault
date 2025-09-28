@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.DocumentScanner
 import androidx.compose.material3.Card
@@ -115,7 +114,7 @@ fun BillListScreen(
     ) { paddingValues ->
         BillListContent(
             bills = bills,
-            onEditBill = { bill ->
+            onViewDetail = { bill ->
                 selectedBill = bill
                 showBillDetailSheet = true
             },
@@ -156,15 +155,61 @@ fun BillListScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BillCard(
+    bill: Bill,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onClick,
+        elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.spacing_xs))
+    ) {
+        Column(modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(bill.title, style = MaterialTheme.typography.titleMedium)
+                    Text(RupiahFormatter.formatWithRupiahPrefix(bill.amount.toLong()))
+                    Text(
+                        stringResource(R.string.vendor_field, bill.vendor),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    val formattedDate = DateUtil.isoStringToLocalDate(bill.billDate)?.let { date ->
+                        DateUtil.formatDateForDisplay(date)
+                    } ?: bill.billDate
+                    Text(
+                        stringResource(R.string.date_label, formattedDate),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        stringResource(
+                            R.string.category_label,
+                            bill.category ?: stringResource(R.string.no_category)
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+    }
+}
+
 @Composable
 fun BillListContent(
     bills: List<Bill>,
-    onEditBill: (Bill) -> Unit,
+    onViewDetail: (Bill) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier
-            .fillMaxSize()
+        modifier = modifier.fillMaxSize()
     ) {
         if (bills.isEmpty()) {
             EmptyState(
@@ -181,68 +226,10 @@ fun BillListContent(
             ) {
                 items(bills.size) { idx ->
                     val bill = bills[idx]
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        onClick = { onEditBill(bill) },
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = dimensionResource(
-                                R.dimen.spacing_xs
-                            )
-                        )
-                    ) {
-                        Column(modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.Top
-                            ) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(bill.title, style = MaterialTheme.typography.titleMedium)
-                                    Text(RupiahFormatter.formatWithRupiahPrefix(bill.amount.toLong()))
-                                    Text(
-                                        stringResource(R.string.vendor_field, bill.vendor),
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-
-                                    // Display formatted date
-                                    val formattedDate =
-                                        DateUtil.isoStringToLocalDate(bill.billDate)?.let { date ->
-                                            DateUtil.formatDateForDisplay(date)
-                                        } ?: bill.billDate
-                                    Text(
-                                        stringResource(R.string.date_label, formattedDate),
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-
-                                    // Display category or "No Category" if null
-                                    Text(
-                                        stringResource(
-                                            R.string.category_label,
-                                            bill.category ?: stringResource(R.string.no_category)
-                                        ),
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
-
-                                // Show attachment icon if image exists
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    if (bill.imagePath != null) {
-                                        Icon(
-                                            imageVector = Icons.Default.AttachFile,
-                                            contentDescription = stringResource(R.string.has_attachment),
-                                            modifier = Modifier.size(dimensionResource(R.dimen.icon_size_small))
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    BillCard(
+                        bill = bill,
+                        onClick = { onViewDetail(bill) }
+                    )
                 }
             }
         }
@@ -311,7 +298,7 @@ fun BillListScreenPreview() {
         ) {
             BillListContent(
                 bills = mockBills,
-                onEditBill = {}
+                onViewDetail = {}
             )
         }
     }

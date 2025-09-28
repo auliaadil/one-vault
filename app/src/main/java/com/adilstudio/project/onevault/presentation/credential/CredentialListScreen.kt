@@ -5,8 +5,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -91,9 +89,7 @@ fun CredentialListScreen(
                 ) { credential ->
                     CredentialCard(
                         credential = credential,
-                        onClick = { selectedCredential = credential },
-                        onEdit = { onEditCredential(credential) },
-                        onDelete = { viewModel.deleteCredential(credential.id) }
+                        onClick = { selectedCredential = credential }
                     )
                 }
             }
@@ -121,12 +117,8 @@ fun CredentialListScreen(
 @Composable
 fun CredentialCard(
     credential: Credential,
-    onClick: () -> Unit,
-    onEdit: () -> Unit,
-    onDelete: () -> Unit
+    onClick: () -> Unit
 ) {
-    var showDeleteConfirmation by remember { mutableStateOf(false) }
-
     Card(
         modifier = Modifier.fillMaxWidth(),
         onClick = onClick,
@@ -177,50 +169,7 @@ fun CredentialCard(
                         }
                     }
                 }
-
-                Row {
-                    IconButton(onClick = onEdit) {
-                        Icon(
-                            Icons.Default.Edit,
-                            contentDescription = stringResource(R.string.edit)
-                        )
-                    }
-                    IconButton(
-                        onClick = { showDeleteConfirmation = true }
-                    ) {
-                        Icon(
-                            Icons.Default.Delete,
-                            contentDescription = stringResource(R.string.delete_credential)
-                        )
-                    }
-                }
             }
         }
-    }
-
-    // Delete confirmation dialog
-    if (showDeleteConfirmation) {
-        AlertDialog(
-            onDismissRequest = { showDeleteConfirmation = false },
-            title = { Text(stringResource(R.string.delete_credential)) },
-            text = {
-                Text(stringResource(R.string.delete_credential_message, credential.serviceName))
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onDelete()
-                        showDeleteConfirmation = false
-                    }
-                ) {
-                    Text(stringResource(R.string.delete))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDeleteConfirmation = false }) {
-                    Text(stringResource(R.string.cancel))
-                }
-            }
-        )
     }
 }

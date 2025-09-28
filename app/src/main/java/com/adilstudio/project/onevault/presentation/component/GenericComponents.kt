@@ -1,6 +1,9 @@
 package com.adilstudio.project.onevault.presentation.component
 
+import android.content.Intent
+import android.net.Uri
 import androidx.annotation.DimenRes
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -310,6 +313,7 @@ fun DetailField(
     maxLines: Int = Int.MAX_VALUE,
     trailing: (@Composable () -> Unit)? = null
 ) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -333,16 +337,22 @@ fun DetailField(
                 )
             }
             if (imagePath != null) {
-                // Show existing image
-                val imageToShow = ImageUtil.getImageFileUri(LocalContext.current, imagePath)
-                imageToShow?.let {
+                val imageToShow = ImageUtil.getImageFileUri(context, imagePath)
+                imageToShow?.let { uri ->
                     AsyncImage(
-                        model = it,
+                        model = uri,
                         contentDescription = "Bill Image",
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(dimensionResource(R.dimen.height_fixed_medium))
-                            .clip(RoundedCornerShape(dimensionResource(R.dimen.corner_radius_small))),
+                            .clip(RoundedCornerShape(dimensionResource(R.dimen.corner_radius_small)))
+                            .clickable {
+                                val intent = Intent(Intent.ACTION_VIEW).apply {
+                                    setDataAndType(uri, "image/*")
+                                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                }
+                                context.startActivity(intent)
+                            },
                         contentScale = ContentScale.Crop
                     )
                 }
