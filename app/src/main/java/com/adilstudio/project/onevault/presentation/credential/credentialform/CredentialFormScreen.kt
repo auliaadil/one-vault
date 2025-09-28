@@ -353,7 +353,7 @@ fun CredentialFormScreen(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
                         )
                     ) {
                         Column(
