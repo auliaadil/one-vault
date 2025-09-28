@@ -33,6 +33,9 @@ coil = "2.6.0"
 # Biometric
 biometric = "1.1.0"
 
+# Splash Screen
+splashScreen = "1.0.1"
+
 # DataStore
 datastore = "1.1.1"
 
@@ -89,6 +92,9 @@ coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coi
 
 # Biometric
 androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
+
+# Splash Screen
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashScreen" }
 
 # DataStore
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }

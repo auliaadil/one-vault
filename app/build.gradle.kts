@@ -97,6 +97,9 @@ dependencies {
     // Biometric Authentication
     implementation(libs.androidx.biometric)
 
+    // Splash Screen
+    implementation(libs.androidx.core.splashscreen)
+
     // Compose Reorderable for drag and drop
     implementation(libs.reorderable)
 
