@@ -14,7 +14,7 @@ fun getGitTag(): Provider<String> = providers.exec {
     isIgnoreExitValue = true
 }.standardOutput.asText.map { output ->
     val result = output.trim()
-    if (result.isNotEmpty()) result else "v0.0.0"
+    result.ifEmpty { "v0.0.0" }
 }.orElse("v0.0.0")
 
 fun getGitCommitCount(): Provider<Int> = providers.exec {
@@ -30,25 +30,24 @@ fun getGitHash(): Provider<String> = providers.exec {
     isIgnoreExitValue = true
 }.standardOutput.asText.map { output ->
     val result = output.trim()
-    if (result.isNotEmpty()) result else "unknown"
+    result.ifEmpty { "unknown" }
 }.orElse("unknown")
 
-fun isGitDirty(): Provider<Boolean> = providers.exec {
-    commandLine("git", "status", "--porcelain")
-    isIgnoreExitValue = true
-}.standardOutput.asText.map { output ->
-    output.trim().isNotEmpty()
-}.orElse(false)
-
 // Generate version name and code using providers
-val appVersionName: Provider<String> = getGitTag().zip(isGitDirty()) { tag, isDirty ->
+val appVersionName: Provider<String> = getGitTag().map { tag ->
     // Remove 'v' prefix if present
     val cleanTag = if (tag.startsWith("v")) tag.substring(1) else tag
 
-    if (isDirty) {
-        "$cleanTag-dirty"
-    } else {
+    // Check if this is a release build by looking at gradle.startParameter.taskNames
+    val isReleaseBuild = gradle.startParameter.taskNames.any { taskName ->
+        taskName.contains("Release", ignoreCase = true) ||
+        taskName.contains("release", ignoreCase = false)
+    }
+
+    if (isReleaseBuild) {
         cleanTag
+    } else {
+        "$cleanTag-debug"
     }
 }
 
@@ -182,7 +181,6 @@ tasks.register("printVersionInfo") {
         println("Git Tag: ${getGitTag().get()}")
         println("Git Hash: ${getGitHash().get()}")
         println("Git Commit Count: ${getGitCommitCount().get()}")
-        println("Git Dirty: ${isGitDirty().get()}")
         println("=====================================")
     }
 }
