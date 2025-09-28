@@ -9,7 +9,6 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "one_vault_preferences")
@@ -40,6 +39,18 @@ class PreferenceManager(private val context: Context) {
         }
     }
 
+    suspend fun setAppLockLastPauseTime(lastPauseTimeMs: Long) {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_APP_LOCK_LAST_PAUSE_TIME] = lastPauseTimeMs
+        }
+    }
+
+    fun getAppLockLastPauseTimeFlow(): Flow<Long> {
+        return context.dataStore.data.map { preferences ->
+            preferences[KEY_APP_LOCK_LAST_PAUSE_TIME] ?: 0L
+        }
+    }
+
     suspend fun saveString(key: String, value: String) {
         val prefKey = stringPreferencesKey(key)
         context.dataStore.edit { preferences ->
@@ -47,30 +58,10 @@ class PreferenceManager(private val context: Context) {
         }
     }
 
-    suspend fun getString(key: String): String? {
-        val prefKey = stringPreferencesKey(key)
-        return context.dataStore.data.map { preferences ->
-            preferences[prefKey]
-        }.first()
-    }
-
-    fun getStringFlow(key: String): Flow<String?> {
-        val prefKey = stringPreferencesKey(key)
-        return context.dataStore.data.map { preferences ->
-            preferences[prefKey]
-        }
-    }
-
-    suspend fun removeString(key: String) {
-        val prefKey = stringPreferencesKey(key)
-        context.dataStore.edit { preferences ->
-            preferences.remove(prefKey)
-        }
-    }
-
     companion object {
         private val KEY_BIOMETRIC_ENABLED = booleanPreferencesKey("biometric_enabled")
         private val KEY_APP_LOCK_TIMEOUT = longPreferencesKey("app_lock_timeout")
+        private val KEY_APP_LOCK_LAST_PAUSE_TIME = longPreferencesKey("app_lock_last_pause_time")
         const val DEFAULT_LOCK_TIMEOUT = 30000L // 30 seconds
     }
 }

@@ -62,6 +62,7 @@ import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.DateUtil
 import com.adilstudio.project.onevault.core.util.ImageUtil
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
+import com.adilstudio.project.onevault.domain.manager.AppSecurityManager
 import com.adilstudio.project.onevault.domain.model.Bill
 import com.adilstudio.project.onevault.presentation.bill.account.AccountViewModel
 import com.adilstudio.project.onevault.presentation.bill.category.BillCategoryViewModel
@@ -83,7 +84,8 @@ fun BillFormScreen(
     onNavigateBack: () -> Unit,
     onCancel: () -> Unit = {},
     categoryViewModel: BillCategoryViewModel = koinViewModel(),
-    accountViewModel: AccountViewModel = koinViewModel()
+    accountViewModel: AccountViewModel = koinViewModel(),
+    appSecurityManager: AppSecurityManager? = null
 ) {
     val context = LocalContext.current
     val categories by categoryViewModel.categories.collectAsState()
@@ -466,7 +468,11 @@ fun BillFormScreen(
                     }
 
                     OutlinedButton(
-                        onClick = { imagePickerLauncher.launch("image/*") },
+                        onClick = {
+                            // Skip biometric lock check when returning from gallery
+                            appSecurityManager?.skipNextLockCheck()
+                            imagePickerLauncher.launch("image/*")
+                        },
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Icon(Icons.Default.AttachFile, contentDescription = null)

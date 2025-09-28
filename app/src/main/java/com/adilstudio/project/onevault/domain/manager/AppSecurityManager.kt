@@ -7,23 +7,28 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 
 class AppSecurityManager(
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
 ) {
 
     private val _isAppLocked = MutableStateFlow(false)
     val isAppLocked: StateFlow<Boolean> = _isAppLocked.asStateFlow()
 
-    private val _shouldShowBiometricPrompt = MutableStateFlow(false)
-    val shouldShowBiometricPrompt: StateFlow<Boolean> = _shouldShowBiometricPrompt.asStateFlow()
+    // Flag to temporarily skip locking (e.g., when returning from camera/gallery)
+    private var skipNextLockCheck = false
 
-    private var lastPauseTime: Long = 0
-
-    fun onAppPaused() {
-        lastPauseTime = System.currentTimeMillis()
+    suspend fun onAppPaused() {
+        settingsRepository.setAppLockLastPauseTime(System.currentTimeMillis())
     }
 
     suspend fun onAppResumed() {
+        // Skip lock check if we're returning from camera/gallery
+        if (skipNextLockCheck) {
+            skipNextLockCheck = false
+            return
+        }
+
         val currentTime = System.currentTimeMillis()
+        val lastPauseTime = settingsRepository.getAppLockLastPauseTime().first()
         val timeDiff = currentTime - lastPauseTime
         val lockTimeout = settingsRepository.getAppLockTimeout().first()
 
@@ -35,19 +40,14 @@ class AppSecurityManager(
 
     fun lockApp() {
         _isAppLocked.value = true
-        _shouldShowBiometricPrompt.value = true
     }
 
     fun unlockApp() {
         _isAppLocked.value = false
-        _shouldShowBiometricPrompt.value = false
     }
 
-    fun dismissBiometricPrompt() {
-        _shouldShowBiometricPrompt.value = false
+    fun skipNextLockCheck() {
+        skipNextLockCheck = true
     }
 
-    fun shouldLockApp(): Boolean {
-        return _isAppLocked.value
-    }
 }

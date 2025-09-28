@@ -7,4 +7,6 @@ interface SettingsRepository {
     fun getBiometricEnabled(): Flow<Boolean>
     suspend fun setAppLockTimeout(timeoutMs: Long)
     fun getAppLockTimeout(): Flow<Long>
+    suspend fun setAppLockLastPauseTime(lastPauseTimeMs: Long)
+    fun getAppLockLastPauseTime(): Flow<Long>
 }

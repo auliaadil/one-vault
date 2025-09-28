@@ -12,15 +12,17 @@ class SettingsRepositoryImpl(
         preferenceManager.setBiometricEnabled(enabled)
     }
 
-    override fun getBiometricEnabled(): Flow<Boolean> {
-        return preferenceManager.getBiometricEnabledFlow()
-    }
+    override fun getBiometricEnabled(): Flow<Boolean> = preferenceManager.getBiometricEnabledFlow()
 
     override suspend fun setAppLockTimeout(timeoutMs: Long) {
         preferenceManager.setAppLockTimeout(timeoutMs)
     }
 
-    override fun getAppLockTimeout(): Flow<Long> {
-        return preferenceManager.getAppLockTimeoutFlow()
+    override fun getAppLockTimeout(): Flow<Long> = preferenceManager.getAppLockTimeoutFlow()
+
+    override suspend fun setAppLockLastPauseTime(lastPauseTimeMs: Long) {
+        preferenceManager.setAppLockLastPauseTime(lastPauseTimeMs)
     }
+
+    override fun getAppLockLastPauseTime(): Flow<Long> = preferenceManager.getAppLockLastPauseTimeFlow()
 }

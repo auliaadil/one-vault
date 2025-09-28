@@ -35,12 +35,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.core.content.FileProvider
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.PermissionUtil
+import com.adilstudio.project.onevault.domain.manager.AppSecurityManager
 import java.io.File
 
 @Composable
 fun BillScannerDialog(
     onDismiss: () -> Unit,
-    onImageCaptured: (Uri) -> Unit
+    onImageCaptured: (Uri) -> Unit,
+    appSecurityManager: AppSecurityManager? = null
 ) {
     val context = LocalContext.current
 
@@ -75,6 +77,9 @@ fun BillScannerDialog(
 
     // Function to launch camera
     fun launchCamera() {
+        // Skip biometric lock check when returning from camera
+        appSecurityManager?.skipNextLockCheck()
+
         val imageFile = File(context.cacheDir, "camera_image_${System.currentTimeMillis()}.jpg")
         cameraImageUri = FileProvider.getUriForFile(
             context,
@@ -103,8 +108,16 @@ fun BillScannerDialog(
         if (hasCameraPermission) {
             launchCamera()
         } else {
+            appSecurityManager?.skipNextLockCheck()
             permissionLauncher.launch(Manifest.permission.CAMERA)
         }
+    }
+
+    // Function to handle gallery button click
+    fun handleGalleryClick() {
+        // Skip biometric lock check when returning from gallery
+        appSecurityManager?.skipNextLockCheck()
+        imagePickerLauncher.launch("image/*")
     }
 
     // Scan method selection dialog
@@ -137,7 +150,7 @@ fun BillScannerDialog(
 
                 // Gallery option
                 OutlinedButton(
-                    onClick = { imagePickerLauncher.launch("image/*") },
+                    onClick = { handleGalleryClick() },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Icon(
