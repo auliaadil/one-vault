@@ -11,17 +11,17 @@ enum class CategoryType {
     ENTERTAINMENT,
     HEALTHCARE,
     EDUCATION,
-    OTHER
+    OTHERS
 }
 
 @Serializable
 data class BillCategory(
-    val id: String,
+    val id: Long?,
     val name: String,
     val icon: String,
     val color: String,
     val type: CategoryType,
-    val parentCategoryId: String? = null,
+    val parentCategoryId: Long? = null,
     val isEditable: Boolean = true,
     val createdAt: Long,
     val updatedAt: Long

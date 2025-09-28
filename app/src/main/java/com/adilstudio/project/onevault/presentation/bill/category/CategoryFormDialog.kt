@@ -31,7 +31,7 @@ fun CategoryFormDialog(
     var name by remember { mutableStateOf(category?.name ?: "") }
     var selectedIcon by remember { mutableStateOf(category?.icon ?: "📋") }
     var selectedColor by remember { mutableStateOf(category?.color ?: "#2196F3") }
-    var selectedType by remember { mutableStateOf(category?.type ?: CategoryType.OTHER) }
+    var selectedType by remember { mutableStateOf(category?.type ?: CategoryType.OTHERS) }
 
     val isEditing = category != null
     val title = if (isEditing) stringResource(R.string.edit_category) else stringResource(R.string.add_category)
@@ -231,6 +231,6 @@ private fun getCategoryTypeDisplayName(type: CategoryType): String {
         CategoryType.ENTERTAINMENT -> stringResource(R.string.entertainment)
         CategoryType.HEALTHCARE -> stringResource(R.string.healthcare)
         CategoryType.EDUCATION -> stringResource(R.string.education)
-        CategoryType.OTHER -> stringResource(R.string.other)
+        CategoryType.OTHERS -> stringResource(R.string.other)
     }
 }

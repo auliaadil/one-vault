@@ -40,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -179,7 +180,7 @@ fun BillCategoriesScreen(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        viewModel.deleteCategory(category.id)
+                        viewModel.deleteCategory(category.id ?: 0L)
                         categoryToDelete = null
                     }
                 ) {
@@ -272,7 +273,7 @@ private fun getCategoryTypeDisplayName(type: CategoryType): String {
         CategoryType.ENTERTAINMENT -> stringResource(R.string.entertainment)
         CategoryType.HEALTHCARE -> stringResource(R.string.healthcare)
         CategoryType.EDUCATION -> stringResource(R.string.education)
-        CategoryType.OTHER -> stringResource(R.string.other)
+        CategoryType.OTHERS -> stringResource(R.string.other)
     }
 }
 
@@ -282,7 +283,7 @@ fun CategoryCardPreview() {
     MaterialTheme {
         CategoryCard(
             category = BillCategory(
-                id = "1",
+                id = 1,
                 name = "Electricity",
                 icon = "💡",
                 color = "#FFD700",

@@ -6,21 +6,22 @@ import com.adilstudio.project.onevault.domain.model.BillCategory
 import com.adilstudio.project.onevault.domain.model.CategoryType
 import com.adilstudio.project.onevault.domain.usecase.AddBillCategoryUseCase
 import com.adilstudio.project.onevault.domain.usecase.DeleteBillCategoryUseCase
-import com.adilstudio.project.onevault.domain.usecase.GetBillCategoriesUseCase
 import com.adilstudio.project.onevault.domain.usecase.GetBillCategoriesCountUseCase
+import com.adilstudio.project.onevault.domain.usecase.GetBillCategoriesUseCase
+import com.adilstudio.project.onevault.domain.usecase.InitializeDefaultBillCategoriesIfEmptyUseCase
 import com.adilstudio.project.onevault.domain.usecase.UpdateBillCategoryUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.util.UUID
 
 class BillCategoryViewModel(
     private val getBillCategoriesUseCase: GetBillCategoriesUseCase,
     private val addBillCategoryUseCase: AddBillCategoryUseCase,
     private val updateBillCategoryUseCase: UpdateBillCategoryUseCase,
     private val deleteBillCategoryUseCase: DeleteBillCategoryUseCase,
-    private val getBillCategoriesCountUseCase: GetBillCategoriesCountUseCase
+    private val getBillCategoriesCountUseCase: GetBillCategoriesCountUseCase,
+    private val initializeDefaultBillCategoriesIfEmptyUseCase: InitializeDefaultBillCategoriesIfEmptyUseCase
 ) : ViewModel() {
 
     private val _categories = MutableStateFlow<List<BillCategory>>(emptyList())
@@ -36,7 +37,10 @@ class BillCategoryViewModel(
     val successMessage: StateFlow<String?> = _successMessage.asStateFlow()
 
     init {
-        loadCategories()
+        viewModelScope.launch {
+            initializeDefaultBillCategoriesIfEmptyUseCase()
+            loadCategories()
+        }
     }
 
     private fun loadCategories() {
@@ -73,13 +77,13 @@ class BillCategoryViewModel(
         icon: String,
         color: String,
         type: CategoryType,
-        parentCategoryId: String? = null
+        parentCategoryId: Long? = null
     ) {
         viewModelScope.launch {
             try {
                 val currentTime = System.currentTimeMillis()
                 val category = BillCategory(
-                    id = UUID.randomUUID().toString(),
+                    id = null,
                     name = name,
                     icon = icon,
                     color = color,
@@ -108,7 +112,7 @@ class BillCategoryViewModel(
         }
     }
 
-    fun deleteCategory(categoryId: String) {
+    fun deleteCategory(categoryId: Long) {
         viewModelScope.launch {
             try {
                 deleteBillCategoryUseCase(categoryId)

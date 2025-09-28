@@ -16,6 +16,7 @@ val useCaseModule = module {
     single { UpdateBillCategoryUseCase(get()) }
     single { DeleteBillCategoryUseCase(get()) }
     single { GetBillCategoriesCountUseCase(get()) }
+    single { InitializeDefaultBillCategoriesIfEmptyUseCase(get()) }
 
     // Credential Use Cases
     single { AddCredentialUseCase(get()) }

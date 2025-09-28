@@ -8,12 +8,12 @@ import com.adilstudio.project.onevault.presentation.credential.CredentialListVie
 import com.adilstudio.project.onevault.presentation.filevault.FileVaultViewModel
 import com.adilstudio.project.onevault.presentation.credential.credentialform.CredentialFormViewModel
 import com.adilstudio.project.onevault.presentation.settings.SettingsViewModel
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
     viewModel { BillTrackerViewModel(get(), get(), get(), get()) }
-    viewModel { BillCategoryViewModel(get(), get(), get(), get(), get()) }
+    viewModel { BillCategoryViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { CredentialListViewModel(get(), get()) }
     viewModel { FileVaultViewModel() }
     viewModel { SettingsViewModel(get()) }

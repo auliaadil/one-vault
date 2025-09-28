@@ -37,7 +37,7 @@ class BillCategoryRepositoryImplTest {
     fun `getCategories returns mapped categories from database`() = runTest {
         // Create expected test data
         val expectedCategory = BillCategory(
-            id = "category-123",
+            id = 123,
             name = "Utilities",
             icon = "⚡",
             color = "#FF5722",
@@ -55,7 +55,7 @@ class BillCategoryRepositoryImplTest {
         testFlow.collect { categories ->
             assertEquals(1, categories.size)
             val category = categories[0]
-            assertEquals("category-123", category.id)
+            assertEquals(123, category.id)
             assertEquals("Utilities", category.name)
             assertEquals("⚡", category.icon)
             assertEquals("#FF5722", category.color)
@@ -74,7 +74,7 @@ class BillCategoryRepositoryImplTest {
     fun `addCategory calls insert with correct parameters`() = runTest {
         // Given
         val category = BillCategory(
-            id = "category-123",
+            id = 123,
             name = "Utilities",
             icon = "⚡",
             color = "#FF5722",
@@ -90,7 +90,6 @@ class BillCategoryRepositoryImplTest {
 
         // Then
         verify(billCategoryEntityQueries).insertCategory(
-            id = "category-123",
             name = "Utilities",
             icon = "⚡",
             color = "#FF5722",
@@ -106,12 +105,12 @@ class BillCategoryRepositoryImplTest {
     fun `updateCategory calls update with correct parameters`() = runTest {
         // Given
         val category = BillCategory(
-            id = "category-123",
+            id = 123,
             name = "Updated Utilities",
             icon = "🔌",
             color = "#FF6722",
             type = CategoryType.UTILITIES,
-            parentCategoryId = "parent-456",
+            parentCategoryId = 456,
             isEditable = false,
             createdAt = 1632835200000L,
             updatedAt = 1632921600000L
@@ -126,17 +125,17 @@ class BillCategoryRepositoryImplTest {
             icon = "🔌",
             color = "#FF6722",
             type = "UTILITIES",
-            parentCategoryId = "parent-456",
+            parentCategoryId = 456,
             isEditable = 0L,
             updatedAt = 1632921600000L,
-            id = "category-123"
+            id = 123
         )
     }
 
     @Test
     fun `deleteCategory calls deleteById with correct id`() = runTest {
         // Given
-        val categoryId = "category-123"
+        val categoryId = 123L
 
         // When
         billCategoryRepository.deleteCategory(categoryId)
@@ -155,7 +154,7 @@ class BillCategoryRepositoryImplTest {
         assertEquals("ENTERTAINMENT", CategoryType.ENTERTAINMENT.name)
         assertEquals("HEALTHCARE", CategoryType.HEALTHCARE.name)
         assertEquals("EDUCATION", CategoryType.EDUCATION.name)
-        assertEquals("OTHER", CategoryType.OTHER.name)
+        assertEquals("OTHER", CategoryType.OTHERS.name)
 
         // Test string to enum conversion
         assertEquals(CategoryType.UTILITIES, CategoryType.valueOf("UTILITIES"))

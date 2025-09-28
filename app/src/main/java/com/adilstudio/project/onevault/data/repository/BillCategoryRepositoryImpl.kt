@@ -37,7 +37,7 @@ class BillCategoryRepositoryImpl(database: Database) : BillCategoryRepository {
             }
     }
 
-    override suspend fun getCategoryById(id: String): BillCategory? {
+    override suspend fun getCategoryById(id: Long): BillCategory? {
         return queries.selectById(id)
             .asFlow()
             .mapToOneOrNull(Dispatchers.IO)
@@ -60,7 +60,6 @@ class BillCategoryRepositoryImpl(database: Database) : BillCategoryRepository {
 
     override suspend fun addCategory(category: BillCategory) {
         queries.insertCategory(
-            id = category.id,
             name = category.name,
             icon = category.icon,
             color = category.color,
@@ -81,15 +80,22 @@ class BillCategoryRepositoryImpl(database: Database) : BillCategoryRepository {
             parentCategoryId = category.parentCategoryId,
             isEditable = if (category.isEditable) 1L else 0L,
             updatedAt = category.updatedAt,
-            id = category.id
+            id = category.id!!
         )
     }
 
-    override suspend fun deleteCategory(id: String) {
+    override suspend fun deleteCategory(id: Long) {
         queries.deleteCategory(id)
     }
 
     override suspend fun getCategoriesCount(): Int {
         return queries.selectAll().executeAsList().size
+    }
+
+    override suspend fun initializeDefaultCategoriesIfEmpty() {
+        if (getCategoriesCount() == 0) {
+            val defaultCategories = DefaultBillCategoriesHelper.createDefaultCategories()
+            defaultCategories.forEach { addCategory(it) }
+        }
     }
 }

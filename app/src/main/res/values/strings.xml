@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">One Vault</string>
-    <string name="autofill_service_description">One Vault Autofill Service</string>
+    <string name="app_name">OneVault</string>
+    <string name="autofill_service_description">OneVault Autofill Service</string>
 
     <!-- Bill Management -->
     <string name="bill_details">Bill Details</string>

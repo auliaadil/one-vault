@@ -39,8 +39,6 @@ import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.DateUtil
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.Bill
-import com.adilstudio.project.onevault.presentation.bill.category.BillCategoryViewModel
-import com.adilstudio.project.onevault.presentation.bill.category.createDefaultCategories
 import com.adilstudio.project.onevault.presentation.component.EmptyState
 import com.adilstudio.project.onevault.presentation.component.GenericScreen
 import com.adilstudio.project.onevault.ui.theme.OneVaultTheme
@@ -50,7 +48,6 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun BillListScreen(
     billTrackerViewModel: BillTrackerViewModel = koinViewModel(),
-    categoryViewModel: BillCategoryViewModel = koinViewModel(),
     onAddBill: () -> Unit = {},
     onManageCategories: () -> Unit = {},
     onEditBill: (Bill) -> Unit = {},
@@ -66,12 +63,6 @@ fun BillListScreen(
     // Bottom sheet state
     var selectedBill by remember { mutableStateOf<Bill?>(null) }
     var showBillDetailSheet by remember { mutableStateOf(false) }
-
-    // Initialize default categories if needed
-    val defaultCategories = createDefaultCategories()
-    LaunchedEffect(Unit) {
-        categoryViewModel.checkAndInitializeDefaultCategories(defaultCategories)
-    }
 
     LaunchedEffect(Unit) {
         billTrackerViewModel.loadBills()
