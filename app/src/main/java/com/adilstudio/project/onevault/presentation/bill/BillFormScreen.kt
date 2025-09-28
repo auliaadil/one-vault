@@ -62,7 +62,6 @@ import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.DateUtil
 import com.adilstudio.project.onevault.core.util.ImageUtil
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
-import com.adilstudio.project.onevault.domain.manager.AppSecurityManager
 import com.adilstudio.project.onevault.domain.model.Bill
 import com.adilstudio.project.onevault.presentation.bill.account.AccountViewModel
 import com.adilstudio.project.onevault.presentation.bill.category.BillCategoryViewModel
@@ -84,8 +83,7 @@ fun BillFormScreen(
     onNavigateBack: () -> Unit,
     onCancel: () -> Unit = {},
     categoryViewModel: BillCategoryViewModel = koinViewModel(),
-    accountViewModel: AccountViewModel = koinViewModel(),
-    appSecurityManager: AppSecurityManager? = null
+    accountViewModel: AccountViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
     val categories by categoryViewModel.categories.collectAsState()
@@ -100,7 +98,7 @@ fun BillFormScreen(
     // Initialize form state from existing bill or defaults
     var title by remember { mutableStateOf(bill?.title ?: "") }
     var selectedCategory by remember {
-        mutableStateOf(categories.find { it.name == bill?.category })
+        mutableStateOf(categories.find { it.id == bill?.categoryId })
     }
     var selectedAccount by remember {
         mutableStateOf(accounts.find { it.id == bill?.accountId })
@@ -188,7 +186,7 @@ fun BillFormScreen(
     // Update selectedCategory when categories are loaded
     LaunchedEffect(categories, bill) {
         if (bill != null && selectedCategory == null) {
-            selectedCategory = categories.find { it.name == bill.category }
+            selectedCategory = categories.find { it.id == bill.categoryId }
         }
     }
 
@@ -395,7 +393,7 @@ fun BillFormScreen(
             OutlinedTextField(
                 value = vendor,
                 onValueChange = { vendor = it },
-                label = { Text(stringResource(R.string.vendor)) },
+                label = { Text(stringResource(R.string.vendor_optional)) },
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text(stringResource(R.string.vendor_placeholder)) }
             )
@@ -533,7 +531,7 @@ fun BillFormScreen(
                         val billToSave = Bill(
                             id = bill?.id ?: System.currentTimeMillis(),
                             title = title,
-                            category = selectedCategory?.name,
+                            categoryId = selectedCategory?.id,
                             amount = amountValue.toDouble(),
                             vendor = vendor,
                             billDate = DateUtil.localDateToIsoString(selectedDate),

@@ -25,7 +25,7 @@ class BillRepositoryImpl(private val database: Database) : BillRepository {
                     Bill(
                         id = entity.id,
                         title = entity.title,
-                        category = entity.category,
+                        categoryId = entity.categoryId,
                         amount = entity.amount,
                         vendor = entity.vendor,
                         billDate = entity.billDate,
@@ -45,7 +45,7 @@ class BillRepositoryImpl(private val database: Database) : BillRepository {
                     Bill(
                         id = it.id,
                         title = it.title,
-                        category = it.category,
+                        categoryId = it.categoryId,
                         amount = it.amount,
                         vendor = it.vendor,
                         billDate = it.billDate,
@@ -61,7 +61,7 @@ class BillRepositoryImpl(private val database: Database) : BillRepository {
         billQueries.insertBill(
             id = bill.id,
             title = bill.title,
-            category = bill.category,
+            categoryId = bill.categoryId,
             amount = bill.amount,
             vendor = bill.vendor,
             billDate = bill.billDate,
@@ -80,7 +80,7 @@ class BillRepositoryImpl(private val database: Database) : BillRepository {
             Bill(
                 id = entity.id,
                 title = entity.title,
-                category = entity.category,
+                categoryId = entity.categoryId,
                 amount = entity.amount,
                 vendor = entity.vendor,
                 billDate = entity.billDate,
@@ -117,7 +117,7 @@ class BillRepositoryImpl(private val database: Database) : BillRepository {
         // Update the bill using direct query (non-suspend)
         billQueries.updateBill(
             title = bill.title,
-            category = bill.category,
+            categoryId = bill.categoryId,
             amount = bill.amount,
             vendor = bill.vendor,
             billDate = bill.billDate,
@@ -133,7 +133,7 @@ class BillRepositoryImpl(private val database: Database) : BillRepository {
             Bill(
                 id = entity.id,
                 title = entity.title,
-                category = entity.category,
+                categoryId = entity.categoryId,
                 amount = entity.amount,
                 vendor = entity.vendor,
                 billDate = entity.billDate,

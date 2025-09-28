@@ -11,13 +11,14 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.DateUtil
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
+import com.adilstudio.project.onevault.domain.model.Account
 import com.adilstudio.project.onevault.domain.model.Bill
+import com.adilstudio.project.onevault.domain.model.BillCategory
 import com.adilstudio.project.onevault.presentation.component.DetailField
 import com.adilstudio.project.onevault.presentation.component.GenericBottomSheet
 
@@ -25,14 +26,12 @@ import com.adilstudio.project.onevault.presentation.component.GenericBottomSheet
 @Composable
 fun BillDetailBottomSheet(
     bill: Bill,
+    categories: List<BillCategory>,
+    accounts: List<Account>,
     onDismiss: () -> Unit,
     onEdit: (Bill) -> Unit,
     onDelete: (Long) -> Unit
 ) {
-    val closeString = stringResource(R.string.close)
-    val editString = stringResource(R.string.edit)
-    val noCategoryString = stringResource(R.string.no_category)
-
     GenericBottomSheet(
         title = stringResource(R.string.bill_details),
         onEdit = { onEdit(bill) },
@@ -49,14 +48,34 @@ fun BillDetailBottomSheet(
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_large))
         ) {
             DetailField(R.string.title, bill.title)
-            DetailField(R.string.vendor, bill.vendor)
-            DetailField(R.string.amount, RupiahFormatter.formatWithRupiahPrefix(bill.amount.toLong()))
+            DetailField(
+                R.string.vendor_optional,
+                if (bill.vendor.isBlank()) stringResource(R.string.no_vendor) else bill.vendor
+            )
+            DetailField(
+                R.string.amount,
+                RupiahFormatter.formatWithRupiahPrefix(bill.amount.toLong())
+            )
             DetailField(
                 labelRes = R.string.bill_date,
                 value = DateUtil.isoStringToLocalDate(bill.billDate)?.let { date ->
                     DateUtil.formatDateForDisplay(date)
                 } ?: bill.billDate)
-            DetailField(R.string.category_optional, bill.category ?: noCategoryString)
+            val category = bill.categoryId?.let { id ->
+                categories.find { it.id == id }
+            }
+            val categoryName = category?.name ?: stringResource(R.string.no_category)
+            DetailField(R.string.category_optional, category?.icon?.let {
+                "$it $categoryName"
+            } ?: categoryName)
+
+            val account = bill.accountId?.let { id ->
+                accounts.find { it.id == id }
+            }
+            DetailField(
+                R.string.account_optional,
+                if (bill.accountId == null) stringResource(R.string.no_account_selected) else account?.name
+            )
             bill.imagePath?.let {
                 DetailField(
                     labelRes = R.string.attachment,
@@ -72,13 +91,13 @@ fun BillDetailBottomSheet(
                     onClick = onDismiss,
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text(closeString)
+                    Text(stringResource(R.string.close))
                 }
                 Button(
                     onClick = { onEdit(bill) },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text(editString)
+                    Text(stringResource(R.string.edit))
                 }
             }
         }

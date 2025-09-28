@@ -16,7 +16,8 @@
     <string name="no_category">No Category</string>
     <string name="amount">Amount</string>
     <string name="amount_placeholder">Enter bill amount</string>
-    <string name="vendor">Vendor</string>
+    <string name="vendor_optional">Vendor (Optional)</string>
+    <string name="no_vendor">No Vendor</string>
     <string name="vendor_placeholder">e.g., PLN, Telkom, Shopee</string>
     <string name="bill_date">Bill Date</string>
     <string name="attachment">Attachment</string>

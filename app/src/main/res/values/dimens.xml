@@ -60,6 +60,9 @@
     <dimen name="height_fixed_medium">200dp</dimen>
     <dimen name="height_fixed_large">240dp</dimen>
 
+    <!-- Layout widths  -->
+    <dimen name="width_fixed_xs">96dp</dimen>
+
     <!-- Text character limits -->
     <dimen name="character_input_limit">2</dimen>
 </resources>

@@ -7,7 +7,7 @@ import java.time.LocalDate
 data class Bill(
     val id: Long,
     val title: String,
-    val category: String? = null, // Optional category
+    val categoryId: Long? = null, // Reference to BillCategory
     val amount: Double,
     val vendor: String,
     val billDate: String, // Store as ISO date string (YYYY-MM-DD)

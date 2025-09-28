@@ -4,9 +4,7 @@ import android.Manifest
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,8 +14,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -35,14 +31,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.core.content.FileProvider
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.PermissionUtil
-import com.adilstudio.project.onevault.domain.manager.AppSecurityManager
 import java.io.File
 
 @Composable
 fun BillScannerDialog(
     onDismiss: () -> Unit,
-    onImageCaptured: (Uri) -> Unit,
-    appSecurityManager: AppSecurityManager? = null
+    onImageCaptured: (Uri) -> Unit
 ) {
     val context = LocalContext.current
 

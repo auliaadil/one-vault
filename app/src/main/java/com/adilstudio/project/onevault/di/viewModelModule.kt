@@ -12,7 +12,7 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
-    viewModel { BillTrackerViewModel(get(), get(), get(), get()) }
+    viewModel { BillTrackerViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { BillCategoryViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { CredentialListViewModel(get(), get()) }
     viewModel { FileVaultViewModel() }

@@ -25,4 +25,12 @@ data class BillCategory(
     val isEditable: Boolean = true,
     val createdAt: Long,
     val updatedAt: Long
-)
+) {
+    fun getIconAndName(): String {
+        return if (icon.isEmpty()) {
+            name
+        } else {
+            "$icon $name"
+        }
+    }
+}

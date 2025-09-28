@@ -2,6 +2,7 @@ package com.adilstudio.project.onevault.presentation.bill
 
 import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
@@ -34,11 +36,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.DateUtil
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.Bill
+import com.adilstudio.project.onevault.domain.model.BillCategory
+import com.adilstudio.project.onevault.domain.model.CategoryType
 import com.adilstudio.project.onevault.presentation.component.EmptyState
 import com.adilstudio.project.onevault.presentation.component.GenericScreen
 import com.adilstudio.project.onevault.ui.theme.OneVaultTheme
@@ -52,10 +57,12 @@ fun BillListScreen(
     onManageCategories: () -> Unit = {},
     onEditBill: (Bill) -> Unit = {},
     onManageAccounts: () -> Unit = {},
-    onAddBillWithScannedImage: (Uri) -> Unit = {}, // Changed to pass image URI
-    showScannerDialog: Boolean = false // New parameter for tile service
+    onAddBillWithScannedImage: (Uri) -> Unit = {},
+    showScannerDialog: Boolean = false
 ) {
     val bills = billTrackerViewModel.bills.collectAsState().value
+    val categories = billTrackerViewModel.categories.collectAsState().value
+    val accounts = billTrackerViewModel.accounts.collectAsState().value
 
     // Scanner dialog state
     var showScannerDialogState by remember { mutableStateOf(showScannerDialog) }
@@ -105,6 +112,7 @@ fun BillListScreen(
     ) { paddingValues ->
         BillListContent(
             bills = bills,
+            categories = categories,
             onViewDetail = { bill ->
                 selectedBill = bill
                 showBillDetailSheet = true
@@ -130,7 +138,9 @@ fun BillListScreen(
                 showBillDetailSheet = false
                 selectedBill = null
                 billTrackerViewModel.deleteBill(billId)
-            }
+            },
+            categories = categories,
+            accounts = accounts
         )
     }
 
@@ -150,45 +160,52 @@ fun BillListScreen(
 @Composable
 fun BillCard(
     bill: Bill,
+    categories: List<BillCategory>,
     onClick: () -> Unit
 ) {
+    val category = bill.categoryId?.let { id ->
+        categories.find { it.id == id }
+    }
     Card(
         modifier = Modifier.fillMaxWidth(),
         onClick = onClick,
         elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.spacing_xs))
     ) {
-        Column(modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(bill.title, style = MaterialTheme.typography.titleMedium)
-                    Text(RupiahFormatter.formatWithRupiahPrefix(bill.amount.toLong()))
-                    Text(
-                        stringResource(R.string.vendor_field, bill.vendor),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    val formattedDate = DateUtil.isoStringToLocalDate(bill.billDate)?.let { date ->
-                        DateUtil.formatDateForDisplay(date)
-                    } ?: bill.billDate
-                    Text(
-                        stringResource(R.string.date_label, formattedDate),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        stringResource(
-                            R.string.category_label,
-                            bill.category ?: stringResource(R.string.no_category)
-                        ),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(dimensionResource(R.dimen.spacing_large)),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                val formattedDate = DateUtil.isoStringToLocalDate(bill.billDate)?.let { date ->
+                    DateUtil.formatDateForDisplay(date)
+                } ?: bill.billDate
+                Text(
+                    text = formattedDate,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(bill.title, style = MaterialTheme.typography.titleMedium)
+                Text(
+                    text = RupiahFormatter.formatWithRupiahPrefix(bill.amount.toLong()),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = if (bill.amount >= 0)
+                        MaterialTheme.colorScheme.primary
+                    else
+                        MaterialTheme.colorScheme.error,
+                    fontWeight = FontWeight.Bold
+                )
             }
+            // Category icon + name at top right, max width 80dp, max 2 lines
+            Text(
+                text = category?.getIconAndName() ?: stringResource(R.string.no_category),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 2,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+            )
         }
     }
 }
@@ -196,6 +213,7 @@ fun BillCard(
 @Composable
 fun BillListContent(
     bills: List<Bill>,
+    categories: List<BillCategory>,
     onViewDetail: (Bill) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -219,6 +237,7 @@ fun BillListContent(
                     val bill = bills[idx]
                     BillCard(
                         bill = bill,
+                        categories = categories,
                         onClick = { onViewDetail(bill) }
                     )
                 }
@@ -230,7 +249,15 @@ fun BillListContent(
 @Preview(showBackground = true)
 @Composable
 fun BillListScreenPreview() {
-    // Create mock bills for preview
+    // Create mock categories for preview
+    val currentTime = System.currentTimeMillis()
+    val mockCategories = listOf(
+        BillCategory(id = 1, name = "Gas", icon = "🔥", color = "#FF5722", type = CategoryType.UTILITIES, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
+        BillCategory(id = 2, name = "Groceries", icon = "🛒", color = "#8BC34A", type = CategoryType.FOOD_AND_DINING, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
+        BillCategory(id = 3, name = "Dining Out", icon = "🍽️", color = "#FF9800", type = CategoryType.FOOD_AND_DINING, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
+        BillCategory(id = 4, name = "Coffee & Beverages", icon = "☕", color = "#8D6E63", type = CategoryType.FOOD_AND_DINING, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
+        BillCategory(id = 5, name = "School Fees", icon = "🎓", color = "#2196F3", type = CategoryType.EDUCATION, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
+    )
     val mockBills = listOf(
         Bill(
             id = 1,
@@ -238,7 +265,7 @@ fun BillListScreenPreview() {
             vendor = "PLN",
             amount = 500000.0,
             billDate = "2024-01-15",
-            category = "Utilities",
+            categoryId = 1,
             imagePath = null
         ),
         Bill(
@@ -247,11 +274,10 @@ fun BillListScreenPreview() {
             vendor = "Telkom",
             amount = 300000.0,
             billDate = "2024-01-10",
-            category = "Utilities",
+            categoryId = 2,
             imagePath = "/path/to/image"
         )
     )
-
     OneVaultTheme(
         darkTheme = true
     ) {
@@ -289,6 +315,7 @@ fun BillListScreenPreview() {
         ) {
             BillListContent(
                 bills = mockBills,
+                categories = mockCategories,
                 onViewDetail = {}
             )
         }

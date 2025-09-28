@@ -1,7 +1,7 @@
 CREATE TABLE BillEntity (
     id INTEGER NOT NULL PRIMARY KEY,
     title TEXT NOT NULL,
-    category TEXT,
+    categoryId INTEGER,
     amount REAL NOT NULL,
     vendor TEXT NOT NULL,
     billDate TEXT NOT NULL,
@@ -16,11 +16,11 @@ selectById:
 SELECT * FROM BillEntity WHERE id = ?;
 
 insertBill:
-INSERT INTO BillEntity(id, title, category, amount, vendor, billDate, imagePath, accountId)
+INSERT INTO BillEntity(id, title, categoryId, amount, vendor, billDate, imagePath, accountId)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 
 updateBill:
-UPDATE BillEntity SET title = ?, category = ?, amount = ?, vendor = ?, billDate = ?, imagePath = ?, accountId = ? WHERE id = ?;
+UPDATE BillEntity SET title = ?, categoryId = ?, amount = ?, vendor = ?, billDate = ?, imagePath = ?, accountId = ? WHERE id = ?;
 
 deleteBill:
 DELETE FROM BillEntity WHERE id = ?;
