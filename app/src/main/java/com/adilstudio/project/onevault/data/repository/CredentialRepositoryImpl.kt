@@ -7,6 +7,7 @@ import com.adilstudio.project.onevault.core.security.CryptoProvider
 import com.adilstudio.project.onevault.data.local.PreferenceManager
 import com.adilstudio.project.onevault.domain.model.Credential
 import com.adilstudio.project.onevault.domain.repository.CredentialRepository
+import com.adilstudio.project.onevault.util.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -15,6 +16,7 @@ class CredentialRepositoryImpl(
     database: Database,
     private val cryptoService: CryptoProvider,
     private val preferenceManager: PreferenceManager,
+    private val logger: Logger,
 ) : CredentialRepository {
 
     private val queries = database.credentialEntityQueries
@@ -32,6 +34,7 @@ class CredentialRepositoryImpl(
                         password = try {
                             cryptoService.decrypt(entity.encryptedPassword)
                         } catch (e: Exception) {
+                            logger.logException(e)
                             // If decryption fails, return empty string or handle gracefully
                             ""
                         },

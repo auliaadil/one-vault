@@ -23,7 +23,7 @@ val repositoryModule = module {
     single<CryptoProvider> { CryptoService() }
 
     single<BillRepository> { BillRepositoryImpl(get()) }
-    single<CredentialRepository> { CredentialRepositoryImpl(get(), get(), get()) }
+    single<CredentialRepository> { CredentialRepositoryImpl(get(), get(), get(), get()) }
     single<VaultFileRepository> { VaultFileRepositoryImpl(get()) }
     single<BillCategoryRepository> { BillCategoryRepositoryImpl(get()) }
     single<SettingsRepository> { SettingsRepositoryImpl(get()) }
