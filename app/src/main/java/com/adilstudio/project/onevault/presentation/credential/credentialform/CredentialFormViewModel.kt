@@ -7,14 +7,19 @@ import androidx.lifecycle.viewModelScope
 import com.adilstudio.project.onevault.domain.model.Credential
 import com.adilstudio.project.onevault.domain.usecase.AddCredentialUseCase
 import com.adilstudio.project.onevault.domain.usecase.UpdateCredentialUseCase
+import com.adilstudio.project.onevault.domain.usecase.SaveDefaultCredentialTemplateUseCase
+import com.adilstudio.project.onevault.domain.usecase.GetDefaultCredentialTemplateUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
 
 class CredentialFormViewModel(
     private val addCredentialUseCase: AddCredentialUseCase,
-    private val updateCredentialUseCase: UpdateCredentialUseCase
+    private val updateCredentialUseCase: UpdateCredentialUseCase,
+    private val saveDefaultCredentialTemplateUseCase: SaveDefaultCredentialTemplateUseCase,
+    private val getDefaultCredentialTemplateUseCase: GetDefaultCredentialTemplateUseCase
 ) : ViewModel() {
 
     // Form state
@@ -50,6 +55,22 @@ class CredentialFormViewModel(
     // For editing existing credentials
     private var currentCredentialId: Long? = null
 
+    // Indicates if there is a default template saved in DataStore
+    private val _hasDefaultTemplate = MutableStateFlow(false)
+    val hasDefaultTemplate: StateFlow<Boolean> = _hasDefaultTemplate.asStateFlow()
+
+    // Checkbox state for "Save as default template"
+    private val _saveAsDefaultTemplateChecked = MutableStateFlow(false)
+    val saveAsDefaultTemplateChecked: StateFlow<Boolean> = _saveAsDefaultTemplateChecked.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            getDefaultCredentialTemplateUseCase().collect { templateJson ->
+                _hasDefaultTemplate.value = !templateJson.isNullOrBlank()
+            }
+        }
+    }
+
     fun updateServiceName(name: String) {
         _serviceName.value = name
         if (_useTemplate.value) {
@@ -70,10 +91,21 @@ class CredentialFormViewModel(
         }
     }
 
-    fun toggleUseTemplate() {
+    fun toggleUseTemplate(shouldApplyDefaultTemplate: Boolean = false) {
         _useTemplate.value = !_useTemplate.value
         if (_useTemplate.value) {
-            generatePassword()
+            if (shouldApplyDefaultTemplate) {
+                viewModelScope.launch {
+                    val templateJson = getDefaultCredentialTemplateUseCase().first()
+                    val (useTemplate, rules) = PasswordTemplateHelper.deserializeTemplate(templateJson)
+                    _useTemplate.value = useTemplate
+                    _rules.clear()
+                    _rules.addAll(rules)
+                    if (useTemplate) generatePassword()
+                }
+            } else {
+                generatePassword()
+            }
         } else {
             _generatedPassword.value = ""
         }
@@ -186,6 +218,10 @@ class CredentialFormViewModel(
                 } else {
                     addCredentialUseCase(credential)
                     _successMessage.value = "Credential saved successfully"
+                    // Save as default template if checked
+                    if (_saveAsDefaultTemplateChecked.value) {
+                        saveCurrentTemplateAsDefault()
+                    }
                 }
 
             } catch (e: Exception) {
@@ -213,23 +249,30 @@ class CredentialFormViewModel(
         }
     }
 
-    fun clearForm() {
-        currentCredentialId = null
-        _serviceName.value = ""
-        _userAccount.value = ""
-        _password.value = ""
-        _useTemplate.value = false
-        _generatedPassword.value = ""
-        _rules.clear()
-        _error.value = null
-        _successMessage.value = null
-    }
-
     fun clearError() {
         _error.value = null
     }
 
     fun clearSuccessMessage() {
         _successMessage.value = null
+    }
+
+    /**
+     * Save the current template as default in DataStore
+     */
+    fun saveCurrentTemplateAsDefault() {
+        viewModelScope.launch {
+            val templateJson = PasswordTemplateHelper.serializeTemplate(_useTemplate.value, _rules.toList())
+            if (!templateJson.isNullOrBlank()) {
+                saveDefaultCredentialTemplateUseCase(templateJson)
+                _successMessage.value = "Default template saved!"
+            } else {
+                _error.value = "No template to save."
+            }
+        }
+    }
+
+    fun setSaveAsDefaultTemplateChecked(checked: Boolean) {
+        _saveAsDefaultTemplateChecked.value = checked
     }
 }

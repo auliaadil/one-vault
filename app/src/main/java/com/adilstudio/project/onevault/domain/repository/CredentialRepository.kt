@@ -8,5 +8,6 @@ interface CredentialRepository {
     suspend fun addCredential(credential: Credential)
     suspend fun updateCredential(credential: Credential)
     suspend fun deleteCredential(id: Long)
+    suspend fun saveDefaultCredentialTemplate(templateJson: String)
+    fun getDefaultCredentialTemplateFlow(): Flow<String?>
 }
-

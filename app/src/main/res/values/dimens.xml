@@ -54,6 +54,8 @@
     <dimen name="scanner_item_padding">8dp</dimen>
 
     <!-- Layout heights -->
+    <dimen name="height_fixed_xxs">56dp</dimen>
+    <dimen name="height_fixed_xs">80dp</dimen>
     <dimen name="height_fixed_medium">200dp</dimen>
     <dimen name="height_fixed_large">240dp</dimen>
 

@@ -86,7 +86,7 @@ fun RuleItem(
                             text = "User Account",
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.secondary
+                            color = MaterialTheme.colorScheme.primary
                         )
                         Text(
                             text = "${rule.length} chars, ${rule.casing.name.lowercase()}",
@@ -99,7 +99,7 @@ fun RuleItem(
                             text = "Fixed String",
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.tertiary
+                            color = MaterialTheme.colorScheme.primary
                         )
                         Text(
                             text = "\"${rule.value}\"",

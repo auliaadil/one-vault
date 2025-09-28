@@ -18,6 +18,6 @@ val viewModelModule = module {
     viewModel { FileVaultViewModel() }
     viewModel { SettingsViewModel(get()) }
     viewModel { AccountViewModel(get(), get(), get(), get(), get()) }
-    viewModel { CredentialFormViewModel(get(), get()) }
+    viewModel { CredentialFormViewModel(get(), get(), get(), get()) }
     viewModel { BiometricLockViewModel(get()) }
 }

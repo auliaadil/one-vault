@@ -23,6 +23,8 @@ val useCaseModule = module {
     single { UpdateCredentialUseCase(get()) }
     single { DeleteCredentialUseCase(get()) }
     single { GetCredentialsUseCase(get()) }
+    single { GetDefaultCredentialTemplateUseCase(get()) }
+    single { SaveDefaultCredentialTemplateUseCase(get()) }
 
     // Account Use Cases
     single { GetAccountsUseCase(get()) }

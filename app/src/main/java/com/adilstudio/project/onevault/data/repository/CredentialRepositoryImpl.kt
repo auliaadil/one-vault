@@ -4,6 +4,7 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.adilstudio.project.onevault.Database
 import com.adilstudio.project.onevault.core.security.CryptoProvider
+import com.adilstudio.project.onevault.data.local.PreferenceManager
 import com.adilstudio.project.onevault.domain.model.Credential
 import com.adilstudio.project.onevault.domain.repository.CredentialRepository
 import kotlinx.coroutines.Dispatchers
@@ -12,7 +13,8 @@ import kotlinx.coroutines.flow.map
 
 class CredentialRepositoryImpl(
     database: Database,
-    private val cryptoService: CryptoProvider
+    private val cryptoService: CryptoProvider,
+    private val preferenceManager: PreferenceManager,
 ) : CredentialRepository {
 
     private val queries = database.credentialEntityQueries
@@ -64,5 +66,13 @@ class CredentialRepositoryImpl(
 
     override suspend fun deleteCredential(id: Long) {
         queries.deleteCredential(id)
+    }
+
+    override suspend fun saveDefaultCredentialTemplate(templateJson: String) {
+        preferenceManager.setDefaultCredentialTemplate(templateJson)
+    }
+
+    override fun getDefaultCredentialTemplateFlow(): Flow<String?> {
+        return preferenceManager.getDefaultCredentialTemplateFlow()
     }
 }

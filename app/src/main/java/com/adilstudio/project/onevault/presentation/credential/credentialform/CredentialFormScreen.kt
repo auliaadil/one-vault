@@ -70,6 +70,8 @@ fun CredentialFormScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
     val successMessage by viewModel.successMessage.collectAsState()
+    val hasDefaultTemplate by viewModel.hasDefaultTemplate.collectAsState()
+    val saveAsDefaultTemplateChecked by viewModel.saveAsDefaultTemplateChecked.collectAsState()
 
     var showPassword by remember { mutableStateOf(false) }
 
@@ -189,19 +191,12 @@ fun CredentialFormScreen(
                         )
                         Switch(
                             checked = useTemplate,
-                            onCheckedChange = { viewModel.toggleUseTemplate() },
+                            onCheckedChange = { viewModel.toggleUseTemplate(credential == null && hasDefaultTemplate) },
                             enabled = !isLoading
                         )
                     }
 
-                    if (useTemplate) {
-                        // Template mode - show rules and generated password
-                        Text(
-                            text = stringResource(R.string.configure_rules_message),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    } else {
+                    if (!useTemplate) {
                         // Manual mode - show password input
                         OutlinedTextField(
                             value = password,
@@ -233,6 +228,11 @@ fun CredentialFormScreen(
 
                 // Rules List with Drag and Drop
                 if (viewModel.rules.isNotEmpty()) {
+                    val itemHeight = dimensionResource(R.dimen.height_fixed_xs)
+                    dimensionResource(R.dimen.height_fixed_xs)
+                    val rulesCount = viewModel.rules.size
+                    dimensionResource(R.dimen.height_fixed_large)
+                    val calculatedHeight = itemHeight * rulesCount
                     Card(
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -245,11 +245,35 @@ fun CredentialFormScreen(
                                 fontWeight = FontWeight.Medium,
                                 modifier = Modifier.padding(bottom = dimensionResource(R.dimen.spacing_medium))
                             )
-
+                            // Toggle for Save as Default Template
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.save_as_default_template),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Medium
+                                )
+                                Switch(
+                                    checked = saveAsDefaultTemplateChecked,
+                                    onCheckedChange = { viewModel.setSaveAsDefaultTemplateChecked(it) },
+                                    enabled = !isLoading
+                                )
+                            }
+                            Text(
+                                text = stringResource(R.string.default_template_description),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                            Spacer(
+                                modifier = Modifier.height(dimensionResource(R.dimen.spacing_small))
+                            )
                             LazyColumn(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(dimensionResource(R.dimen.height_fixed_large)),
+                                    .height(calculatedHeight),
                                 state = lazyListState,
                                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_xs)),
                             ) {
@@ -362,23 +386,20 @@ fun CredentialFormScreen(
                             Text(
                                 text = stringResource(R.string.live_preview),
                                 style = MaterialTheme.typography.labelMedium,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                                fontWeight = FontWeight.Medium
                             )
 
                             if (serviceName.isNotEmpty()) {
                                 Text(
                                     text = stringResource(R.string.service_preview_format, serviceName),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                    style = MaterialTheme.typography.bodySmall
                                 )
                             }
 
                             if (userAccount.isNotEmpty()) {
                                 Text(
                                     text = stringResource(R.string.account_preview_format, userAccount),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                    style = MaterialTheme.typography.bodySmall
                                 )
                             }
                         }
@@ -402,8 +423,19 @@ fun CredentialFormScreen(
                 }
                 Text(
                     stringResource(
-                        if (credential != null) R.string.update_credential
-                        else R.string.save_credential
+                        if (credential != null) {
+                            if (saveAsDefaultTemplateChecked) {
+                                R.string.update_credential_template
+                            } else {
+                                R.string.update_credential
+                            }
+                        } else {
+                            if (saveAsDefaultTemplateChecked) {
+                                R.string.save_credential_template
+                            } else {
+                                R.string.save_credential
+                            }
+                        }
                     )
                 )
             }

@@ -118,9 +118,8 @@
     <string name="username_email_placeholder">e.g., john.doe, myemail@gmail.com</string>
     <string name="password">Password</string>
     <string name="generate_from_template">Generate from template</string>
-    <string name="configure_rules_message">Configure rules to automatically generate your password:</string>
     <string name="password_rules">Password Rules</string>
-    <string name="add_rules_description">Add rules to automatically generate passwords based on service name and user account</string>
+    <string name="add_rules_description">Configure rules to automatically generate passwords based on combination of service name, user name, and fixed string.</string>
     <string name="add_rule">Add Rule</string>
     <string name="password_rules_drag_hint">Password Rules (drag to reorder)</string>
     <string name="generated_password">Generated Password</string>
@@ -132,6 +131,8 @@
     <string name="account_preview_format">Account: \"%1$s\"</string>
     <string name="save_credential">Save Credential</string>
     <string name="update_credential">Update Credential</string>
+    <string name="save_credential_template">Save Credential &amp; Default Template</string>
+    <string name="update_credential_template">Update Credential &amp; Default Template</string>
     <string name="edit_credential_title">Edit Credential</string>
     <string name="add_credential_title">Add Credential</string>
     <string name="dismiss">Dismiss</string>
@@ -190,6 +191,11 @@
     <string name="template_based_password">Template-based Password</string>
     <string name="template_password_description">This password was generated using a custom template. Edit to modify the generation rules.</string>
     <string name="has_been_copied">%s has been copied</string>
+
+    <!-- Password Rules Default Template Actions -->
+    <string name="apply_default_template">Apply Default Template</string>
+    <string name="save_as_default_template">Save as Default Template</string>
+    <string name="default_template_description">When you create a new credential, the default template will be automatically applied as the initial set of password rules.</string>
 
     <!-- Text Selection -->
     <string name="select_scanned_text">Select Scanned Text</string>
@@ -361,5 +367,4 @@
     <string name="screen_capture_description">Capture the current screen to extract bill information</string>
     <string name="start_screen_capture">Start Screen Capture</string>
     <string name="capturing">Capturing…</string>
-
 </resources>
