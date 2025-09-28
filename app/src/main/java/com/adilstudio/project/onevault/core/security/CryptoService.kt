@@ -39,6 +39,7 @@ class CryptoService : CryptoProvider {
             )
                 .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+                .setKeySize(256)
                 .setUserAuthenticationRequired(false)
                 .setRandomizedEncryptionRequired(true)
                 .build()
