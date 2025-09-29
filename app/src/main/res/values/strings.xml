@@ -368,4 +368,10 @@
     <string name="screen_capture_description">Capture the current screen to extract bill information</string>
     <string name="start_screen_capture">Start Screen Capture</string>
     <string name="capturing">Capturing…</string>
+
+    <!-- Currency Settings -->
+    <string name="currency_rupiah_label">Currency: Rupiah (Rp)</string>
+    <string name="currency_info_dialog_title">Currency Information</string>
+    <string name="currency_info_dialog_message">Currently, OneVault only supports the Indonesian Rupiah (Rp) for all bill and account transactions. Support for other currencies may be added in future updates.</string>
+    <string name="currency_info_dialog_ok">OK</string>
 </resources>

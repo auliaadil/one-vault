@@ -29,6 +29,7 @@ fun SettingsScreen(
     val activity = context as? FragmentActivity
     val biometricEnabled by viewModel.biometricEnabled.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
+    var showCurrencyDialog by remember { mutableStateOf(false) }
 
     GenericScreen(
         title = stringResource(R.string.settings),
@@ -80,6 +81,25 @@ fun SettingsScreen(
                     }
                 }
             )
+
+            // Currency
+            SettingsItem(
+                icon = Icons.Default.AttachMoney,
+                title = stringResource(R.string.currency_rupiah_label),
+                onClick = { showCurrencyDialog = true }
+            )
+            if (showCurrencyDialog) {
+                AlertDialog(
+                    onDismissRequest = { showCurrencyDialog = false },
+                    confirmButton = {
+                        TextButton(onClick = { showCurrencyDialog = false }) {
+                            Text(stringResource(R.string.currency_info_dialog_ok))
+                        }
+                    },
+                    title = { Text(stringResource(R.string.currency_info_dialog_title)) },
+                    text = { Text(stringResource(R.string.currency_info_dialog_message)) }
+                )
+            }
 
             Spacer(modifier = Modifier.weight(1f))
 
