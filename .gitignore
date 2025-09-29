@@ -33,3 +33,6 @@ app/src/main/assets/models/
 
 # Local Gradle properties (contains secrets)
 gradle.properties
+
+# Google Services (contains secrets)
+app/google-services.json
