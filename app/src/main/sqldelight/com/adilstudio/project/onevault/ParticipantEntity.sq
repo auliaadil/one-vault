@@ -1,0 +1,26 @@
+CREATE TABLE ParticipantEntity (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT,
+    phone TEXT,
+    ratio REAL NOT NULL DEFAULT 1.0
+);
+
+selectAll:
+SELECT * FROM ParticipantEntity ORDER BY name;
+
+selectById:
+SELECT * FROM ParticipantEntity WHERE id = ?;
+
+insert:
+INSERT INTO ParticipantEntity(name, email, phone, ratio)
+VALUES (?, ?, ?, ?);
+
+update:
+UPDATE ParticipantEntity SET name = ?, email = ?, phone = ?, ratio = ? WHERE id = ?;
+
+deleteById:
+DELETE FROM ParticipantEntity WHERE id = ?;
+
+lastInsertRowId:
+SELECT last_insert_rowid();

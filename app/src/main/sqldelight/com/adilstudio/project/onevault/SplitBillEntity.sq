@@ -1,0 +1,29 @@
+CREATE TABLE SplitBillEntity (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    vendor TEXT NOT NULL,
+    billDate TEXT NOT NULL,
+    imagePath TEXT,
+    createdAt INTEGER NOT NULL,
+    updatedAt INTEGER NOT NULL,
+    data TEXT NOT NULL
+);
+
+selectAll:
+SELECT * FROM SplitBillEntity ORDER BY createdAt DESC;
+
+selectById:
+SELECT * FROM SplitBillEntity WHERE id = ?;
+
+insert:
+INSERT INTO SplitBillEntity(title, vendor, billDate, imagePath, createdAt, updatedAt, data)
+VALUES (?, ?, ?, ?, ?, ?, ?);
+
+update:
+UPDATE SplitBillEntity SET title = ?, vendor = ?, billDate = ?, imagePath = ?, updatedAt = ?, data = ? WHERE id = ?;
+
+deleteById:
+DELETE FROM SplitBillEntity WHERE id = ?;
+
+lastInsertRowId:
+SELECT last_insert_rowid();

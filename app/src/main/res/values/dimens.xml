@@ -44,6 +44,12 @@
     <!-- App specific sizes -->
     <dimen name="app_icon_size">120dp</dimen>
 
+    <!-- Split Bill feature dimensions -->
+    <dimen name="icon_small">16dp</dimen>
+    <dimen name="icon_extra_large">96dp</dimen>
+    <dimen name="spacing_extra_large">40dp</dimen>
+    <dimen name="text_field_small_width">100dp</dimen>
+
     <!-- Scanner dialog specific -->
     <dimen name="scanner_dialog_spacing">16dp</dimen>
     <dimen name="scanner_dialog_icon_size">20dp</dimen>

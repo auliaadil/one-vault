@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CallSplit
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.DocumentScanner
 import androidx.compose.material3.Card
@@ -57,6 +58,7 @@ fun BillListScreen(
     onManageCategories: () -> Unit = {},
     onEditBill: (Bill) -> Unit = {},
     onManageAccounts: () -> Unit = {},
+    onSplitBill: () -> Unit = {},
     onAddBillWithScannedImage: (Uri) -> Unit = {},
     showScannerDialog: Boolean = false
 ) {
@@ -78,6 +80,12 @@ fun BillListScreen(
     GenericScreen(
         title = stringResource(R.string.bills),
         actions = {
+            OutlinedButton(onClick = onSplitBill) {
+                Icon(
+                    Icons.Default.CallSplit,
+                    contentDescription = "Split Bill"
+                )
+            }
             OutlinedButton(onClick = onManageCategories) {
                 Icon(
                     Icons.Default.Category,

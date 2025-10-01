@@ -36,6 +36,12 @@ sealed class Screen(val route: String) {
     object EditBill : Screen("edit_bill")
     object BillCategories : Screen("bill_categories")
     object BillAccounts : Screen("bill_accounts")
+    object SplitBillList : Screen("split_bill_list")
+    object SplitBillCapture : Screen("split_bill_capture")
+    object SplitBillReview : Screen("split_bill_review")
+    object SplitBillParticipants : Screen("split_bill_participants")
+    object SplitBillMethod : Screen("split_bill_method")
+    object SplitBillResults : Screen("split_bill_results")
     object CredentialList : Screen("credential_list")
     object AddCredential : Screen("add_credential")
     object EditCredential : Screen("edit_credential")
@@ -70,6 +76,7 @@ fun NavGraph(
                     navController.navigate(Screen.EditBill.route)
                 },
                 onManageAccounts = { navController.navigate(Screen.BillAccounts.route) },
+                onSplitBill = { navController.navigate(Screen.SplitBillList.route) },
                 onAddBillWithScannedImage = { imageUri ->
                     // Pass scanned image URI through savedStateHandle and navigate to AddBill
                     navController.currentBackStackEntry?.savedStateHandle?.set("scannedImageUri", imageUri)
@@ -220,6 +227,54 @@ fun NavGraph(
                 onNavigateBack = { navController.popBackStack() },
             )
         }
+
+        // Split Bill Feature Navigation
+        composable(Screen.SplitBillList.route) {
+            com.adilstudio.project.onevault.presentation.splitbill.SplitBillListScreen(
+                onCreateSplitBill = { navController.navigate(Screen.SplitBillCapture.route) },
+                onViewSplitBill = { splitBill ->
+                    navController.currentBackStackEntry?.savedStateHandle?.set("splitBillId", splitBill.id)
+                    navController.navigate(Screen.SplitBillResults.route)
+                }
+            )
+        }
+
+        composable(Screen.SplitBillCapture.route) {
+            com.adilstudio.project.onevault.presentation.splitbill.BillCaptureScreen(
+                onProceedToReview = { navController.navigate(Screen.SplitBillReview.route) },
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.SplitBillReview.route) {
+            com.adilstudio.project.onevault.presentation.splitbill.BillReviewScreen(
+                onProceedToParticipants = { navController.navigate(Screen.SplitBillParticipants.route) },
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.SplitBillParticipants.route) {
+            com.adilstudio.project.onevault.presentation.splitbill.AssignParticipantsScreen(
+                onProceedToSplitMethod = { navController.navigate(Screen.SplitBillMethod.route) },
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.SplitBillMethod.route) {
+            com.adilstudio.project.onevault.presentation.splitbill.SplitMethodScreen(
+                onProceedToResults = { navController.navigate(Screen.SplitBillResults.route) },
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.SplitBillResults.route) {
+            com.adilstudio.project.onevault.presentation.splitbill.SplitResultsScreen(
+                onSave = { navController.popBackStack(Screen.SplitBillList.route, false) },
+                onShare = { /* TODO: Implement sharing */ },
+                onBack = { navController.popBackStack() }
+            )
+        }
+
         composable(Screen.Settings.route) {
             SettingsScreen(
                 onNavigateToAbout = { navController.navigate(Screen.About.route) },
