@@ -1,8 +1,7 @@
-package com.adilstudio.project.onevault.presentation.bill
+package com.adilstudio.project.onevault.presentation.transaction
 
 import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
@@ -41,8 +39,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.DateUtil
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
-import com.adilstudio.project.onevault.domain.model.Bill
-import com.adilstudio.project.onevault.domain.model.BillCategory
+import com.adilstudio.project.onevault.domain.model.Transaction
+import com.adilstudio.project.onevault.domain.model.TransactionCategory
 import com.adilstudio.project.onevault.domain.model.CategoryType
 import com.adilstudio.project.onevault.presentation.component.EmptyState
 import com.adilstudio.project.onevault.presentation.component.GenericScreen
@@ -51,32 +49,32 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BillListScreen(
-    billTrackerViewModel: BillTrackerViewModel = koinViewModel(),
-    onAddBill: () -> Unit = {},
+fun TransactionListScreen(
+    transactionTrackerViewModel: TransactionTrackerViewModel = koinViewModel(),
+    onAddTransaction: () -> Unit = {},
     onManageCategories: () -> Unit = {},
-    onEditBill: (Bill) -> Unit = {},
+    onEditTransaction: (Transaction) -> Unit = {},
     onManageAccounts: () -> Unit = {},
-    onAddBillWithScannedImage: (Uri) -> Unit = {},
+    onAddTransactionWithScannedImage: (Uri) -> Unit = {},
     showScannerDialog: Boolean = false
 ) {
-    val bills = billTrackerViewModel.bills.collectAsState().value
-    val categories = billTrackerViewModel.categories.collectAsState().value
-    val accounts = billTrackerViewModel.accounts.collectAsState().value
+    val transactions = transactionTrackerViewModel.transactions.collectAsState().value
+    val categories = transactionTrackerViewModel.categories.collectAsState().value
+    val accounts = transactionTrackerViewModel.accounts.collectAsState().value
 
     // Scanner dialog state
     var showScannerDialogState by remember { mutableStateOf(showScannerDialog) }
 
     // Bottom sheet state
-    var selectedBill by remember { mutableStateOf<Bill?>(null) }
-    var showBillDetailSheet by remember { mutableStateOf(false) }
+    var selectedTransaction by remember { mutableStateOf<Transaction?>(null) }
+    var showTransactionDetailSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        billTrackerViewModel.loadBills()
+        transactionTrackerViewModel.loadTransactions()
     }
 
     GenericScreen(
-        title = stringResource(R.string.bills),
+        title = stringResource(R.string.transactions),
         actions = {
             OutlinedButton(onClick = onManageCategories) {
                 Icon(
@@ -96,48 +94,48 @@ fun BillListScreen(
                 FloatingActionButton(onClick = { showScannerDialogState = true }) {
                     Icon(
                         Icons.Default.DocumentScanner,
-                        contentDescription = stringResource(R.string.scan_bill)
+                        contentDescription = stringResource(R.string.scan_transaction)
                     )
                 }
                 Spacer(modifier = Modifier.size(dimensionResource(R.dimen.spacing_small)))
-                FloatingActionButton(onClick = onAddBill) {
+                FloatingActionButton(onClick = onAddTransaction) {
                     Icon(
                         Icons.Default.Add,
-                        contentDescription = stringResource(R.string.add_bill)
+                        contentDescription = stringResource(R.string.add_transaction)
                     )
                 }
             }
         },
         defaultPaddingHorizontal = R.dimen.spacing_none
     ) { paddingValues ->
-        BillListContent(
-            bills = bills,
+        TransactionListContent(
+            transactions = transactions,
             categories = categories,
-            onViewDetail = { bill ->
-                selectedBill = bill
-                showBillDetailSheet = true
+            onViewDetail = { transaction ->
+                selectedTransaction = transaction
+                showTransactionDetailSheet = true
             },
             modifier = Modifier.padding(paddingValues)
         )
     }
 
-    // Bill Detail Bottom Sheet
-    if (showBillDetailSheet && selectedBill != null) {
-        BillDetailBottomSheet(
-            bill = selectedBill!!,
+    // Transaction Detail Bottom Sheet
+    if (showTransactionDetailSheet && selectedTransaction != null) {
+        TransactionDetailBottomSheet(
+            transaction = selectedTransaction!!,
             onDismiss = {
-                showBillDetailSheet = false
-                selectedBill = null
+                showTransactionDetailSheet = false
+                selectedTransaction = null
             },
-            onEdit = { bill ->
-                showBillDetailSheet = false
-                selectedBill = null
-                onEditBill(bill)
+            onEdit = { transaction ->
+                showTransactionDetailSheet = false
+                selectedTransaction = null
+                onEditTransaction(transaction)
             },
-            onDelete = { billId ->
-                showBillDetailSheet = false
-                selectedBill = null
-                billTrackerViewModel.deleteBill(billId)
+            onDelete = { transactionId ->
+                showTransactionDetailSheet = false
+                selectedTransaction = null
+                transactionTrackerViewModel.deleteTransaction(transactionId)
             },
             categories = categories,
             accounts = accounts
@@ -146,11 +144,11 @@ fun BillListScreen(
 
     // Scanner Dialog
     if (showScannerDialogState) {
-        BillScannerDialog(
+        TransactionScannerDialog(
             onDismiss = { showScannerDialogState = false },
             onImageCaptured = { imageUri ->
                 showScannerDialogState = false
-                onAddBillWithScannedImage(imageUri)
+                onAddTransactionWithScannedImage(imageUri)
             }
         )
     }
@@ -158,12 +156,12 @@ fun BillListScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BillCard(
-    bill: Bill,
-    categories: List<BillCategory>,
+fun TransactionCard(
+    transaction: Transaction,
+    categories: List<TransactionCategory>,
     onClick: () -> Unit
 ) {
-    val category = bill.categoryId?.let { id ->
+    val category = transaction.categoryId?.let { id ->
         categories.find { it.id == id }
     }
     Card(
@@ -179,19 +177,19 @@ fun BillCard(
             verticalAlignment = Alignment.Top
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                val formattedDate = DateUtil.isoStringToLocalDate(bill.billDate)?.let { date ->
+                val formattedDate = DateUtil.isoStringToLocalDate(transaction.transactionDate)?.let { date ->
                     DateUtil.formatDateForDisplay(date)
-                } ?: bill.billDate
+                } ?: transaction.transactionDate
                 Text(
                     text = formattedDate,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                Text(bill.title, style = MaterialTheme.typography.titleMedium)
+                Text(transaction.title, style = MaterialTheme.typography.titleMedium)
                 Text(
-                    text = RupiahFormatter.formatWithRupiahPrefix(bill.amount.toLong()),
+                    text = RupiahFormatter.formatWithRupiahPrefix(transaction.amount.toLong()),
                     style = MaterialTheme.typography.titleLarge,
-                    color = if (bill.amount >= 0)
+                    color = if (transaction.amount >= 0)
                         MaterialTheme.colorScheme.primary
                     else
                         MaterialTheme.colorScheme.error,
@@ -211,19 +209,19 @@ fun BillCard(
 }
 
 @Composable
-fun BillListContent(
-    bills: List<Bill>,
-    categories: List<BillCategory>,
-    onViewDetail: (Bill) -> Unit,
+fun TransactionListContent(
+    transactions: List<Transaction>,
+    categories: List<TransactionCategory>,
+    onViewDetail: (Transaction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        if (bills.isEmpty()) {
+        if (transactions.isEmpty()) {
             EmptyState(
-                title = stringResource(R.string.no_bills_saved),
-                description = stringResource(R.string.tap_plus_to_add_first_bill),
+                title = stringResource(R.string.no_transactions_saved),
+                description = stringResource(R.string.tap_plus_to_add_first_transaction),
                 modifier = modifier
             )
         } else {
@@ -233,12 +231,12 @@ fun BillListContent(
                     .padding(horizontal = dimensionResource(R.dimen.spacing_large)),
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_small))
             ) {
-                items(bills.size) { idx ->
-                    val bill = bills[idx]
-                    BillCard(
-                        bill = bill,
+                items(transactions.size) { idx ->
+                    val transaction = transactions[idx]
+                    TransactionCard(
+                        transaction = transaction,
                         categories = categories,
-                        onClick = { onViewDetail(bill) }
+                        onClick = { onViewDetail(transaction) }
                     )
                 }
             }
@@ -248,32 +246,32 @@ fun BillListContent(
 
 @Preview(showBackground = true)
 @Composable
-fun BillListScreenPreview() {
+fun TransactionListScreenPreview() {
     // Create mock categories for preview
     val currentTime = System.currentTimeMillis()
     val mockCategories = listOf(
-        BillCategory(id = 1, name = "Gas", icon = "🔥", color = "#FF5722", type = CategoryType.UTILITIES, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
-        BillCategory(id = 2, name = "Groceries", icon = "🛒", color = "#8BC34A", type = CategoryType.FOOD_AND_DINING, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
-        BillCategory(id = 3, name = "Dining Out", icon = "🍽️", color = "#FF9800", type = CategoryType.FOOD_AND_DINING, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
-        BillCategory(id = 4, name = "Coffee & Beverages", icon = "☕", color = "#8D6E63", type = CategoryType.FOOD_AND_DINING, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
-        BillCategory(id = 5, name = "School Fees", icon = "🎓", color = "#2196F3", type = CategoryType.EDUCATION, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
+        TransactionCategory(id = 1, name = "Gas", icon = "🔥", color = "#FF5722", type = CategoryType.UTILITIES, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
+        TransactionCategory(id = 2, name = "Groceries", icon = "🛒", color = "#8BC34A", type = CategoryType.FOOD_AND_DINING, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
+        TransactionCategory(id = 3, name = "Dining Out", icon = "🍽️", color = "#FF9800", type = CategoryType.FOOD_AND_DINING, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
+        TransactionCategory(id = 4, name = "Coffee & Beverages", icon = "☕", color = "#8D6E63", type = CategoryType.FOOD_AND_DINING, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
+        TransactionCategory(id = 5, name = "School Fees", icon = "🎓", color = "#2196F3", type = CategoryType.EDUCATION, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
     )
-    val mockBills = listOf(
-        Bill(
+    val mockTransactions = listOf(
+        Transaction(
             id = 1,
-            title = "Electric Bill",
+            title = "Electric Transaction",
             vendor = "PLN",
             amount = 500000.0,
-            billDate = "2024-01-15",
+            transactionDate = "2024-01-15",
             categoryId = 1,
             imagePath = null
         ),
-        Bill(
+        Transaction(
             id = 2,
-            title = "Internet Bill",
+            title = "Internet Transaction",
             vendor = "Telkom",
             amount = 300000.0,
-            billDate = "2024-01-10",
+            transactionDate = "2024-01-10",
             categoryId = 2,
             imagePath = "/path/to/image"
         )
@@ -282,12 +280,12 @@ fun BillListScreenPreview() {
         darkTheme = true
     ) {
         GenericScreen(
-            title = stringResource(R.string.bills),
+            title = stringResource(R.string.transactions),
             actions = {
                 OutlinedButton(onClick = { }) {
                     Icon(
                         Icons.Default.DocumentScanner,
-                        contentDescription = stringResource(R.string.scan_bill)
+                        contentDescription = stringResource(R.string.scan_transaction)
                     )
                 }
                 OutlinedButton(onClick = { }) {
@@ -307,14 +305,14 @@ fun BillListScreenPreview() {
                 FloatingActionButton(onClick = {}) {
                     Icon(
                         Icons.Default.Add,
-                        contentDescription = stringResource(R.string.add_bill)
+                        contentDescription = stringResource(R.string.add_transaction)
                     )
                 }
             },
             defaultPaddingHorizontal = R.dimen.spacing_none
         ) {
-            BillListContent(
-                bills = mockBills,
+            TransactionListContent(
+                transactions = mockTransactions,
                 categories = mockCategories,
                 onViewDetail = {}
             )

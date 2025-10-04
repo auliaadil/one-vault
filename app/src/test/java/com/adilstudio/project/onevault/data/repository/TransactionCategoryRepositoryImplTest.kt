@@ -1,8 +1,8 @@
 package com.adilstudio.project.onevault.data.repository
 
-import com.adilstudio.project.onevault.BillCategoryEntityQueries
+import com.adilstudio.project.onevault.TransactionCategoryEntityQueries
 import com.adilstudio.project.onevault.Database
-import com.adilstudio.project.onevault.domain.model.BillCategory
+import com.adilstudio.project.onevault.domain.model.TransactionCategory
 import com.adilstudio.project.onevault.domain.model.CategoryType
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -16,27 +16,27 @@ import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-class BillCategoryRepositoryImplTest {
+class TransactionCategoryRepositoryImplTest {
 
     @Mock
     private lateinit var database: Database
 
     @Mock
-    private lateinit var billCategoryEntityQueries: BillCategoryEntityQueries
+    private lateinit var transactionCategoryEntityQueries: TransactionCategoryEntityQueries
 
-    private lateinit var billCategoryRepository: BillCategoryRepositoryImpl
+    private lateinit var transactionCategoryRepository: TransactionCategoryRepositoryImpl
 
     @Before
     fun setup() {
         MockitoAnnotations.openMocks(this)
-        whenever(database.billCategoryEntityQueries).thenReturn(billCategoryEntityQueries)
-        billCategoryRepository = BillCategoryRepositoryImpl(database)
+        whenever(database.transactionCategoryEntityQueries).thenReturn(transactionCategoryEntityQueries)
+        transactionCategoryRepository = TransactionCategoryRepositoryImpl(database)
     }
 
     @Test
     fun `getCategories returns mapped categories from database`() = runTest {
         // Create expected test data
-        val expectedCategory = BillCategory(
+        val expectedCategory = TransactionCategory(
             id = 123,
             name = "Utilities",
             icon = "⚡",
@@ -73,7 +73,7 @@ class BillCategoryRepositoryImplTest {
     @Test
     fun `addCategory calls insert with correct parameters`() = runTest {
         // Given
-        val category = BillCategory(
+        val category = TransactionCategory(
             id = 123,
             name = "Utilities",
             icon = "⚡",
@@ -86,10 +86,10 @@ class BillCategoryRepositoryImplTest {
         )
 
         // When
-        billCategoryRepository.addCategory(category)
+        transactionCategoryRepository.addCategory(category)
 
         // Then
-        verify(billCategoryEntityQueries).insertCategory(
+        verify(transactionCategoryEntityQueries).insertCategory(
             name = "Utilities",
             icon = "⚡",
             color = "#FF5722",
@@ -104,7 +104,7 @@ class BillCategoryRepositoryImplTest {
     @Test
     fun `updateCategory calls update with correct parameters`() = runTest {
         // Given
-        val category = BillCategory(
+        val category = TransactionCategory(
             id = 123,
             name = "Updated Utilities",
             icon = "🔌",
@@ -117,10 +117,10 @@ class BillCategoryRepositoryImplTest {
         )
 
         // When
-        billCategoryRepository.updateCategory(category)
+        transactionCategoryRepository.updateCategory(category)
 
         // Then
-        verify(billCategoryEntityQueries).updateCategory(
+        verify(transactionCategoryEntityQueries).updateCategory(
             name = "Updated Utilities",
             icon = "🔌",
             color = "#FF6722",
@@ -138,10 +138,10 @@ class BillCategoryRepositoryImplTest {
         val categoryId = 123L
 
         // When
-        billCategoryRepository.deleteCategory(categoryId)
+        transactionCategoryRepository.deleteCategory(categoryId)
 
         // Then
-        verify(billCategoryEntityQueries).deleteCategory(categoryId)
+        verify(transactionCategoryEntityQueries).deleteCategory(categoryId)
     }
 
     @Test

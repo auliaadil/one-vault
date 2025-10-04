@@ -1,4 +1,4 @@
-package com.adilstudio.project.onevault.presentation.bill.category
+package com.adilstudio.project.onevault.presentation.transaction.category
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -40,7 +40,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -48,7 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import com.adilstudio.project.onevault.R
-import com.adilstudio.project.onevault.domain.model.BillCategory
+import com.adilstudio.project.onevault.domain.model.TransactionCategory
 import com.adilstudio.project.onevault.domain.model.CategoryType
 import com.adilstudio.project.onevault.presentation.component.BackNavigationIcon
 import com.adilstudio.project.onevault.presentation.component.GenericScreen
@@ -56,8 +55,8 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BillCategoriesScreen(
-    viewModel: BillCategoryViewModel = koinViewModel(),
+fun TransactionCategoriesScreen(
+    viewModel: TransactionCategoryViewModel = koinViewModel(),
     onNavigateBack: () -> Unit = {}
 ) {
     val categories by viewModel.categories.collectAsState()
@@ -66,8 +65,8 @@ fun BillCategoriesScreen(
     val successMessage by viewModel.successMessage.collectAsState()
 
     var showAddDialog by remember { mutableStateOf(false) }
-    var editingCategory by remember { mutableStateOf<BillCategory?>(null) }
-    var categoryToDelete by remember { mutableStateOf<BillCategory?>(null) }
+    var editingCategory by remember { mutableStateOf<TransactionCategory?>(null) }
+    var categoryToDelete by remember { mutableStateOf<TransactionCategory?>(null) }
 
     // Handle error messages
     LaunchedEffect(error) {
@@ -84,7 +83,7 @@ fun BillCategoriesScreen(
     }
 
     GenericScreen(
-        title = stringResource(R.string.bill_categories),
+        title = stringResource(R.string.transaction_categories),
         navigationIcon = {
             BackNavigationIcon(onNavigateBack = onNavigateBack)
         },
@@ -199,9 +198,9 @@ fun BillCategoriesScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryCard(
-    category: BillCategory,
-    onEdit: (BillCategory) -> Unit,
-    onDelete: (BillCategory) -> Unit
+    category: TransactionCategory,
+    onEdit: (TransactionCategory) -> Unit,
+    onDelete: (TransactionCategory) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -282,7 +281,7 @@ private fun getCategoryTypeDisplayName(type: CategoryType): String {
 fun CategoryCardPreview() {
     MaterialTheme {
         CategoryCard(
-            category = BillCategory(
+            category = TransactionCategory(
                 id = 1,
                 name = "Electricity",
                 icon = "💡",

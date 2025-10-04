@@ -1,12 +1,12 @@
 package com.adilstudio.project.onevault.domain.repository
 
-import com.adilstudio.project.onevault.domain.model.Bill
+import com.adilstudio.project.onevault.domain.model.Transaction
 import kotlinx.coroutines.flow.Flow
 
-interface BillRepository {
-    fun getBills(): Flow<List<Bill>>
-    suspend fun getBillById(id: Long): Bill?
-    suspend fun addBill(bill: Bill)
-    suspend fun updateBill(bill: Bill)
-    suspend fun deleteBill(id: Long)
+interface TransactionRepository {
+    fun getTransactions(): Flow<List<Transaction>>
+    suspend fun getTransactionById(id: Long): Transaction?
+    suspend fun addTransaction(transaction: Transaction)
+    suspend fun updateTransaction(transaction: Transaction)
+    suspend fun deleteTransaction(id: Long)
 }

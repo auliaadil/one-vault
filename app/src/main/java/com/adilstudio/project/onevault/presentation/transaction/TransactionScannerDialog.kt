@@ -1,4 +1,4 @@
-package com.adilstudio.project.onevault.presentation.bill
+package com.adilstudio.project.onevault.presentation.transaction
 
 import android.Manifest
 import android.net.Uri
@@ -34,7 +34,7 @@ import com.adilstudio.project.onevault.core.util.PermissionUtil
 import java.io.File
 
 @Composable
-fun BillScannerDialog(
+fun TransactionScannerDialog(
     onDismiss: () -> Unit,
     onImageCaptured: (Uri) -> Unit
 ) {
@@ -111,7 +111,7 @@ fun BillScannerDialog(
     // Scan method selection dialog
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.scan_bill)) },
+        title = { Text(stringResource(R.string.scan_transaction)) },
         text = {
             Column {
                 Text(

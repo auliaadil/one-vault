@@ -15,7 +15,7 @@ enum class CategoryType {
 }
 
 @Serializable
-data class BillCategory(
+data class TransactionCategory(
     val id: Long?,
     val name: String,
     val icon: String,

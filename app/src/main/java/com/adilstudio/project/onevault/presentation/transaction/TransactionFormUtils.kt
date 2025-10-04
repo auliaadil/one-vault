@@ -1,11 +1,11 @@
-package com.adilstudio.project.onevault.presentation.bill
+package com.adilstudio.project.onevault.presentation.transaction
 
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
 
 /**
- * Utility functions for BillForm operations
+ * Utility functions for TransactionForm operations
  */
-object BillFormUtils {
+object TransactionFormUtils {
 
     /**
      * Extracts numeric amount from scanned text

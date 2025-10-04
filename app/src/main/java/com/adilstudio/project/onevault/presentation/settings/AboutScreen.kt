@@ -100,7 +100,7 @@ fun AboutScreen(
 
                     Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_medium)))
 
-                    FeatureItem(stringResource(R.string.feature_bill_tracker))
+                    FeatureItem(stringResource(R.string.feature_transaction_tracker))
                     FeatureItem(stringResource(R.string.feature_password_manager))
                     FeatureItem(stringResource(R.string.feature_password_generator))
                     FeatureItem(stringResource(R.string.feature_biometric_security))

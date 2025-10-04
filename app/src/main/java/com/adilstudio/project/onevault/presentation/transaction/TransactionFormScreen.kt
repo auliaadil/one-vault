@@ -1,4 +1,4 @@
-package com.adilstudio.project.onevault.presentation.bill
+package com.adilstudio.project.onevault.presentation.transaction
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -62,9 +62,9 @@ import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.DateUtil
 import com.adilstudio.project.onevault.core.util.ImageUtil
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
-import com.adilstudio.project.onevault.domain.model.Bill
-import com.adilstudio.project.onevault.presentation.bill.account.AccountViewModel
-import com.adilstudio.project.onevault.presentation.bill.category.BillCategoryViewModel
+import com.adilstudio.project.onevault.domain.model.Transaction
+import com.adilstudio.project.onevault.presentation.transaction.account.AccountViewModel
+import com.adilstudio.project.onevault.presentation.transaction.category.TransactionCategoryViewModel
 import com.adilstudio.project.onevault.presentation.component.GenericScreen
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
@@ -75,50 +75,50 @@ import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BillFormScreen(
-    bill: Bill? = null, // null for add, non-null for edit
+fun TransactionFormScreen(
+    transaction: Transaction? = null, // null for add, non-null for edit
     scannedImageUri: Uri? = null, // Scanned image to process and attach
-    onSave: (Bill) -> Unit,
+    onSave: (Transaction) -> Unit,
     onDelete: ((Long) -> Unit)? = null,
     onNavigateBack: () -> Unit,
     onCancel: () -> Unit = {},
-    categoryViewModel: BillCategoryViewModel = koinViewModel(),
+    categoryViewModel: TransactionCategoryViewModel = koinViewModel(),
     accountViewModel: AccountViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
     val categories by categoryViewModel.categories.collectAsState()
     val accounts by accountViewModel.accounts.collectAsState()
-    val isEditing = bill != null
+    val isEditing = transaction != null
 
     // ML Kit scanning state for scanned image
     var scannedTexts by remember { mutableStateOf<List<String>>(emptyList()) }
     var showTextSelectionDialog by remember { mutableStateOf(false) }
     var scanningProgress by remember { mutableStateOf(false) }
 
-    // Initialize form state from existing bill or defaults
-    var title by remember { mutableStateOf(bill?.title ?: "") }
+    // Initialize form state from existing transaction or defaults
+    var title by remember { mutableStateOf(transaction?.title ?: "") }
     var selectedCategory by remember {
-        mutableStateOf(categories.find { it.id == bill?.categoryId })
+        mutableStateOf(categories.find { it.id == transaction?.categoryId })
     }
     var selectedAccount by remember {
-        mutableStateOf(accounts.find { it.id == bill?.accountId })
+        mutableStateOf(accounts.find { it.id == transaction?.accountId })
     }
     var showCategoryDropdown by remember { mutableStateOf(false) }
     var showAccountDropdown by remember { mutableStateOf(false) }
-    var amountValue by remember { mutableStateOf(bill?.amount?.toLong() ?: 0L) }
+    var amountValue by remember { mutableStateOf(transaction?.amount?.toLong() ?: 0L) }
     var amountDisplay by remember {
         mutableStateOf(
-            if (bill?.amount != null)
-                RupiahFormatter.formatRupiahDisplay(bill.amount.toLong())
+            if (transaction?.amount != null)
+                RupiahFormatter.formatRupiahDisplay(transaction.amount.toLong())
             else ""
         )
     }
-    var vendor by remember { mutableStateOf(bill?.vendor ?: "") }
+    var vendor by remember { mutableStateOf(transaction?.vendor ?: "") }
 
     // Date picker state - using Calendar for API 24 compatibility
     var selectedDate by remember {
         mutableStateOf(
-            bill?.billDate?.let { DateUtil.isoStringToLocalDate(it) } ?: DateUtil.getCurrentDate()
+            transaction?.transactionDate?.let { DateUtil.isoStringToLocalDate(it) } ?: DateUtil.getCurrentDate()
         )
     }
     var showDatePicker by remember { mutableStateOf(false) }
@@ -145,7 +145,7 @@ fun BillFormScreen(
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     var savedImagePath by remember {
         mutableStateOf(
-            bill?.imagePath ?: scannedImageUri?.let {
+            transaction?.imagePath ?: scannedImageUri?.let {
                 ImageUtil.saveImageToInternalStorage(context, it)
             }
         )
@@ -184,16 +184,16 @@ fun BillFormScreen(
     }
 
     // Update selectedCategory when categories are loaded
-    LaunchedEffect(categories, bill) {
-        if (bill != null && selectedCategory == null) {
-            selectedCategory = categories.find { it.id == bill.categoryId }
+    LaunchedEffect(categories, transaction) {
+        if (transaction != null && selectedCategory == null) {
+            selectedCategory = categories.find { it.id == transaction.categoryId }
         }
     }
 
     // Update selectedCategory when categories are loaded
-    LaunchedEffect(accounts, bill) {
-        if (bill != null && selectedAccount == null) {
-            selectedAccount = accounts.find { it.id == bill.accountId }
+    LaunchedEffect(accounts, transaction) {
+        if (transaction != null && selectedAccount == null) {
+            selectedAccount = accounts.find { it.id == transaction.accountId }
         }
     }
 
@@ -210,7 +210,7 @@ fun BillFormScreen(
     }
 
     GenericScreen(
-        title = if (isEditing) stringResource(R.string.edit_bill) else stringResource(R.string.add_bill),
+        title = if (isEditing) stringResource(R.string.edit_transaction) else stringResource(R.string.add_transaction),
         navigationIcon = {
             IconButton(onClick = onNavigateBack) {
                 Icon(
@@ -402,7 +402,7 @@ fun BillFormScreen(
             OutlinedTextField(
                 value = DateUtil.formatDateForDisplay(selectedDate),
                 onValueChange = { },
-                label = { Text(stringResource(R.string.bill_date)) },
+                label = { Text(stringResource(R.string.transaction_date)) },
                 modifier = Modifier.fillMaxWidth(),
                 readOnly = true,
                 trailingIcon = {
@@ -456,7 +456,7 @@ fun BillFormScreen(
                     imageToShow?.let {
                         AsyncImage(
                             model = it,
-                            contentDescription = "Bill Image",
+                            contentDescription = "Transaction Image",
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(dimensionResource(R.dimen.height_fixed_medium))
@@ -528,24 +528,24 @@ fun BillFormScreen(
 
                 Button(
                     onClick = {
-                        val billToSave = Bill(
-                            id = bill?.id ?: System.currentTimeMillis(),
+                        val transactionToSave = Transaction(
+                            id = transaction?.id ?: System.currentTimeMillis(),
                             title = title,
                             categoryId = selectedCategory?.id,
                             amount = amountValue.toDouble(),
                             vendor = vendor,
-                            billDate = DateUtil.localDateToIsoString(selectedDate),
+                            transactionDate = DateUtil.localDateToIsoString(selectedDate),
                             imagePath = savedImagePath,
                             accountId = selectedAccount?.id
                         )
-                        onSave(billToSave)
+                        onSave(transactionToSave)
                     },
                     modifier = if (isEditing) Modifier.weight(1f) else Modifier.fillMaxWidth(),
                     enabled = title.isNotBlank() && amountValue > 0
                 ) {
                     Text(
                         if (isEditing) stringResource(R.string.save_changes)
-                        else stringResource(R.string.save_bill)
+                        else stringResource(R.string.save_transaction)
                     )
                 }
             }
@@ -590,14 +590,14 @@ fun BillFormScreen(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text(stringResource(R.string.delete_bill)) },
+            title = { Text(stringResource(R.string.delete_transaction)) },
             text = {
-                Text(stringResource(R.string.delete_bill_message, title))
+                Text(stringResource(R.string.delete_transaction_message, title))
             },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        bill?.let { onDelete?.invoke(it.id) }
+                        transaction?.let { onDelete?.invoke(it.id) }
                         showDeleteDialog = false
                     }
                 ) {
@@ -624,10 +624,10 @@ fun BillFormScreen(
                 if (selectedTitle.isNotBlank()) title = selectedTitle
                 if (selectedVendor.isNotBlank()) vendor = selectedVendor
                 if (selectedAmount.isNotBlank()) {
-                    val extractedAmount = BillFormUtils.extractAmountFromText(selectedAmount)
+                    val extractedAmount = TransactionFormUtils.extractAmountFromText(selectedAmount)
                     if (extractedAmount > 0) {
                         amountValue = extractedAmount.toLong()
-                        amountDisplay = BillFormUtils.getFormattedAmountDisplay(extractedAmount)
+                        amountDisplay = TransactionFormUtils.getFormattedAmountDisplay(extractedAmount)
                     }
                 }
                 showTextSelectionDialog = false

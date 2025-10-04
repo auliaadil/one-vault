@@ -4,31 +4,31 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.adilstudio.project.onevault.Database
-import com.adilstudio.project.onevault.domain.model.Bill
-import com.adilstudio.project.onevault.domain.repository.BillRepository
+import com.adilstudio.project.onevault.domain.model.Transaction
+import com.adilstudio.project.onevault.domain.repository.TransactionRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.single
 
-class BillRepositoryImpl(private val database: Database) : BillRepository {
+class TransactionRepositoryImpl(private val database: Database) : TransactionRepository {
 
-    private val billQueries = database.billEntityQueries
+    private val transactionQueries = database.transactionEntityQueries
     private val accountQueries = database.accountEntityQueries
 
-    override fun getBills(): Flow<List<Bill>> {
-        return billQueries.selectAll()
+    override fun getTransactions(): Flow<List<Transaction>> {
+        return transactionQueries.selectAll()
             .asFlow()
             .mapToList(Dispatchers.IO)
             .map { entities ->
                 entities.map { entity ->
-                    Bill(
+                    Transaction(
                         id = entity.id,
                         title = entity.title,
                         categoryId = entity.categoryId,
                         amount = entity.amount,
                         vendor = entity.vendor,
-                        billDate = entity.billDate,
+                        transactionDate = entity.transactionDate,
                         imagePath = entity.imagePath,
                         accountId = entity.accountId
                     )
@@ -36,19 +36,19 @@ class BillRepositoryImpl(private val database: Database) : BillRepository {
             }
     }
 
-    override suspend fun getBillById(id: Long): Bill? {
-        return billQueries.selectById(id)
+    override suspend fun getTransactionById(id: Long): Transaction? {
+        return transactionQueries.selectById(id)
             .asFlow()
             .mapToOneOrNull(Dispatchers.IO)
             .map { entity ->
                 entity?.let {
-                    Bill(
+                    Transaction(
                         id = it.id,
                         title = it.title,
                         categoryId = it.categoryId,
                         amount = it.amount,
                         vendor = it.vendor,
-                        billDate = it.billDate,
+                        transactionDate = it.transactionDate,
                         imagePath = it.imagePath,
                         accountId = it.accountId
                     )
@@ -56,98 +56,98 @@ class BillRepositoryImpl(private val database: Database) : BillRepository {
             }.single()
     }
 
-    override suspend fun addBill(bill: Bill) {
-        // Add the bill using direct query (non-suspend)
-        billQueries.insertBill(
-            id = bill.id,
-            title = bill.title,
-            categoryId = bill.categoryId,
-            amount = bill.amount,
-            vendor = bill.vendor,
-            billDate = bill.billDate,
-            imagePath = bill.imagePath,
-            accountId = bill.accountId
+    override suspend fun addTransaction(transaction: Transaction) {
+        // Add the transaction using direct query (non-suspend)
+        transactionQueries.insertTransaction(
+            id = transaction.id,
+            title = transaction.title,
+            categoryId = transaction.categoryId,
+            amount = transaction.amount,
+            vendor = transaction.vendor,
+            transactionDate = transaction.transactionDate,
+            imagePath = transaction.imagePath,
+            accountId = transaction.accountId
         )
         // Deduct from account if specified
-        bill.accountId?.let { accountId ->
-            deductFromAccount(accountId, bill.amount)
+        transaction.accountId?.let { accountId ->
+            deductFromAccount(accountId, transaction.amount)
         }
     }
 
-    override suspend fun updateBill(bill: Bill) {
-        // Get existing bill for comparison using direct query (non-suspend)
-        val existingBill = billQueries.selectById(bill.id).executeAsOneOrNull()?.let { entity ->
-            Bill(
+    override suspend fun updateTransaction(transaction: Transaction) {
+        // Get existing transaction for comparison using direct query (non-suspend)
+        val existingTransaction = transactionQueries.selectById(transaction.id).executeAsOneOrNull()?.let { entity ->
+            Transaction(
                 id = entity.id,
                 title = entity.title,
                 categoryId = entity.categoryId,
                 amount = entity.amount,
                 vendor = entity.vendor,
-                billDate = entity.billDate,
+                transactionDate = entity.transactionDate,
                 imagePath = entity.imagePath,
                 accountId = entity.accountId
             )
         }
 
-        if (existingBill != null) {
+        if (existingTransaction != null) {
             // Handle account balance adjustments
             when {
                 // Account changed (including from null to account or account to null)
-                existingBill.accountId != bill.accountId -> {
+                existingTransaction.accountId != transaction.accountId -> {
                     // Restore previous account balance if it existed
-                    existingBill.accountId?.let { oldAccountId ->
-                        restoreToAccount(oldAccountId, existingBill.amount)
+                    existingTransaction.accountId?.let { oldAccountId ->
+                        restoreToAccount(oldAccountId, existingTransaction.amount)
                     }
                     // Deduct from new account if it exists
-                    bill.accountId?.let { newAccountId ->
-                        deductFromAccount(newAccountId, bill.amount)
+                    transaction.accountId?.let { newAccountId ->
+                        deductFromAccount(newAccountId, transaction.amount)
                     }
                 }
                 // Same account but amount changed
-                existingBill.accountId == bill.accountId && bill.accountId != null -> {
-                    val amountDifference = bill.amount - existingBill.amount
+                existingTransaction.accountId == transaction.accountId && transaction.accountId != null -> {
+                    val amountDifference = transaction.amount - existingTransaction.amount
                     if (amountDifference != 0.0) {
-                        deductFromAccount(bill.accountId, amountDifference)
+                        deductFromAccount(transaction.accountId, amountDifference)
                     }
                 }
-                // No account involved, just update the bill
+                // No account involved, just update the transaction
             }
         }
 
-        // Update the bill using direct query (non-suspend)
-        billQueries.updateBill(
-            title = bill.title,
-            categoryId = bill.categoryId,
-            amount = bill.amount,
-            vendor = bill.vendor,
-            billDate = bill.billDate,
-            imagePath = bill.imagePath,
-            accountId = bill.accountId,
-            id = bill.id
+        // Update the transaction using direct query (non-suspend)
+        transactionQueries.updateTransaction(
+            title = transaction.title,
+            categoryId = transaction.categoryId,
+            amount = transaction.amount,
+            vendor = transaction.vendor,
+            transactionDate = transaction.transactionDate,
+            imagePath = transaction.imagePath,
+            accountId = transaction.accountId,
+            id = transaction.id
         )
     }
 
-    override suspend fun deleteBill(id: Long) {
-        // Get the bill to restore account balance using direct query (non-suspend)
-        val bill = billQueries.selectById(id).executeAsOneOrNull()?.let { entity ->
-            Bill(
+    override suspend fun deleteTransaction(id: Long) {
+        // Get the transaction to restore account balance using direct query (non-suspend)
+        val transaction = transactionQueries.selectById(id).executeAsOneOrNull()?.let { entity ->
+            Transaction(
                 id = entity.id,
                 title = entity.title,
                 categoryId = entity.categoryId,
                 amount = entity.amount,
                 vendor = entity.vendor,
-                billDate = entity.billDate,
+                transactionDate = entity.transactionDate,
                 imagePath = entity.imagePath,
                 accountId = entity.accountId
             )
         }
 
-        // Delete the bill using direct query (non-suspend)
-        billQueries.deleteBill(id)
+        // Delete the transaction using direct query (non-suspend)
+        transactionQueries.deleteTransaction(id)
 
         // Restore to account if accountId was specified
-        bill?.accountId?.let { accountId ->
-            restoreToAccount(accountId, bill.amount)
+        transaction?.accountId?.let { accountId ->
+            restoreToAccount(accountId, transaction.amount)
         }
     }
 

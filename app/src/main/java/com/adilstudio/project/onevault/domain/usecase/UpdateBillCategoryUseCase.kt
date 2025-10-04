@@ -1,8 +1,8 @@
 package com.adilstudio.project.onevault.domain.usecase
 
-import com.adilstudio.project.onevault.domain.model.BillCategory
-import com.adilstudio.project.onevault.domain.repository.BillCategoryRepository
+import com.adilstudio.project.onevault.domain.model.TransactionCategory
+import com.adilstudio.project.onevault.domain.repository.TransactionCategoryRepository
 
-class UpdateBillCategoryUseCase(private val repository: BillCategoryRepository) {
-    suspend operator fun invoke(category: BillCategory) = repository.updateCategory(category)
+class UpdateTransactionCategoryUseCase(private val repository: TransactionCategoryRepository) {
+    suspend operator fun invoke(category: TransactionCategory) = repository.updateCategory(category)
 }

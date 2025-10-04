@@ -341,7 +341,7 @@ fun DetailField(
                 imageToShow?.let { uri ->
                     AsyncImage(
                         model = uri,
-                        contentDescription = "Bill Image",
+                        contentDescription = "Transaction Image",
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(dimensionResource(R.dimen.height_fixed_medium))

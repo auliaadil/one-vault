@@ -1,4 +1,4 @@
-package com.adilstudio.project.onevault.presentation.bill
+package com.adilstudio.project.onevault.presentation.transaction
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

@@ -1,22 +1,22 @@
 package com.adilstudio.project.onevault.di
 
 import com.adilstudio.project.onevault.domain.usecase.*
-import com.adilstudio.project.onevault.domain.usecase.GetBillCategoriesUseCase
+import com.adilstudio.project.onevault.domain.usecase.GetTransactionCategoriesUseCase
 import org.koin.dsl.module
 
 val useCaseModule = module {
 
-    // Bill Use Cases
-    single { AddBillUseCase(get()) }
-    single { UpdateBillUseCase(get()) }
-    single { DeleteBillUseCase(get()) }
-    single { GetBillsUseCase(get()) }
-    single { GetBillCategoriesUseCase(get()) }
-    single { AddBillCategoryUseCase(get()) }
-    single { UpdateBillCategoryUseCase(get()) }
-    single { DeleteBillCategoryUseCase(get()) }
-    single { GetBillCategoriesCountUseCase(get()) }
-    single { InitializeDefaultBillCategoriesIfEmptyUseCase(get()) }
+    // Transaction Use Cases
+    single { AddTransactionUseCase(get()) }
+    single { UpdateTransactionUseCase(get()) }
+    single { DeleteTransactionUseCase(get()) }
+    single { GetTransactionsUseCase(get()) }
+    single { GetTransactionCategoriesUseCase(get()) }
+    single { AddTransactionCategoryUseCase(get()) }
+    single { UpdateTransactionCategoryUseCase(get()) }
+    single { DeleteTransactionCategoryUseCase(get()) }
+    single { GetTransactionCategoriesCountUseCase(get()) }
+    single { InitializeDefaultTransactionCategoriesIfEmptyUseCase(get()) }
 
     // Credential Use Cases
     single { AddCredentialUseCase(get()) }

@@ -4,25 +4,25 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.adilstudio.project.onevault.Database
-import com.adilstudio.project.onevault.domain.model.BillCategory
+import com.adilstudio.project.onevault.domain.model.TransactionCategory
 import com.adilstudio.project.onevault.domain.model.CategoryType
-import com.adilstudio.project.onevault.domain.repository.BillCategoryRepository
+import com.adilstudio.project.onevault.domain.repository.TransactionCategoryRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.single
 
-class BillCategoryRepositoryImpl(database: Database) : BillCategoryRepository {
+class TransactionCategoryRepositoryImpl(database: Database) : TransactionCategoryRepository {
 
-    private val queries = database.billCategoryEntityQueries
+    private val queries = database.transactionCategoryEntityQueries
 
-    override fun getCategories(): Flow<List<BillCategory>> {
+    override fun getCategories(): Flow<List<TransactionCategory>> {
         return queries.selectAll()
             .asFlow()
             .mapToList(Dispatchers.IO)
             .map { entities ->
                 entities.map { entity ->
-                    BillCategory(
+                    TransactionCategory(
                         id = entity.id,
                         name = entity.name,
                         icon = entity.icon,
@@ -37,13 +37,13 @@ class BillCategoryRepositoryImpl(database: Database) : BillCategoryRepository {
             }
     }
 
-    override suspend fun getCategoryById(id: Long): BillCategory? {
+    override suspend fun getCategoryById(id: Long): TransactionCategory? {
         return queries.selectById(id)
             .asFlow()
             .mapToOneOrNull(Dispatchers.IO)
             .map { entity ->
                 entity?.let {
-                    BillCategory(
+                    TransactionCategory(
                         id = it.id,
                         name = it.name,
                         icon = it.icon,
@@ -58,7 +58,7 @@ class BillCategoryRepositoryImpl(database: Database) : BillCategoryRepository {
             }.single()
     }
 
-    override suspend fun addCategory(category: BillCategory) {
+    override suspend fun addCategory(category: TransactionCategory) {
         queries.insertCategory(
             name = category.name,
             icon = category.icon,
@@ -71,7 +71,7 @@ class BillCategoryRepositoryImpl(database: Database) : BillCategoryRepository {
         )
     }
 
-    override suspend fun updateCategory(category: BillCategory) {
+    override suspend fun updateCategory(category: TransactionCategory) {
         queries.updateCategory(
             name = category.name,
             icon = category.icon,
@@ -94,7 +94,7 @@ class BillCategoryRepositoryImpl(database: Database) : BillCategoryRepository {
 
     override suspend fun initializeDefaultCategoriesIfEmpty() {
         if (getCategoriesCount() == 0) {
-            val defaultCategories = DefaultBillCategoriesHelper.createDefaultCategories()
+            val defaultCategories = DefaultTransactionCategoriesHelper.createDefaultCategories()
             defaultCategories.forEach { addCategory(it) }
         }
     }

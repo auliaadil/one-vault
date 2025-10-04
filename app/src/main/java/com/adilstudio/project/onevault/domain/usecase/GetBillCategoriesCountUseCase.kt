@@ -1,11 +1,11 @@
 package com.adilstudio.project.onevault.domain.usecase
 
-import com.adilstudio.project.onevault.domain.repository.BillCategoryRepository
+import com.adilstudio.project.onevault.domain.repository.TransactionCategoryRepository
 
-class GetBillCategoriesCountUseCase(
-    private val billCategoryRepository: BillCategoryRepository
+class GetTransactionCategoriesCountUseCase(
+    private val transactionCategoryRepository: TransactionCategoryRepository
 ) {
     suspend operator fun invoke(): Int {
-        return billCategoryRepository.getCategoriesCount()
+        return transactionCategoryRepository.getCategoriesCount()
     }
 }

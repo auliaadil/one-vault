@@ -1,4 +1,4 @@
-CREATE TABLE BillCategoryEntity (
+CREATE TABLE TransactionCategoryEntity (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     icon TEXT NOT NULL,
@@ -11,19 +11,19 @@ CREATE TABLE BillCategoryEntity (
 );
 
 selectAll:
-SELECT * FROM BillCategoryEntity ORDER BY type, name;
+SELECT * FROM TransactionCategoryEntity ORDER BY type, name;
 
 selectById:
-SELECT * FROM BillCategoryEntity WHERE id = ?;
+SELECT * FROM TransactionCategoryEntity WHERE id = ?;
 
 insertCategory:
-INSERT INTO BillCategoryEntity(name, icon, color, type, parentCategoryId, isEditable, createdAt, updatedAt)
+INSERT INTO TransactionCategoryEntity(name, icon, color, type, parentCategoryId, isEditable, createdAt, updatedAt)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 
 updateCategory:
-UPDATE BillCategoryEntity SET
+UPDATE TransactionCategoryEntity SET
 name = ?, icon = ?, color = ?, type = ?, parentCategoryId = ?, isEditable = ?, updatedAt = ?
 WHERE id = ?;
 
 deleteCategory:
-DELETE FROM BillCategoryEntity WHERE id = ?;
+DELETE FROM TransactionCategoryEntity WHERE id = ?;

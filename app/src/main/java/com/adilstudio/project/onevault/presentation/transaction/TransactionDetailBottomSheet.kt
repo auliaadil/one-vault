@@ -1,4 +1,4 @@
-package com.adilstudio.project.onevault.presentation.bill
+package com.adilstudio.project.onevault.presentation.transaction
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,28 +17,28 @@ import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.DateUtil
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.Account
-import com.adilstudio.project.onevault.domain.model.Bill
-import com.adilstudio.project.onevault.domain.model.BillCategory
+import com.adilstudio.project.onevault.domain.model.Transaction
+import com.adilstudio.project.onevault.domain.model.TransactionCategory
 import com.adilstudio.project.onevault.presentation.component.DetailField
 import com.adilstudio.project.onevault.presentation.component.GenericBottomSheet
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BillDetailBottomSheet(
-    bill: Bill,
-    categories: List<BillCategory>,
+fun TransactionDetailBottomSheet(
+    transaction: Transaction,
+    categories: List<TransactionCategory>,
     accounts: List<Account>,
     onDismiss: () -> Unit,
-    onEdit: (Bill) -> Unit,
+    onEdit: (Transaction) -> Unit,
     onDelete: (Long) -> Unit
 ) {
     GenericBottomSheet(
-        title = stringResource(R.string.bill_details),
-        onEdit = { onEdit(bill) },
+        title = stringResource(R.string.transaction_details),
+        onEdit = { onEdit(transaction) },
         onDelete = {}, // handled by deleteDialogText and onDeleteConfirmed
-        deleteDialogText = stringResource(R.string.delete_bill_message, bill.title),
+        deleteDialogText = stringResource(R.string.delete_transaction_message, transaction.title),
         onDeleteConfirmed = {
-            onDelete(bill.id)
+            onDelete(transaction.id)
             onDismiss()
         },
         onDismiss = onDismiss
@@ -47,21 +47,21 @@ fun BillDetailBottomSheet(
             modifier = Modifier.padding(padding),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_large))
         ) {
-            DetailField(R.string.title, bill.title)
+            DetailField(R.string.title, transaction.title)
             DetailField(
                 R.string.vendor_optional,
-                if (bill.vendor.isBlank()) stringResource(R.string.no_vendor) else bill.vendor
+                if (transaction.vendor.isBlank()) stringResource(R.string.no_vendor) else transaction.vendor
             )
             DetailField(
                 R.string.amount,
-                RupiahFormatter.formatWithRupiahPrefix(bill.amount.toLong())
+                RupiahFormatter.formatWithRupiahPrefix(transaction.amount.toLong())
             )
             DetailField(
-                labelRes = R.string.bill_date,
-                value = DateUtil.isoStringToLocalDate(bill.billDate)?.let { date ->
+                labelRes = R.string.transaction_date,
+                value = DateUtil.isoStringToLocalDate(transaction.transactionDate)?.let { date ->
                     DateUtil.formatDateForDisplay(date)
-                } ?: bill.billDate)
-            val category = bill.categoryId?.let { id ->
+                } ?: transaction.transactionDate)
+            val category = transaction.categoryId?.let { id ->
                 categories.find { it.id == id }
             }
             val categoryName = category?.name ?: stringResource(R.string.no_category)
@@ -69,14 +69,14 @@ fun BillDetailBottomSheet(
                 "$it $categoryName"
             } ?: categoryName)
 
-            val account = bill.accountId?.let { id ->
+            val account = transaction.accountId?.let { id ->
                 accounts.find { it.id == id }
             }
             DetailField(
                 R.string.account_optional,
-                if (bill.accountId == null) stringResource(R.string.no_account_selected) else account?.name
+                if (transaction.accountId == null) stringResource(R.string.no_account_selected) else account?.name
             )
-            bill.imagePath?.let {
+            transaction.imagePath?.let {
                 DetailField(
                     labelRes = R.string.attachment,
                     imagePath = it
@@ -94,7 +94,7 @@ fun BillDetailBottomSheet(
                     Text(stringResource(R.string.close))
                 }
                 Button(
-                    onClick = { onEdit(bill) },
+                    onClick = { onEdit(transaction) },
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(stringResource(R.string.edit))

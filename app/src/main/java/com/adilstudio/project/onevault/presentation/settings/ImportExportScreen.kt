@@ -92,9 +92,9 @@ fun ImportExportScreen(
 
             ImportExportItem(
                 icon = Icons.Default.Receipt,
-                title = stringResource(R.string.export_bills),
-                description = stringResource(R.string.export_bills_description),
-                onClick = { /* TODO: Implement bill export */ }
+                title = stringResource(R.string.export_transactions),
+                description = stringResource(R.string.export_transactions_description),
+                onClick = { /* TODO: Implement transaction export */ }
             )
 
             ImportExportItem(
@@ -124,9 +124,9 @@ fun ImportExportScreen(
 
             ImportExportItem(
                 icon = Icons.Default.Receipt,
-                title = stringResource(R.string.import_bills),
-                description = stringResource(R.string.import_bills_description),
-                onClick = { /* TODO: Implement bill import */ }
+                title = stringResource(R.string.import_transactions),
+                description = stringResource(R.string.import_transactions_description),
+                onClick = { /* TODO: Implement transaction import */ }
             )
 
             ImportExportItem(

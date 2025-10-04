@@ -1,31 +1,31 @@
-package com.adilstudio.project.onevault.presentation.bill.category
+package com.adilstudio.project.onevault.presentation.transaction.category
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.adilstudio.project.onevault.domain.model.BillCategory
+import com.adilstudio.project.onevault.domain.model.TransactionCategory
 import com.adilstudio.project.onevault.domain.model.CategoryType
-import com.adilstudio.project.onevault.domain.usecase.AddBillCategoryUseCase
-import com.adilstudio.project.onevault.domain.usecase.DeleteBillCategoryUseCase
-import com.adilstudio.project.onevault.domain.usecase.GetBillCategoriesCountUseCase
-import com.adilstudio.project.onevault.domain.usecase.GetBillCategoriesUseCase
-import com.adilstudio.project.onevault.domain.usecase.InitializeDefaultBillCategoriesIfEmptyUseCase
-import com.adilstudio.project.onevault.domain.usecase.UpdateBillCategoryUseCase
+import com.adilstudio.project.onevault.domain.usecase.AddTransactionCategoryUseCase
+import com.adilstudio.project.onevault.domain.usecase.DeleteTransactionCategoryUseCase
+import com.adilstudio.project.onevault.domain.usecase.GetTransactionCategoriesCountUseCase
+import com.adilstudio.project.onevault.domain.usecase.GetTransactionCategoriesUseCase
+import com.adilstudio.project.onevault.domain.usecase.InitializeDefaultTransactionCategoriesIfEmptyUseCase
+import com.adilstudio.project.onevault.domain.usecase.UpdateTransactionCategoryUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class BillCategoryViewModel(
-    private val getBillCategoriesUseCase: GetBillCategoriesUseCase,
-    private val addBillCategoryUseCase: AddBillCategoryUseCase,
-    private val updateBillCategoryUseCase: UpdateBillCategoryUseCase,
-    private val deleteBillCategoryUseCase: DeleteBillCategoryUseCase,
-    private val getBillCategoriesCountUseCase: GetBillCategoriesCountUseCase,
-    private val initializeDefaultBillCategoriesIfEmptyUseCase: InitializeDefaultBillCategoriesIfEmptyUseCase
+class TransactionCategoryViewModel(
+    private val getTransactionCategoriesUseCase: GetTransactionCategoriesUseCase,
+    private val addTransactionCategoryUseCase: AddTransactionCategoryUseCase,
+    private val updateTransactionCategoryUseCase: UpdateTransactionCategoryUseCase,
+    private val deleteTransactionCategoryUseCase: DeleteTransactionCategoryUseCase,
+    private val getTransactionCategoriesCountUseCase: GetTransactionCategoriesCountUseCase,
+    private val initializeDefaultTransactionCategoriesIfEmptyUseCase: InitializeDefaultTransactionCategoriesIfEmptyUseCase
 ) : ViewModel() {
 
-    private val _categories = MutableStateFlow<List<BillCategory>>(emptyList())
-    val categories: StateFlow<List<BillCategory>> = _categories.asStateFlow()
+    private val _categories = MutableStateFlow<List<TransactionCategory>>(emptyList())
+    val categories: StateFlow<List<TransactionCategory>> = _categories.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
@@ -38,7 +38,7 @@ class BillCategoryViewModel(
 
     init {
         viewModelScope.launch {
-            initializeDefaultBillCategoriesIfEmptyUseCase()
+            initializeDefaultTransactionCategoriesIfEmptyUseCase()
             loadCategories()
         }
     }
@@ -47,7 +47,7 @@ class BillCategoryViewModel(
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                getBillCategoriesUseCase().collect { categoryList ->
+                getTransactionCategoriesUseCase().collect { categoryList ->
                     _categories.value = categoryList
                     _isLoading.value = false
                 }
@@ -58,13 +58,13 @@ class BillCategoryViewModel(
         }
     }
 
-    suspend fun checkAndInitializeDefaultCategories(defaultCategories: List<BillCategory>) {
+    suspend fun checkAndInitializeDefaultCategories(defaultCategories: List<TransactionCategory>) {
         try {
-            val categoriesCount = getBillCategoriesCountUseCase()
+            val categoriesCount = getTransactionCategoriesCountUseCase()
             if (categoriesCount == 0) {
                 // No categories exist, initialize with defaults
                 defaultCategories.forEach { category ->
-                    addBillCategoryUseCase(category)
+                    addTransactionCategoryUseCase(category)
                 }
             }
         } catch (e: Exception) {
@@ -82,7 +82,7 @@ class BillCategoryViewModel(
         viewModelScope.launch {
             try {
                 val currentTime = System.currentTimeMillis()
-                val category = BillCategory(
+                val category = TransactionCategory(
                     id = null,
                     name = name,
                     icon = icon,
@@ -93,7 +93,7 @@ class BillCategoryViewModel(
                     createdAt = currentTime,
                     updatedAt = currentTime
                 )
-                addBillCategoryUseCase(category)
+                addTransactionCategoryUseCase(category)
                 _successMessage.value = "Category '$name' added successfully"
             } catch (e: Exception) {
                 _error.value = e.message
@@ -101,10 +101,10 @@ class BillCategoryViewModel(
         }
     }
 
-    fun updateCategory(category: BillCategory) {
+    fun updateCategory(category: TransactionCategory) {
         viewModelScope.launch {
             try {
-                updateBillCategoryUseCase(category.copy(updatedAt = System.currentTimeMillis()))
+                updateTransactionCategoryUseCase(category.copy(updatedAt = System.currentTimeMillis()))
                 _successMessage.value = "Category '${category.name}' updated successfully"
             } catch (e: Exception) {
                 _error.value = e.message
@@ -115,7 +115,7 @@ class BillCategoryViewModel(
     fun deleteCategory(categoryId: Long) {
         viewModelScope.launch {
             try {
-                deleteBillCategoryUseCase(categoryId)
+                deleteTransactionCategoryUseCase(categoryId)
                 _successMessage.value = "Category deleted successfully"
             } catch (e: Exception) {
                 _error.value = e.message

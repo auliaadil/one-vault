@@ -1,15 +1,15 @@
 # OneVault 🔐
 
-A secure, local-first Android application for managing your financial bills, passwords, and important files. OneVault prioritizes your privacy by storing all data locally on your device with advanced encryption and biometric security.
+A secure, local-first Android application for managing your financial transactions, passwords, and important files. OneVault prioritizes your privacy by storing all data locally on your device with advanced encryption and biometric security.
 
 ## 📱 Features
 
-### 💳 Bill Tracker
-- **Smart Bill Management**: Track and organize your bills with categorization
-- **OCR Scanning**: Scan physical bills using your camera with ML Kit text recognition
-- **Account Integration**: Link bills to specific accounts and track balances
-- **Attachment Support**: Store bill images for reference
-- **Category Management**: Organize bills with customizable categories
+### 💳 Transaction Tracker
+- **Smart Transaction Management**: Track and organize your transactions with categorization
+- **OCR Scanning**: Scan physical transactions using your camera with ML Kit text recognition
+- **Account Integration**: Link transactions to specific accounts and track balances
+- **Attachment Support**: Store transaction images for reference
+- **Category Management**: Organize transactions with customizable categories
 - **Rupiah Currency Support**: Optimized for Indonesian currency formatting
 
 ### 🔑 Password Manager
@@ -102,7 +102,7 @@ app/src/main/java/com/adilstudio/project/onevault/
 - **Android Version**: 8.0 (API level 26)
 - **RAM**: 2GB recommended
 - **Storage**: 100MB for app installation
-- **Camera**: Required for bill scanning feature
+- **Camera**: Required for transaction scanning feature
 - **Biometric Hardware**: Optional, for enhanced security
 
 ### Supported Architectures
@@ -147,8 +147,8 @@ The project includes comprehensive testing:
 
 ## 📱 Features in Detail
 
-### Bill Management
-- Create, read, update, delete bills
+### Transaction Management
+- Create, read, update, delete transactions
 - OCR text extraction from images
 - Category assignment and management
 - Account balance tracking
@@ -200,7 +200,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### Upcoming Features
 - [ ] Dark theme support
-- [ ] Advanced bill analytics and reporting
+- [ ] Advanced transaction analytics and reporting
 - [ ] Multi-language support
 - [ ] Widget support for quick access
 - [ ] File encryption in vault

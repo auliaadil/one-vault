@@ -1,4 +1,4 @@
-package com.adilstudio.project.onevault.presentation.bill.account
+package com.adilstudio.project.onevault.presentation.transaction.account
 
 import com.adilstudio.project.onevault.domain.model.Account
 

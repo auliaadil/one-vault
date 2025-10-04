@@ -1,6 +1,6 @@
 package com.adilstudio.project.onevault.domain.usecase
 
-import com.adilstudio.project.onevault.domain.repository.BillCategoryRepository
+import com.adilstudio.project.onevault.domain.repository.TransactionCategoryRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
 import org.junit.Before
@@ -9,27 +9,27 @@ import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.whenever
 
-class GetBillCategoriesCountUseCaseTest {
+class GetTransactionCategoriesCountUseCaseTest {
 
     @Mock
-    private lateinit var billCategoryRepository: BillCategoryRepository
+    private lateinit var transactionCategoryRepository: TransactionCategoryRepository
 
-    private lateinit var getBillCategoriesCountUseCase: GetBillCategoriesCountUseCase
+    private lateinit var getTransactionCategoriesCountUseCase: GetTransactionCategoriesCountUseCase
 
     @Before
     fun setup() {
         MockitoAnnotations.openMocks(this)
-        getBillCategoriesCountUseCase = GetBillCategoriesCountUseCase(billCategoryRepository)
+        getTransactionCategoriesCountUseCase = GetTransactionCategoriesCountUseCase(transactionCategoryRepository)
     }
 
     @Test
     fun `invoke returns correct count from repository`() = runTest {
         // Given
         val expectedCount = 8
-        whenever(billCategoryRepository.getCategoriesCount()).thenReturn(expectedCount)
+        whenever(transactionCategoryRepository.getCategoriesCount()).thenReturn(expectedCount)
 
         // When
-        val result = getBillCategoriesCountUseCase()
+        val result = getTransactionCategoriesCountUseCase()
 
         // Then
         assertEquals(expectedCount, result)
@@ -38,10 +38,10 @@ class GetBillCategoriesCountUseCaseTest {
     @Test
     fun `invoke returns zero when no categories exist`() = runTest {
         // Given
-        whenever(billCategoryRepository.getCategoriesCount()).thenReturn(0)
+        whenever(transactionCategoryRepository.getCategoriesCount()).thenReturn(0)
 
         // When
-        val result = getBillCategoriesCountUseCase()
+        val result = getTransactionCategoriesCountUseCase()
 
         // Then
         assertEquals(0, result)

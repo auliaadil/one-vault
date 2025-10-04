@@ -53,7 +53,7 @@ class MainActivity : FragmentActivity() {
         val showScanner = intent.getBooleanExtra("show_scanner", false)
 
         val initialRoute = when (navigateTo) {
-            Screen.AddBill.route -> Screen.AddBill.route
+            Screen.AddTransaction.route -> Screen.AddTransaction.route
             else -> null
         }
 
@@ -99,7 +99,7 @@ fun MainApp(
                 modifier = Modifier.fillMaxSize(),
                 bottomBar = {
                     val items = listOf(
-                        Triple(stringResource(R.string.bills), Screen.BillList.route, Icons.Filled.ShoppingCart),
+                        Triple(stringResource(R.string.transactions), Screen.TransactionList.route, Icons.Filled.ShoppingCart),
                         Triple(stringResource(R.string.passwords), Screen.CredentialList.route, Icons.Filled.Lock),
                         Triple(stringResource(R.string.settings), Screen.Settings.route, Icons.Filled.Settings),
                     )
@@ -128,7 +128,7 @@ fun MainApp(
                 NavGraph(
                     navController = navController,
                     modifier = Modifier.padding(innerPadding),
-                    startDestination = initialRoute ?: Screen.BillList.route,
+                    startDestination = initialRoute ?: Screen.TransactionList.route,
                     showScanner = showScanner
                 )
             }

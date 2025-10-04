@@ -1,7 +1,7 @@
 package com.adilstudio.project.onevault.domain.usecase
 
-import com.adilstudio.project.onevault.domain.repository.BillCategoryRepository
+import com.adilstudio.project.onevault.domain.repository.TransactionCategoryRepository
 
-class DeleteBillCategoryUseCase(private val repository: BillCategoryRepository) {
+class DeleteTransactionCategoryUseCase(private val repository: TransactionCategoryRepository) {
     suspend operator fun invoke(id: Long) = repository.deleteCategory(id)
 }

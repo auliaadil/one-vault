@@ -1,26 +1,26 @@
-CREATE TABLE BillEntity (
+CREATE TABLE TransactionEntity (
     id INTEGER NOT NULL PRIMARY KEY,
     title TEXT NOT NULL,
     categoryId INTEGER,
     amount REAL NOT NULL,
     vendor TEXT NOT NULL,
-    billDate TEXT NOT NULL,
+    transactionDate TEXT NOT NULL,
     imagePath TEXT,
     accountId INTEGER
 );
 
 selectAll:
-SELECT * FROM BillEntity;
+SELECT * FROM TransactionEntity;
 
 selectById:
-SELECT * FROM BillEntity WHERE id = ?;
+SELECT * FROM TransactionEntity WHERE id = ?;
 
-insertBill:
-INSERT INTO BillEntity(id, title, categoryId, amount, vendor, billDate, imagePath, accountId)
+insertTransaction:
+INSERT INTO TransactionEntity(id, title, categoryId, amount, vendor, transactionDate, imagePath, accountId)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 
-updateBill:
-UPDATE BillEntity SET title = ?, categoryId = ?, amount = ?, vendor = ?, billDate = ?, imagePath = ?, accountId = ? WHERE id = ?;
+updateTransaction:
+UPDATE TransactionEntity SET title = ?, categoryId = ?, amount = ?, vendor = ?, transactionDate = ?, imagePath = ?, accountId = ? WHERE id = ?;
 
-deleteBill:
-DELETE FROM BillEntity WHERE id = ?;
+deleteTransaction:
+DELETE FROM TransactionEntity WHERE id = ?;

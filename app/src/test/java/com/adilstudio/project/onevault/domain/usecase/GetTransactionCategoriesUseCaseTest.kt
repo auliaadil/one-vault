@@ -1,8 +1,8 @@
 package com.adilstudio.project.onevault.domain.usecase
 
-import com.adilstudio.project.onevault.domain.model.BillCategory
+import com.adilstudio.project.onevault.domain.model.TransactionCategory
 import com.adilstudio.project.onevault.domain.model.CategoryType
-import com.adilstudio.project.onevault.domain.repository.BillCategoryRepository
+import com.adilstudio.project.onevault.domain.repository.TransactionCategoryRepository
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
@@ -12,25 +12,25 @@ import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.whenever
 
-class GetBillCategoriesUseCaseTest {
+class GetTransactionCategoriesUseCaseTest {
 
     @Mock
-    private lateinit var billCategoryRepository: BillCategoryRepository
+    private lateinit var transactionCategoryRepository: TransactionCategoryRepository
 
-    private lateinit var getBillCategoriesUseCase: GetBillCategoriesUseCase
+    private lateinit var getTransactionCategoriesUseCase: GetTransactionCategoriesUseCase
 
     @Before
     fun setup() {
         MockitoAnnotations.openMocks(this)
-        getBillCategoriesUseCase = GetBillCategoriesUseCase(billCategoryRepository)
+        getTransactionCategoriesUseCase = GetTransactionCategoriesUseCase(transactionCategoryRepository)
     }
 
     @Test
     fun `invoke returns flow of categories from repository`() = runTest {
         // Given
         val categories = listOf(
-            BillCategory(
-                id = "1",
+            TransactionCategory(
+                id = 1,
                 name = "Utilities",
                 icon = "⚡",
                 color = "#FF5722",
@@ -38,8 +38,8 @@ class GetBillCategoriesUseCaseTest {
                 createdAt = 1632835200000L,
                 updatedAt = 1632835200000L
             ),
-            BillCategory(
-                id = "2",
+            TransactionCategory(
+                id = 2,
                 name = "Food",
                 icon = "🍕",
                 color = "#4CAF50",
@@ -48,10 +48,10 @@ class GetBillCategoriesUseCaseTest {
                 updatedAt = 1632835200000L
             )
         )
-        whenever(billCategoryRepository.getCategories()).thenReturn(flowOf(categories))
+        whenever(transactionCategoryRepository.getCategories()).thenReturn(flowOf(categories))
 
         // When
-        val result = getBillCategoriesUseCase()
+        val result = getTransactionCategoriesUseCase()
 
         // Then
         result.collect { categoryList ->
@@ -64,10 +64,10 @@ class GetBillCategoriesUseCaseTest {
     @Test
     fun `invoke returns empty list when no categories exist`() = runTest {
         // Given
-        whenever(billCategoryRepository.getCategories()).thenReturn(flowOf(emptyList()))
+        whenever(transactionCategoryRepository.getCategories()).thenReturn(flowOf(emptyList()))
 
         // When
-        val result = getBillCategoriesUseCase()
+        val result = getTransactionCategoriesUseCase()
 
         // Then
         result.collect { categoryList ->

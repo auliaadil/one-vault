@@ -1,4 +1,4 @@
-package com.adilstudio.project.onevault.presentation.bill.category
+package com.adilstudio.project.onevault.presentation.transaction.category
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,14 +19,14 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.adilstudio.project.onevault.R
-import com.adilstudio.project.onevault.domain.model.BillCategory
+import com.adilstudio.project.onevault.domain.model.TransactionCategory
 import com.adilstudio.project.onevault.domain.model.CategoryType
 import androidx.core.graphics.toColorInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryFormDialog(
-    category: BillCategory? = null,
+    category: TransactionCategory? = null,
     onDismiss: () -> Unit,
     onSave: (name: String, icon: String, color: String, type: CategoryType) -> Unit
 ) {
