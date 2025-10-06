@@ -17,10 +17,11 @@ enum class CategoryType {
 @Serializable
 data class TransactionCategory(
     val id: Long?,
-    val name: String,
+    val name: String, // e.g., Food, Internet, Salary
     val icon: String,
     val color: String,
-    val type: CategoryType,
+    val type: CategoryType, // Subcategory type (UTILITIES, FOOD_AND_DINING, etc.)
+    val transactionType: TransactionType, // EXPENSE or INCOME
     val parentCategoryId: Long? = null,
     val isEditable: Boolean = true,
     val createdAt: Long,

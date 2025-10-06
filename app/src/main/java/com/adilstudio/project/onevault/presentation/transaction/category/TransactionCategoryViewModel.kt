@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.adilstudio.project.onevault.domain.model.TransactionCategory
 import com.adilstudio.project.onevault.domain.model.CategoryType
+import com.adilstudio.project.onevault.domain.model.TransactionType
 import com.adilstudio.project.onevault.domain.usecase.AddTransactionCategoryUseCase
 import com.adilstudio.project.onevault.domain.usecase.DeleteTransactionCategoryUseCase
 import com.adilstudio.project.onevault.domain.usecase.GetTransactionCategoriesCountUseCase
@@ -77,6 +78,7 @@ class TransactionCategoryViewModel(
         icon: String,
         color: String,
         type: CategoryType,
+        transactionType: TransactionType,
         parentCategoryId: Long? = null
     ) {
         viewModelScope.launch {
@@ -88,6 +90,7 @@ class TransactionCategoryViewModel(
                     icon = icon,
                     color = color,
                     type = type,
+                    transactionType = transactionType,
                     parentCategoryId = parentCategoryId,
                     isEditable = true,
                     createdAt = currentTime,

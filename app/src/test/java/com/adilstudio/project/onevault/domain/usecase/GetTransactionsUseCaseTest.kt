@@ -1,6 +1,7 @@
 package com.adilstudio.project.onevault.domain.usecase
 
 import com.adilstudio.project.onevault.domain.model.Transaction
+import com.adilstudio.project.onevault.domain.model.TransactionType
 import com.adilstudio.project.onevault.domain.repository.TransactionRepository
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -32,15 +33,17 @@ class GetTransactionsUseCaseTest {
                 id = 1L,
                 title = "Electric Transaction",
                 amount = 150000.0,
-                vendor = "PLN",
-                transactionDate = "2024-01-15"
+                merchant = "PLN", // Updated from vendor
+                date = "2024-01-15", // Updated from transactionDate
+                type = TransactionType.EXPENSE // New field
             ),
             Transaction(
                 id = 2L,
                 title = "Water Transaction",
                 amount = 50000.0,
-                vendor = "PDAM",
-                transactionDate = "2024-01-10"
+                merchant = "PDAM", // Updated from vendor
+                date = "2024-01-10", // Updated from transactionDate
+                type = TransactionType.EXPENSE // New field
             )
         )
         whenever(transactionRepository.getTransactions()).thenReturn(flowOf(transactions))

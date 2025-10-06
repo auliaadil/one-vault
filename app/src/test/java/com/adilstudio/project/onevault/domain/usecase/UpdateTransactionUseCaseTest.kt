@@ -1,6 +1,7 @@
 package com.adilstudio.project.onevault.domain.usecase
 
 import com.adilstudio.project.onevault.domain.model.Transaction
+import com.adilstudio.project.onevault.domain.model.TransactionType
 import com.adilstudio.project.onevault.domain.repository.TransactionRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -27,12 +28,13 @@ class UpdateTransactionUseCaseTest {
         // Given
         val transaction = Transaction(
             id = 1L,
-            title = "Updated Electric Transaction",
-            categoryId = 12,
-            amount = 175000.0,
-            vendor = "PLN",
-            transactionDate = "2024-01-15",
-            imagePath = "/path/to/updated_image.jpg",
+            title = "Electric Transaction",
+            categoryId = 12L,
+            amount = 150000.0,
+            merchant = "PLN", // Updated from vendor
+            date = "2024-01-15", // Updated from transactionDate
+            type = TransactionType.EXPENSE, // New field
+            imagePath = "/path/to/image.jpg",
             accountId = 123L
         )
 

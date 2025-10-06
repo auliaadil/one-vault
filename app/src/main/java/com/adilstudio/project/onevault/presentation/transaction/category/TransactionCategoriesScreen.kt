@@ -49,6 +49,7 @@ import androidx.core.graphics.toColorInt
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.TransactionCategory
 import com.adilstudio.project.onevault.domain.model.CategoryType
+import com.adilstudio.project.onevault.domain.model.TransactionType
 import com.adilstudio.project.onevault.presentation.component.BackNavigationIcon
 import com.adilstudio.project.onevault.presentation.component.GenericScreen
 import org.koin.androidx.compose.koinViewModel
@@ -151,18 +152,19 @@ fun TransactionCategoriesScreen(
                 showAddDialog = false
                 editingCategory = null
             },
-            onSave = { name, icon, color, type ->
+            onSave = { name, icon, color, type, transactionType ->
                 if (editingCategory != null) {
                     viewModel.updateCategory(
                         editingCategory!!.copy(
                             name = name,
                             icon = icon,
                             color = color,
-                            type = type
+                            type = type,
+                            transactionType = transactionType
                         )
                     )
                 } else {
-                    viewModel.addCategory(name, icon, color, type)
+                    viewModel.addCategory(name, icon, color, type, transactionType)
                 }
                 showAddDialog = false
                 editingCategory = null
@@ -287,6 +289,7 @@ fun CategoryCardPreview() {
                 icon = "💡",
                 color = "#FFD700",
                 type = CategoryType.UTILITIES,
+                transactionType = TransactionType.EXPENSE,
                 createdAt = System.currentTimeMillis(),
                 updatedAt = System.currentTimeMillis()
             ),

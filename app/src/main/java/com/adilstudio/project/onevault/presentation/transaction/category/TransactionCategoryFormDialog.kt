@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.TransactionCategory
 import com.adilstudio.project.onevault.domain.model.CategoryType
+import com.adilstudio.project.onevault.domain.model.TransactionType
 import androidx.core.graphics.toColorInt
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,12 +29,13 @@ import androidx.core.graphics.toColorInt
 fun CategoryFormDialog(
     category: TransactionCategory? = null,
     onDismiss: () -> Unit,
-    onSave: (name: String, icon: String, color: String, type: CategoryType) -> Unit
+    onSave: (name: String, icon: String, color: String, type: CategoryType, transactionType: TransactionType) -> Unit
 ) {
     var name by remember { mutableStateOf(category?.name ?: "") }
     var selectedIcon by remember { mutableStateOf(category?.icon ?: "📋") }
     var selectedColor by remember { mutableStateOf(category?.color ?: "#2196F3") }
     var selectedType by remember { mutableStateOf(category?.type ?: CategoryType.OTHERS) }
+    var selectedTransactionType by remember { mutableStateOf(category?.transactionType ?: TransactionType.EXPENSE) }
 
     val isEditing = category != null
     val title = if (isEditing) stringResource(R.string.edit_category) else stringResource(R.string.add_category)
@@ -74,6 +76,35 @@ fun CategoryFormDialog(
                     ),
                     singleLine = true
                 )
+
+                // Transaction Type selection (EXPENSE/INCOME)
+                Column {
+                    Text(stringResource(R.string.transaction_type), style = MaterialTheme.typography.labelMedium)
+                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        TransactionType.entries.forEach { transactionType ->
+                            Row(
+                                modifier = Modifier
+                                    .clickable { selectedTransactionType = transactionType },
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = selectedTransactionType == transactionType,
+                                    onClick = { selectedTransactionType = transactionType }
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = getTransactionTypeDisplayName(transactionType),
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                        }
+                    }
+                }
 
                 // Icon selection
                 Column {
@@ -141,7 +172,7 @@ fun CategoryFormDialog(
                     }
                 }
 
-                // Type selection
+                // Category Type selection
                 Column {
                     Text(stringResource(R.string.category_type), style = MaterialTheme.typography.labelMedium)
                     Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
@@ -202,7 +233,7 @@ fun CategoryFormDialog(
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Text(
-                                text = getCategoryTypeDisplayName(selectedType),
+                                text = "${getTransactionTypeDisplayName(selectedTransactionType)} • ${getCategoryTypeDisplayName(selectedType)}",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -215,7 +246,7 @@ fun CategoryFormDialog(
             TextButton(
                 onClick = {
                     if (name.isNotBlank()) {
-                        onSave(name.trim(), selectedIcon, selectedColor, selectedType)
+                        onSave(name.trim(), selectedIcon, selectedColor, selectedType, selectedTransactionType)
                     }
                 },
                 enabled = name.isNotBlank()
@@ -242,5 +273,13 @@ private fun getCategoryTypeDisplayName(type: CategoryType): String {
         CategoryType.HEALTHCARE -> stringResource(R.string.healthcare)
         CategoryType.EDUCATION -> stringResource(R.string.education)
         CategoryType.OTHERS -> stringResource(R.string.other)
+    }
+}
+
+@Composable
+private fun getTransactionTypeDisplayName(transactionType: TransactionType): String {
+    return when (transactionType) {
+        TransactionType.EXPENSE -> stringResource(R.string.expense)
+        TransactionType.INCOME -> stringResource(R.string.income)
     }
 }

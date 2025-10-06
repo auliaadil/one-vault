@@ -49,8 +49,8 @@ fun TransactionDetailBottomSheet(
         ) {
             DetailField(R.string.title, transaction.title)
             DetailField(
-                R.string.vendor_optional,
-                if (transaction.vendor.isBlank()) stringResource(R.string.no_vendor) else transaction.vendor
+                R.string.merchant,
+                if (transaction.merchant.isNullOrBlank()) stringResource(R.string.no_merchant) else transaction.merchant
             )
             DetailField(
                 R.string.amount,
@@ -58,14 +58,14 @@ fun TransactionDetailBottomSheet(
             )
             DetailField(
                 labelRes = R.string.transaction_date,
-                value = DateUtil.isoStringToLocalDate(transaction.transactionDate)?.let { date ->
+                value = DateUtil.isoStringToLocalDate(transaction.date)?.let { date ->
                     DateUtil.formatDateForDisplay(date)
-                } ?: transaction.transactionDate)
+                } ?: transaction.date)
             val category = transaction.categoryId?.let { id ->
                 categories.find { it.id == id }
             }
             val categoryName = category?.name ?: stringResource(R.string.no_category)
-            DetailField(R.string.category_optional, category?.icon?.let {
+            DetailField(R.string.category, category?.icon?.let {
                 "$it $categoryName"
             } ?: categoryName)
 
@@ -73,7 +73,7 @@ fun TransactionDetailBottomSheet(
                 accounts.find { it.id == id }
             }
             DetailField(
-                R.string.account_optional,
+                R.string.account,
                 if (transaction.accountId == null) stringResource(R.string.no_account_selected) else account?.name
             )
             transaction.imagePath?.let {

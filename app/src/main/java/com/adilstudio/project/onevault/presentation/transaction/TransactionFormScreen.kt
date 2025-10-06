@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -63,6 +64,7 @@ import com.adilstudio.project.onevault.core.util.DateUtil
 import com.adilstudio.project.onevault.core.util.ImageUtil
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.Transaction
+import com.adilstudio.project.onevault.domain.model.TransactionType
 import com.adilstudio.project.onevault.presentation.transaction.account.AccountViewModel
 import com.adilstudio.project.onevault.presentation.transaction.category.TransactionCategoryViewModel
 import com.adilstudio.project.onevault.presentation.component.GenericScreen
@@ -97,6 +99,10 @@ fun TransactionFormScreen(
 
     // Initialize form state from existing transaction or defaults
     var title by remember { mutableStateOf(transaction?.title ?: "") }
+
+    // Add TransactionType state - initialize from transaction or default to EXPENSE
+    var selectedTransactionType by remember { mutableStateOf(transaction?.type ?: TransactionType.EXPENSE) }
+
     var selectedCategory by remember {
         mutableStateOf(categories.find { it.id == transaction?.categoryId })
     }
@@ -113,12 +119,12 @@ fun TransactionFormScreen(
             else ""
         )
     }
-    var vendor by remember { mutableStateOf(transaction?.vendor ?: "") }
+    var merchant by remember { mutableStateOf(transaction?.merchant ?: "") }
 
     // Date picker state - using Calendar for API 24 compatibility
     var selectedDate by remember {
         mutableStateOf(
-            transaction?.transactionDate?.let { DateUtil.isoStringToLocalDate(it) } ?: DateUtil.getCurrentDate()
+            transaction?.date?.let { DateUtil.isoStringToLocalDate(it) } ?: DateUtil.getCurrentDate()
         )
     }
     var showDatePicker by remember { mutableStateOf(false) }
@@ -140,6 +146,20 @@ fun TransactionFormScreen(
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = selectedDateMillis
     )
+
+    // Filter categories based on selected transaction type
+    val filteredCategories = remember(categories, selectedTransactionType) {
+        categories.filter { it.transactionType == selectedTransactionType }
+    }
+
+    // Auto-clear selected category if it doesn't match the current transaction type
+    LaunchedEffect(selectedTransactionType, categories) {
+        selectedCategory?.let { category ->
+            if (category.transactionType != selectedTransactionType) {
+                selectedCategory = null
+            }
+        }
+    }
 
     // Image handling state - auto-attach scanned image
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
@@ -245,7 +265,53 @@ fun TransactionFormScreen(
                 placeholder = { Text(stringResource(R.string.title_placeholder)) }
             )
 
-            // Category selection
+            // Transaction Type selection
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
+            ) {
+                Column(
+                    modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))
+                ) {
+                    Text(
+                        text = stringResource(R.string.transaction_type),
+                        style = MaterialTheme.typography.labelLarge
+                    )
+
+                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_medium))
+                    ) {
+                        TransactionType.entries.forEach { transactionType ->
+                            OutlinedButton(
+                                onClick = { selectedTransactionType = transactionType },
+                                modifier = Modifier.weight(1f),
+                                colors = if (selectedTransactionType == transactionType) {
+                                    ButtonDefaults.outlinedButtonColors(
+                                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
+                                } else {
+                                    ButtonDefaults.outlinedButtonColors()
+                                }
+                            ) {
+                                Text(
+                                    text = when (transactionType) {
+                                        TransactionType.EXPENSE -> stringResource(R.string.expense)
+                                        TransactionType.INCOME -> stringResource(R.string.income)
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Category selection - now filtered by transaction type
             ExposedDropdownMenuBox(
                 expanded = showCategoryDropdown,
                 onExpandedChange = { showCategoryDropdown = !showCategoryDropdown }
@@ -283,7 +349,8 @@ fun TransactionFormScreen(
                         }
                     )
 
-                    categories.forEach { category ->
+                    // Show only categories that match the selected transaction type
+                    filteredCategories.forEach { category ->
                         DropdownMenuItem(
                             text = {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -296,6 +363,8 @@ fun TransactionFormScreen(
                             },
                             onClick = {
                                 selectedCategory = category
+                                // Auto-set transaction type based on category selection
+                                selectedTransactionType = category.transactionType
                                 showCategoryDropdown = false
                             }
                         )
@@ -391,11 +460,11 @@ fun TransactionFormScreen(
             )
 
             OutlinedTextField(
-                value = vendor,
-                onValueChange = { vendor = it },
-                label = { Text(stringResource(R.string.vendor_optional)) },
+                value = merchant,
+                onValueChange = { merchant = it },
+                label = { Text(stringResource(R.string.merchant_optional)) },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text(stringResource(R.string.vendor_placeholder)) }
+                placeholder = { Text(stringResource(R.string.merchant_placeholder)) }
             )
 
             // Date picker field
@@ -533,8 +602,9 @@ fun TransactionFormScreen(
                             title = title,
                             categoryId = selectedCategory?.id,
                             amount = amountValue.toDouble(),
-                            vendor = vendor,
-                            transactionDate = DateUtil.localDateToIsoString(selectedDate),
+                            merchant = merchant,
+                            date = DateUtil.localDateToIsoString(selectedDate),
+                            type = selectedTransactionType, // Use selected transaction type
                             imagePath = savedImagePath,
                             accountId = selectedAccount?.id
                         )
@@ -622,7 +692,7 @@ fun TransactionFormScreen(
             onTextSelected = { selectedTitle, selectedAmount, selectedVendor ->
                 // Apply selected text to form fields
                 if (selectedTitle.isNotBlank()) title = selectedTitle
-                if (selectedVendor.isNotBlank()) vendor = selectedVendor
+                if (selectedVendor.isNotBlank()) merchant = selectedVendor
                 if (selectedAmount.isNotBlank()) {
                     val extractedAmount = TransactionFormUtils.extractAmountFromText(selectedAmount)
                     if (extractedAmount > 0) {

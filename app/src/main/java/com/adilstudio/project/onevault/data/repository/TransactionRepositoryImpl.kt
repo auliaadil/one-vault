@@ -5,6 +5,7 @@ import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.adilstudio.project.onevault.Database
 import com.adilstudio.project.onevault.domain.model.Transaction
+import com.adilstudio.project.onevault.domain.model.TransactionType
 import com.adilstudio.project.onevault.domain.repository.TransactionRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +14,7 @@ import kotlinx.coroutines.flow.single
 
 class TransactionRepositoryImpl(private val database: Database) : TransactionRepository {
 
-    private val transactionQueries = database.transactionEntityQueries
+    private val transactionQueries = database.billEntityQueries
     private val accountQueries = database.accountEntityQueries
 
     override fun getTransactions(): Flow<List<Transaction>> {
@@ -27,8 +28,9 @@ class TransactionRepositoryImpl(private val database: Database) : TransactionRep
                         title = entity.title,
                         categoryId = entity.categoryId,
                         amount = entity.amount,
-                        vendor = entity.vendor,
-                        transactionDate = entity.transactionDate,
+                        merchant = entity.merchant,
+                        date = entity.date,
+                        type = TransactionType.valueOf(entity.type),
                         imagePath = entity.imagePath,
                         accountId = entity.accountId
                     )
@@ -47,8 +49,9 @@ class TransactionRepositoryImpl(private val database: Database) : TransactionRep
                         title = it.title,
                         categoryId = it.categoryId,
                         amount = it.amount,
-                        vendor = it.vendor,
-                        transactionDate = it.transactionDate,
+                        merchant = it.merchant,
+                        date = it.date,
+                        type = TransactionType.valueOf(it.type),
                         imagePath = it.imagePath,
                         accountId = it.accountId
                     )
@@ -57,14 +60,15 @@ class TransactionRepositoryImpl(private val database: Database) : TransactionRep
     }
 
     override suspend fun addTransaction(transaction: Transaction) {
-        // Add the transaction using direct query (non-suspend)
+        // Add the transaction using direct query
         transactionQueries.insertTransaction(
             id = transaction.id,
             title = transaction.title,
             categoryId = transaction.categoryId,
             amount = transaction.amount,
-            vendor = transaction.vendor,
-            transactionDate = transaction.transactionDate,
+            merchant = transaction.merchant,
+            date = transaction.date,
+            type = transaction.type.name,
             imagePath = transaction.imagePath,
             accountId = transaction.accountId
         )
@@ -75,15 +79,16 @@ class TransactionRepositoryImpl(private val database: Database) : TransactionRep
     }
 
     override suspend fun updateTransaction(transaction: Transaction) {
-        // Get existing transaction for comparison using direct query (non-suspend)
+        // Get existing transaction for comparison using direct query
         val existingTransaction = transactionQueries.selectById(transaction.id).executeAsOneOrNull()?.let { entity ->
             Transaction(
                 id = entity.id,
                 title = entity.title,
                 categoryId = entity.categoryId,
                 amount = entity.amount,
-                vendor = entity.vendor,
-                transactionDate = entity.transactionDate,
+                merchant = entity.merchant,
+                date = entity.date,
+                type = TransactionType.valueOf(entity.type),
                 imagePath = entity.imagePath,
                 accountId = entity.accountId
             )
@@ -114,13 +119,14 @@ class TransactionRepositoryImpl(private val database: Database) : TransactionRep
             }
         }
 
-        // Update the transaction using direct query (non-suspend)
+        // Update the transaction using direct query
         transactionQueries.updateTransaction(
             title = transaction.title,
             categoryId = transaction.categoryId,
             amount = transaction.amount,
-            vendor = transaction.vendor,
-            transactionDate = transaction.transactionDate,
+            merchant = transaction.merchant,
+            date = transaction.date,
+            type = transaction.type.name,
             imagePath = transaction.imagePath,
             accountId = transaction.accountId,
             id = transaction.id
@@ -128,21 +134,22 @@ class TransactionRepositoryImpl(private val database: Database) : TransactionRep
     }
 
     override suspend fun deleteTransaction(id: Long) {
-        // Get the transaction to restore account balance using direct query (non-suspend)
+        // Get the transaction to restore account balance using direct query
         val transaction = transactionQueries.selectById(id).executeAsOneOrNull()?.let { entity ->
             Transaction(
                 id = entity.id,
                 title = entity.title,
                 categoryId = entity.categoryId,
                 amount = entity.amount,
-                vendor = entity.vendor,
-                transactionDate = entity.transactionDate,
+                merchant = entity.merchant,
+                date = entity.date,
+                type = TransactionType.valueOf(entity.type),
                 imagePath = entity.imagePath,
                 accountId = entity.accountId
             )
         }
 
-        // Delete the transaction using direct query (non-suspend)
+        // Delete the transaction using direct query
         transactionQueries.deleteTransaction(id)
 
         // Restore to account if accountId was specified

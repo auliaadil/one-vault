@@ -1,6 +1,7 @@
 package com.adilstudio.project.onevault.domain.usecase
 
 import com.adilstudio.project.onevault.domain.model.Transaction
+import com.adilstudio.project.onevault.domain.model.TransactionType
 import com.adilstudio.project.onevault.domain.repository.TransactionRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -30,8 +31,9 @@ class AddTransactionUseCaseTest {
             title = "Electric Transaction",
             categoryId = 12L,
             amount = 150000.0,
-            vendor = "PLN",
-            transactionDate = "2024-01-15",
+            merchant = "PLN", // Updated from vendor
+            date = "2024-01-15", // Updated from transactionDate
+            type = TransactionType.EXPENSE, // New field
             imagePath = "/path/to/image.jpg",
             accountId = 123L
         )
@@ -50,8 +52,9 @@ class AddTransactionUseCaseTest {
             id = 1L,
             title = "Electric Transaction",
             amount = 150000.0,
-            vendor = "PLN",
-            transactionDate = "2024-01-15"
+            merchant = "PLN", // Updated from vendor
+            date = "2024-01-15", // Updated from transactionDate
+            type = TransactionType.EXPENSE // New field
         )
 
         // When
@@ -59,5 +62,20 @@ class AddTransactionUseCaseTest {
 
         // Then
         verify(transactionRepository).addTransaction(transaction)
+    }
+
+    @Test
+    fun `invoke throws exception when repository throws exception`() = runTest {
+        // Given
+        val transaction = Transaction(
+            id = 1L,
+            title = "Electric Transaction",
+            categoryId = 12L,
+            amount = 150000.0,
+            merchant = "PLN", // Updated from vendor
+            date = "2024-01-15", // Updated from transactionDate
+            type = TransactionType.EXPENSE // New field
+        )
+        // ...existing code...
     }
 }

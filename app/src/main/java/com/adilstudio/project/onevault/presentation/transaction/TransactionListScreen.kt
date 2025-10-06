@@ -42,6 +42,7 @@ import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.Transaction
 import com.adilstudio.project.onevault.domain.model.TransactionCategory
 import com.adilstudio.project.onevault.domain.model.CategoryType
+import com.adilstudio.project.onevault.domain.model.TransactionType
 import com.adilstudio.project.onevault.presentation.component.EmptyState
 import com.adilstudio.project.onevault.presentation.component.GenericScreen
 import com.adilstudio.project.onevault.ui.theme.OneVaultTheme
@@ -177,9 +178,9 @@ fun TransactionCard(
             verticalAlignment = Alignment.Top
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                val formattedDate = DateUtil.isoStringToLocalDate(transaction.transactionDate)?.let { date ->
+                val formattedDate = DateUtil.isoStringToLocalDate(transaction.date)?.let { date ->
                     DateUtil.formatDateForDisplay(date)
-                } ?: transaction.transactionDate
+                } ?: transaction.date
                 Text(
                     text = formattedDate,
                     style = MaterialTheme.typography.bodySmall,
@@ -250,28 +251,30 @@ fun TransactionListScreenPreview() {
     // Create mock categories for preview
     val currentTime = System.currentTimeMillis()
     val mockCategories = listOf(
-        TransactionCategory(id = 1, name = "Gas", icon = "🔥", color = "#FF5722", type = CategoryType.UTILITIES, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
-        TransactionCategory(id = 2, name = "Groceries", icon = "🛒", color = "#8BC34A", type = CategoryType.FOOD_AND_DINING, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
-        TransactionCategory(id = 3, name = "Dining Out", icon = "🍽️", color = "#FF9800", type = CategoryType.FOOD_AND_DINING, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
-        TransactionCategory(id = 4, name = "Coffee & Beverages", icon = "☕", color = "#8D6E63", type = CategoryType.FOOD_AND_DINING, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
-        TransactionCategory(id = 5, name = "School Fees", icon = "🎓", color = "#2196F3", type = CategoryType.EDUCATION, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
+        TransactionCategory(id = 1, name = "Gas", icon = "🔥", color = "#FF5722", type = CategoryType.UTILITIES, transactionType = TransactionType.EXPENSE, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
+        TransactionCategory(id = 2, name = "Groceries", icon = "🛒", color = "#8BC34A", type = CategoryType.FOOD_AND_DINING, transactionType = TransactionType.EXPENSE, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
+        TransactionCategory(id = 3, name = "Dining Out", icon = "🍽️", color = "#FF9800", type = CategoryType.FOOD_AND_DINING, transactionType = TransactionType.EXPENSE, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
+        TransactionCategory(id = 4, name = "Coffee & Beverages", icon = "☕", color = "#8D6E63", type = CategoryType.FOOD_AND_DINING, transactionType = TransactionType.EXPENSE, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
+        TransactionCategory(id = 5, name = "School Fees", icon = "🎓", color = "#2196F3", type = CategoryType.EDUCATION, transactionType = TransactionType.EXPENSE, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
     )
     val mockTransactions = listOf(
         Transaction(
             id = 1,
             title = "Electric Transaction",
-            vendor = "PLN",
+            merchant = "PLN", // Updated from vendor
             amount = 500000.0,
-            transactionDate = "2024-01-15",
+            date = "2024-01-15", // Updated from transactionDate
+            type = TransactionType.EXPENSE, // New field
             categoryId = 1,
             imagePath = null
         ),
         Transaction(
             id = 2,
             title = "Internet Transaction",
-            vendor = "Telkom",
+            merchant = "Telkom", // Updated from vendor
             amount = 300000.0,
-            transactionDate = "2024-01-10",
+            date = "2024-01-10", // Updated from transactionDate
+            type = TransactionType.EXPENSE, // New field
             categoryId = 2,
             imagePath = "/path/to/image"
         )

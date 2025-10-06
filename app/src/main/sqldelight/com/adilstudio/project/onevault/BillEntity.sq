@@ -3,8 +3,9 @@ CREATE TABLE TransactionEntity (
     title TEXT NOT NULL,
     categoryId INTEGER,
     amount REAL NOT NULL,
-    vendor TEXT NOT NULL,
-    transactionDate TEXT NOT NULL,
+    merchant TEXT,
+    date TEXT NOT NULL,
+    type TEXT NOT NULL,
     imagePath TEXT,
     accountId INTEGER
 );
@@ -16,11 +17,11 @@ selectById:
 SELECT * FROM TransactionEntity WHERE id = ?;
 
 insertTransaction:
-INSERT INTO TransactionEntity(id, title, categoryId, amount, vendor, transactionDate, imagePath, accountId)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+INSERT INTO TransactionEntity(id, title, categoryId, amount, merchant, date, type, imagePath, accountId)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 updateTransaction:
-UPDATE TransactionEntity SET title = ?, categoryId = ?, amount = ?, vendor = ?, transactionDate = ?, imagePath = ?, accountId = ? WHERE id = ?;
+UPDATE TransactionEntity SET title = ?, categoryId = ?, amount = ?, merchant = ?, date = ?, type = ?, imagePath = ?, accountId = ? WHERE id = ?;
 
 deleteTransaction:
 DELETE FROM TransactionEntity WHERE id = ?;

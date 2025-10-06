@@ -4,6 +4,7 @@ CREATE TABLE TransactionCategoryEntity (
     icon TEXT NOT NULL,
     color TEXT NOT NULL,
     type TEXT NOT NULL,
+    transactionType TEXT NOT NULL,
     parentCategoryId INTEGER,
     isEditable INTEGER NOT NULL DEFAULT 1,
     createdAt INTEGER NOT NULL,
@@ -11,18 +12,21 @@ CREATE TABLE TransactionCategoryEntity (
 );
 
 selectAll:
-SELECT * FROM TransactionCategoryEntity ORDER BY type, name;
+SELECT * FROM TransactionCategoryEntity ORDER BY transactionType, type, name;
 
 selectById:
 SELECT * FROM TransactionCategoryEntity WHERE id = ?;
 
+selectByTransactionType:
+SELECT * FROM TransactionCategoryEntity WHERE transactionType = ? ORDER BY type, name;
+
 insertCategory:
-INSERT INTO TransactionCategoryEntity(name, icon, color, type, parentCategoryId, isEditable, createdAt, updatedAt)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+INSERT INTO TransactionCategoryEntity(name, icon, color, type, transactionType, parentCategoryId, isEditable, createdAt, updatedAt)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 updateCategory:
 UPDATE TransactionCategoryEntity SET
-name = ?, icon = ?, color = ?, type = ?, parentCategoryId = ?, isEditable = ?, updatedAt = ?
+name = ?, icon = ?, color = ?, type = ?, transactionType = ?, parentCategoryId = ?, isEditable = ?, updatedAt = ?
 WHERE id = ?;
 
 deleteCategory:

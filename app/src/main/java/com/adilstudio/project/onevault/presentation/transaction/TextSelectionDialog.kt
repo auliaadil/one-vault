@@ -138,7 +138,7 @@ fun TextSelectionDialog(
                                         )
                                     ) {
                                         Text(
-                                            stringResource(R.string.vendor_optional),
+                                            stringResource(R.string.merchant),
                                             style = MaterialTheme.typography.labelSmall
                                         )
                                     }

@@ -4,9 +4,11 @@ import com.adilstudio.project.onevault.AccountEntityQueries
 import com.adilstudio.project.onevault.TransactionEntityQueries
 import com.adilstudio.project.onevault.Database
 import com.adilstudio.project.onevault.domain.model.Transaction
+import com.adilstudio.project.onevault.domain.model.TransactionType
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -43,8 +45,9 @@ class TransactionRepositoryImplTest {
             title = "Electric Transaction",
             categoryId = 12L,
             amount = 150000.0,
-            vendor = "PLN",
-            transactionDate = "2024-01-15",
+            merchant = "PLN",
+            date = "2024-01-15",
+            type = TransactionType.EXPENSE,
             imagePath = "/path/to/image.jpg",
             accountId = 123L
         )
@@ -60,8 +63,9 @@ class TransactionRepositoryImplTest {
             assertEquals("Electric Transaction", transaction.title)
             assertEquals(12L, transaction.categoryId)
             assertEquals(150000.0, transaction.amount, 0.0)
-            assertEquals("PLN", transaction.vendor)
-            assertEquals("2024-01-15", transaction.transactionDate)
+            assertEquals("PLN", transaction.merchant)
+            assertEquals("2024-01-15", transaction.date)
+            assertEquals(TransactionType.EXPENSE, transaction.type)
             assertEquals("/path/to/image.jpg", transaction.imagePath)
             assertEquals(123L, transaction.accountId)
         }
@@ -77,8 +81,8 @@ class TransactionRepositoryImplTest {
             id = 1L,
             title = "Electric Transaction",
             amount = 150000.0,
-            vendor = "PLN",
-            transactionDate = "2024-01-15"
+            merchant = "PLN",
+            date = "2024-01-15"
         )
 
         // When
@@ -90,10 +94,77 @@ class TransactionRepositoryImplTest {
             title = "Electric Transaction",
             categoryId = null,
             amount = 150000.0,
-            vendor = "PLN",
-            transactionDate = "2024-01-15",
+            merchant = "PLN",
+            date = "2024-01-15",
+            type = null,
             imagePath = null,
             accountId = null
         )
+    }
+
+    @Test
+    fun `addTransaction should insert transaction correctly`() = runTest {
+        // Given
+        val transaction = Transaction(
+            id = 1L,
+            title = "Electric Bill",
+            categoryId = 123L,
+            amount = 150000.0,
+            merchant = "PLN", // Updated from vendor
+            date = "2024-01-15", // Updated from transactionDate
+            type = TransactionType.EXPENSE, // New field
+            imagePath = "/path/to/image.jpg",
+            accountId = 456L
+        )
+
+        // When
+        transactionRepository.addTransaction(transaction)
+
+        // Then
+        val insertedTransaction = transactionRepository.getTransactionById(1L)
+        assertNotNull(insertedTransaction)
+        assertEquals("Electric Bill", insertedTransaction?.title)
+        assertEquals(150000.0, insertedTransaction?.amount)
+        assertEquals("PLN", insertedTransaction?.merchant) // Updated assertion
+        assertEquals("2024-01-15", insertedTransaction?.date) // Updated assertion
+        assertEquals(TransactionType.EXPENSE, insertedTransaction?.type) // New assertion
+    }
+
+    @Test
+    fun `updateTransaction should update transaction correctly`() = runTest {
+        // Given
+        val originalTransaction = Transaction(
+            id = 1L,
+            title = "Electric Bill",
+            amount = 150000.0,
+            merchant = "PLN", // Updated from vendor
+            date = "2024-01-15", // Updated from transactionDate
+            type = TransactionType.EXPENSE // New field
+        )
+        transactionRepository.addTransaction(originalTransaction)
+
+        val updatedTransaction = Transaction(
+            id = 1L,
+            title = "Updated Electric Bill",
+            categoryId = 789L,
+            amount = 175000.0,
+            merchant = "Updated PLN", // Updated from vendor
+            date = "2024-01-15", // Updated from transactionDate
+            type = TransactionType.EXPENSE, // New field
+            imagePath = "/new/path/image.jpg",
+            accountId = 101112L
+        )
+
+        // When
+        transactionRepository.updateTransaction(updatedTransaction)
+
+        // Then
+        val fetchedTransaction = transactionRepository.getTransactionById(1L)
+        assertNotNull(fetchedTransaction)
+        assertEquals("Updated Electric Bill", fetchedTransaction?.title)
+        assertEquals(175000.0, fetchedTransaction?.amount)
+        assertEquals("Updated PLN", fetchedTransaction?.merchant) // Updated assertion
+        assertEquals("2024-01-15", fetchedTransaction?.date) // Updated assertion
+        assertEquals(TransactionType.EXPENSE, fetchedTransaction?.type) // New assertion
     }
 }
