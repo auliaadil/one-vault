@@ -28,9 +28,13 @@ import com.adilstudio.project.onevault.presentation.settings.AboutScreen
 import com.adilstudio.project.onevault.presentation.settings.ImportExportScreen
 import com.adilstudio.project.onevault.presentation.settings.PrivacyPolicyScreen
 import com.adilstudio.project.onevault.presentation.settings.SettingsScreen
+import com.adilstudio.project.onevault.presentation.home.HomeScreen
+import com.adilstudio.project.onevault.presentation.action.ActionBottomSheet
 import org.koin.androidx.compose.koinViewModel
 
 sealed class Screen(val route: String) {
+    object Home : Screen("home")
+    object Action : Screen("action")
     object TransactionList : Screen("transaction_list")
     object AddTransaction : Screen("add_transaction")
     object EditTransaction : Screen("edit_transaction")
@@ -52,10 +56,18 @@ sealed class Screen(val route: String) {
 fun NavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    startDestination: String = Screen.TransactionList.route,
+    startDestination: String = Screen.Home.route,
     showScanner: Boolean = false
 ) {
     NavHost(navController, startDestination = startDestination, modifier = modifier) {
+        composable(Screen.Home.route) {
+            HomeScreen(
+                onNavigateToTransactions = { navController.navigate(Screen.TransactionList.route) },
+                onNavigateToCategories = { navController.navigate(Screen.TransactionCategories.route) },
+                onNavigateToAccounts = { navController.navigate(Screen.TransactionAccounts.route) },
+                onNavigateToCredentials = { navController.navigate(Screen.CredentialList.route) }
+            )
+        }
         composable(Screen.TransactionList.route) {
             TransactionListScreen(
                 onAddTransaction = {
@@ -240,6 +252,11 @@ fun NavGraph(
         composable(Screen.ImportExport.route) {
             ImportExportScreen(
                 onNavigateBack = { navController.popBackStack() }
+            )
+        }
+        composable(Screen.Action.route) {
+            ActionBottomSheet(
+                onDismiss = { navController.popBackStack() }
             )
         }
     }
