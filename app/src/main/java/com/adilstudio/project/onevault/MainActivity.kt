@@ -34,6 +34,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.adilstudio.project.onevault.core.util.NavigationKeys
 import com.adilstudio.project.onevault.domain.manager.AppSecurityManager
 import com.adilstudio.project.onevault.domain.manager.BiometricAuthManager
 import com.adilstudio.project.onevault.presentation.TopBarViewModel
@@ -105,6 +106,7 @@ fun MainApp(
 
         // State for action bottom sheet
         var showActionSheet by remember { mutableStateOf(false) }
+        var showScannerDialog by remember { mutableStateOf(false) }
 
         // Show biometric lock screen if app is locked
         if (isAppLocked) {
@@ -182,14 +184,12 @@ fun MainApp(
                         ActionBottomSheet(
                             onAddTransaction = {
                                 showActionSheet = false
-                                navController.currentBackStackEntry?.savedStateHandle?.remove<Uri>("scannedImageUri")
+                                navController.currentBackStackEntry?.savedStateHandle?.remove<Uri>(NavigationKeys.SCANNED_IMAGE_URI)
                                 navController.navigate(Screen.AddTransaction.route)
                             },
                             onScanTransaction = {
                                 showActionSheet = false
-                                // Navigate to transaction list with scanner enabled
-                                navController.navigate(Screen.TransactionList.route)
-                                // You might want to trigger scanner from here
+                                showScannerDialog = true
                             },
                             onAddCredential = {
                                 showActionSheet = false
@@ -198,6 +198,19 @@ fun MainApp(
                             onDismiss = { showActionSheet = false }
                         )
                     }
+                }
+
+                // Scanner Dialog
+                if (showScannerDialog) {
+                    com.adilstudio.project.onevault.presentation.transaction.TransactionScannerDialog(
+                        onDismiss = { showScannerDialog = false },
+                        onImageCaptured = { imageUri ->
+                            showScannerDialog = false
+                            // Pass scanned image URI through savedStateHandle and navigate to AddTransaction
+                            navController.currentBackStackEntry?.savedStateHandle?.set(NavigationKeys.SCANNED_IMAGE_URI, imageUri)
+                            navController.navigate(Screen.AddTransaction.route)
+                        }
+                    )
                 }
             }
         }

@@ -1,6 +1,5 @@
 package com.adilstudio.project.onevault.presentation.action
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -43,7 +42,7 @@ fun ActionBottomSheet(
         ),
         ActionItem(
             title = stringResource(R.string.scan_transaction),
-            icon = Icons.Filled.CameraAlt,
+            icon = Icons.Filled.DocumentScanner,
             onClick = {
                 onScanTransaction()
                 onDismiss()

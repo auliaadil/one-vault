@@ -67,6 +67,7 @@ fun CredentialListScreen(
                 )
             }
         },
+        showNavIcon = true
     ) { paddingValues ->
         if (credentials.isEmpty()) {
             EmptyState(

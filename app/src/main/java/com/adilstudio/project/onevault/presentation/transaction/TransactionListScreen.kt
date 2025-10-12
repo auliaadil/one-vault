@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Category
@@ -86,7 +87,7 @@ fun TransactionListScreen(
             }
             OutlinedButton(onClick = onManageAccounts) {
                 Icon(
-                    Icons.Default.AccountBalanceWallet,
+                    Icons.Default.AccountBalance,
                     contentDescription = stringResource(R.string.accounts)
                 )
             }

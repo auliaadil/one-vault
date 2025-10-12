@@ -51,7 +51,7 @@ fun HomeScreen(
             onClick = onNavigateToAccounts
         ),
         HomeFeature(
-            title = stringResource(R.string.passwords),
+            title = stringResource(R.string.credentials),
             icon = Icons.Filled.Lock,
             onClick = onNavigateToCredentials
         )

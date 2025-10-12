@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.adilstudio.project.onevault.core.util.NavigationKeys
 import com.adilstudio.project.onevault.presentation.transaction.account.AccountsScreen
 import com.adilstudio.project.onevault.presentation.transaction.TransactionFormScreen
 import com.adilstudio.project.onevault.presentation.transaction.TransactionListScreen
@@ -72,7 +73,7 @@ fun NavGraph(
             TransactionListScreen(
                 onAddTransaction = {
                     // Clear any existing scanned image URI when using regular add button
-                    navController.currentBackStackEntry?.savedStateHandle?.remove<Uri>("scannedImageUri")
+                    navController.currentBackStackEntry?.savedStateHandle?.remove<Uri>(NavigationKeys.SCANNED_IMAGE_URI)
                     navController.navigate(Screen.AddTransaction.route)
                 },
                 onManageCategories = { navController.navigate(Screen.TransactionCategories.route) },
@@ -84,7 +85,7 @@ fun NavGraph(
                 onManageAccounts = { navController.navigate(Screen.TransactionAccounts.route) },
                 onAddTransactionWithScannedImage = { imageUri ->
                     // Pass scanned image URI through savedStateHandle and navigate to AddTransaction
-                    navController.currentBackStackEntry?.savedStateHandle?.set("scannedImageUri", imageUri)
+                    navController.currentBackStackEntry?.savedStateHandle?.set(NavigationKeys.SCANNED_IMAGE_URI, imageUri)
                     navController.navigate(Screen.AddTransaction.route)
                 },
                 showScannerDialog = showScanner,
@@ -94,12 +95,12 @@ fun NavGraph(
             val viewModel: TransactionTrackerViewModel = koinViewModel()
 
             // Get scanned image URI from previous screen if available
-            val scannedImageUri = navController.previousBackStackEntry?.savedStateHandle?.get<Uri>("scannedImageUri")
+            val scannedImageUri = navController.previousBackStackEntry?.savedStateHandle?.get<Uri>(NavigationKeys.SCANNED_IMAGE_URI)
 
             // Clear the scanned image URI after retrieving it to prevent reuse
             LaunchedEffect(scannedImageUri) {
                 if (scannedImageUri != null) {
-                    navController.previousBackStackEntry?.savedStateHandle?.remove<Uri>("scannedImageUri")
+                    navController.previousBackStackEntry?.savedStateHandle?.remove<Uri>(NavigationKeys.SCANNED_IMAGE_URI)
                 }
             }
 
