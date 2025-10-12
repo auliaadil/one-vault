@@ -56,8 +56,7 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionCategoriesScreen(
-    viewModel: TransactionCategoryViewModel = koinViewModel(),
-    onNavigateBack: () -> Unit = {}
+    viewModel: TransactionCategoryViewModel = koinViewModel()
 ) {
     val categories by viewModel.categories.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -97,8 +96,7 @@ fun TransactionCategoriesScreen(
                 Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_category))
             }
         },
-        defaultPaddingHorizontal = R.dimen.spacing_none
-    ) { paddingValues ->
+    ) {
         if (isLoading) {
             Box(
                 modifier = Modifier.fillMaxSize(),

@@ -67,13 +67,12 @@ fun CredentialListScreen(
                 )
             }
         },
-        defaultPaddingHorizontal = R.dimen.spacing_none
     ) { paddingValues ->
         if (credentials.isEmpty()) {
             EmptyState(
                 title = stringResource(R.string.no_credentials_saved),
                 description = stringResource(R.string.tap_plus_to_add_first_credential),
-                modifier = Modifier.padding(paddingValues)
+                modifier = Modifier
             )
         } else {
             // Credentials list

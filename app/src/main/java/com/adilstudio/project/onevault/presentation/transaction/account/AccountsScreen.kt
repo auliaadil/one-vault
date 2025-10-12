@@ -47,8 +47,7 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountsScreen(
-    viewModel: AccountViewModel = koinViewModel(),
-    onNavigateBack: () -> Unit = {}
+    viewModel: AccountViewModel = koinViewModel()
 ) {
     val accounts by viewModel.accounts.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -86,18 +85,17 @@ fun AccountsScreen(
             ) {
                 Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_account))
             }
-        },
-        defaultPaddingHorizontal = R.dimen.spacing_none
+        }
     ) { paddingValues ->
         if (accounts.isEmpty()) {
             EmptyState(
                 title = stringResource(R.string.no_accounts_saved),
                 description = stringResource(R.string.tap_plus_to_add_first_account),
-                modifier = Modifier.padding(paddingValues)
+                modifier = Modifier
             )
         } else if (isLoading) {
             Box(
-                modifier = Modifier.fillMaxSize().padding(paddingValues),
+                modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()

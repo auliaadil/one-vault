@@ -223,14 +223,10 @@ fun NavGraph(
             )
         }
         composable(Screen.TransactionCategories.route) {
-            TransactionCategoriesScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+            TransactionCategoriesScreen()
         }
         composable(Screen.TransactionAccounts.route) {
-            AccountsScreen(
-                onNavigateBack = { navController.popBackStack() },
-            )
+            AccountsScreen()
         }
         composable(Screen.Settings.route) {
             SettingsScreen(
@@ -246,7 +242,6 @@ fun NavGraph(
         }
         composable(Screen.PrivacyPolicy.route) {
             PrivacyPolicyScreen(
-                onNavigateBack = { navController.popBackStack() }
             )
         }
         composable(Screen.ImportExport.route) {

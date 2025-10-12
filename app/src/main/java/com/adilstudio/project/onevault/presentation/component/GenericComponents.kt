@@ -1,7 +1,6 @@
 package com.adilstudio.project.onevault.presentation.component
 
 import android.content.Intent
-import androidx.annotation.DimenRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -42,7 +41,6 @@ fun BaseScreen(
     errorMessage: String? = null,
     onClearSuccess: () -> Unit = {},
     onClearError: () -> Unit = {},
-    @DimenRes defaultPaddingHorizontal: Int = R.dimen.spacing_large,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -57,28 +55,25 @@ fun BaseScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Content area
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = dimensionResource(defaultPaddingHorizontal))
-            ) {
-                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
 
-                // Content
-                Box(modifier = Modifier.fillMaxSize()) {
-                    content(PaddingValues())
+            // Content
+            Box(modifier = Modifier.fillMaxSize()) {
+                content(
+                    PaddingValues(
+                        horizontal = dimensionResource(R.dimen.spacing_large)
+                    )
+                )
 
-                    // Floating Action Button positioned at bottom right
+                // Floating Action Button positioned at bottom right
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.BottomEnd
+                ) {
                     Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.BottomEnd
+                        modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))
                     ) {
-                        Box(
-                            modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))
-                        ) {
-                            floatingActionButton()
-                        }
+                        floatingActionButton()
                     }
                 }
             }

@@ -108,7 +108,6 @@ fun TransactionListScreen(
                 }
             }
         },
-        defaultPaddingHorizontal = R.dimen.spacing_none
     ) { paddingValues ->
         TransactionListContent(
             transactions = transactions,
@@ -117,7 +116,7 @@ fun TransactionListScreen(
                 selectedTransaction = transaction
                 showTransactionDetailSheet = true
             },
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier
         )
     }
 

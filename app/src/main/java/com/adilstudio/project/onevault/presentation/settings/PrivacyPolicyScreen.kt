@@ -15,9 +15,7 @@ import com.adilstudio.project.onevault.presentation.component.BaseScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PrivacyPolicyScreen(
-    onNavigateBack: () -> Unit
-) {
+fun PrivacyPolicyScreen() {
     BaseScreen(
         title = stringResource(R.string.privacy_policy),
         showNavIcon = true,

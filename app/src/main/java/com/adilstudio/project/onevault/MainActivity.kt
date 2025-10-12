@@ -134,31 +134,35 @@ fun MainApp(
                 },
                 modifier = Modifier.fillMaxSize(),
                 bottomBar = {
-                    val items = listOf(
-                        Triple(stringResource(R.string.home), Screen.Home.route, Icons.Filled.Home),
-                        Triple(stringResource(R.string.action), "action_sheet", Icons.Filled.Add),
-                        Triple(stringResource(R.string.settings), Screen.Settings.route, Icons.Filled.Settings),
-                    )
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentRoute = navBackStackEntry?.destination?.route
-                    NavigationBar {
-                        items.forEach { (label, route, icon) ->
-                            NavigationBarItem(
-                                icon = { Icon(icon, contentDescription = label) },
-                                label = { Text(label) },
-                                selected = currentRoute == route || (route == "action_sheet" && showActionSheet),
-                                onClick = {
-                                    if (route == "action_sheet") {
-                                        showActionSheet = true
-                                    } else if (currentRoute != route) {
-                                        navController.navigate(route) {
-                                            popUpTo(navController.graph.startDestinationId) { saveState = true }
-                                            launchSingleTop = true
-                                            restoreState = true
+
+                    // Only show bottom navigation on Home and Settings screens
+                    if (currentRoute == Screen.Home.route || currentRoute == Screen.Settings.route) {
+                        val items = listOf(
+                            Triple(stringResource(R.string.home), Screen.Home.route, Icons.Filled.Home),
+                            Triple(stringResource(R.string.action), "action_sheet", Icons.Filled.Add),
+                            Triple(stringResource(R.string.settings), Screen.Settings.route, Icons.Filled.Settings),
+                        )
+                        NavigationBar {
+                            items.forEach { (label, route, icon) ->
+                                NavigationBarItem(
+                                    icon = { Icon(icon, contentDescription = label) },
+                                    label = { Text(label) },
+                                    selected = currentRoute == route || (route == "action_sheet" && showActionSheet),
+                                    onClick = {
+                                        if (route == "action_sheet") {
+                                            showActionSheet = true
+                                        } else if (currentRoute != route) {
+                                            navController.navigate(route) {
+                                                popUpTo(navController.graph.startDestinationId) { saveState = true }
+                                                launchSingleTop = true
+                                                restoreState = true
+                                            }
                                         }
                                     }
-                                }
-                            )
+                                )
+                            }
                         }
                     }
                 },
