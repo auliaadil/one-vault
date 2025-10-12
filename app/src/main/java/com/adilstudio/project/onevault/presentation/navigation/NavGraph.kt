@@ -108,8 +108,7 @@ fun NavGraph(
                 onSave = { transaction ->
                     viewModel.addTransaction(transaction)
                     navController.popBackStack()
-                },
-                onNavigateBack = { navController.popBackStack() }
+                }
             )
         }
         composable(Screen.EditTransaction.route) {
@@ -146,7 +145,6 @@ fun NavGraph(
                         viewModel.deleteTransaction(transactionId)
                         navController.popBackStack()
                     },
-                    onNavigateBack = { navController.popBackStack() },
                     onCancel = { navController.popBackStack() }
                 )
             }
@@ -237,7 +235,6 @@ fun NavGraph(
         }
         composable(Screen.About.route) {
             AboutScreen(
-                onNavigateBack = { navController.popBackStack() }
             )
         }
         composable(Screen.PrivacyPolicy.route) {

@@ -81,7 +81,6 @@ fun TransactionFormScreen(
     scannedImageUri: Uri? = null, // Scanned image to process and attach
     onSave: (Transaction) -> Unit,
     onDelete: ((Long) -> Unit)? = null,
-    onNavigateBack: () -> Unit,
     onCancel: () -> Unit = {},
     categoryViewModel: TransactionCategoryViewModel = koinViewModel(),
     accountViewModel: AccountViewModel = koinViewModel()

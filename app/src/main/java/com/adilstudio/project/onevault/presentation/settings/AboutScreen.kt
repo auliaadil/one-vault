@@ -30,9 +30,7 @@ import com.adilstudio.project.onevault.presentation.component.BaseScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AboutScreen(
-    onNavigateBack: () -> Unit
-) {
+fun AboutScreen() {
     BaseScreen(
         title = stringResource(R.string.about_us),
         showNavIcon = true,
@@ -86,6 +84,7 @@ fun AboutScreen(
             // Features
             Card(
                 modifier = Modifier.fillMaxWidth()
+                    .padding(vertical = dimensionResource(R.dimen.spacing_xs))
             ) {
                 Column(
                     modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))
@@ -106,11 +105,10 @@ fun AboutScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_xxxl)))
-
             // Developer Info
             Card(
                 modifier = Modifier.fillMaxWidth()
+                    .padding(vertical = dimensionResource(R.dimen.spacing_xs))
             ) {
                 Column(
                     modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))
