@@ -66,7 +66,7 @@ import com.adilstudio.project.onevault.domain.model.Transaction
 import com.adilstudio.project.onevault.domain.model.TransactionType
 import com.adilstudio.project.onevault.presentation.transaction.account.AccountViewModel
 import com.adilstudio.project.onevault.presentation.transaction.category.TransactionCategoryViewModel
-import com.adilstudio.project.onevault.presentation.component.GenericScreen
+import com.adilstudio.project.onevault.presentation.component.BaseScreen
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
@@ -228,7 +228,7 @@ fun TransactionFormScreen(
         }
     }
 
-    GenericScreen(
+    BaseScreen(
         title = if (isEditing) stringResource(R.string.edit_transaction) else stringResource(R.string.add_transaction),
         showNavIcon = true,
         actions = {

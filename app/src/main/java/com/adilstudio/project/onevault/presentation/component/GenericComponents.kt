@@ -31,7 +31,7 @@ import org.koin.androidx.compose.koinViewModel
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GenericScreen(
+fun BaseScreen(
     title: String,
     modifier: Modifier = Modifier,
     topBarViewModel: TopBarViewModel = koinViewModel(),

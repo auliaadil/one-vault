@@ -50,7 +50,7 @@ import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.TransactionCategory
 import com.adilstudio.project.onevault.domain.model.CategoryType
 import com.adilstudio.project.onevault.domain.model.TransactionType
-import com.adilstudio.project.onevault.presentation.component.GenericScreen
+import com.adilstudio.project.onevault.presentation.component.BaseScreen
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -82,7 +82,7 @@ fun TransactionCategoriesScreen(
         }
     }
 
-    GenericScreen(
+    BaseScreen(
         title = stringResource(R.string.transaction_categories),
         showNavIcon = true,
         successMessage = successMessage,

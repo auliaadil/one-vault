@@ -17,7 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.adilstudio.project.onevault.R
-import com.adilstudio.project.onevault.presentation.component.GenericScreen
+import com.adilstudio.project.onevault.presentation.component.BaseScreen
 import com.adilstudio.project.onevault.ui.theme.OneVaultTheme
 
 data class HomeFeature(
@@ -57,7 +57,7 @@ fun HomeScreen(
         )
     )
 
-    GenericScreen(
+    BaseScreen(
         title = stringResource(R.string.home)
     ) { paddingValues ->
         Column(

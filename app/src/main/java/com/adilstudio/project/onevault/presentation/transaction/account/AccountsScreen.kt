@@ -41,7 +41,7 @@ import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.Account
 import com.adilstudio.project.onevault.presentation.component.EmptyState
-import com.adilstudio.project.onevault.presentation.component.GenericScreen
+import com.adilstudio.project.onevault.presentation.component.BaseScreen
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,7 +73,7 @@ fun AccountsScreen(
         }
     }
 
-    GenericScreen(
+    BaseScreen(
         title = stringResource(R.string.accounts),
         showNavIcon = true,
         successMessage = successMessage,

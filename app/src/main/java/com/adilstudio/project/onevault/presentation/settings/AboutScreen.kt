@@ -26,14 +26,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.adilstudio.project.onevault.BuildConfig
 import com.adilstudio.project.onevault.R
-import com.adilstudio.project.onevault.presentation.component.GenericScreen
+import com.adilstudio.project.onevault.presentation.component.BaseScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(
     onNavigateBack: () -> Unit
 ) {
-    GenericScreen(
+    BaseScreen(
         title = stringResource(R.string.about_us),
         showNavIcon = true,
     ) { paddingValues ->

@@ -15,7 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.Credential
 import com.adilstudio.project.onevault.presentation.component.EmptyState
-import com.adilstudio.project.onevault.presentation.component.GenericScreen
+import com.adilstudio.project.onevault.presentation.component.BaseScreen
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,7 +51,7 @@ fun CredentialListScreen(
         }
     }
 
-    GenericScreen(
+    BaseScreen(
         title = stringResource(R.string.credentials),
         successMessage = successMessage,
         errorMessage = error,

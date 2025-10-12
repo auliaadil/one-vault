@@ -49,7 +49,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.Credential
-import com.adilstudio.project.onevault.presentation.component.GenericScreen
+import com.adilstudio.project.onevault.presentation.component.BaseScreen
 import org.koin.androidx.compose.koinViewModel
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -96,7 +96,7 @@ fun CredentialFormScreen(
         hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
     }
 
-    GenericScreen(
+    BaseScreen(
         title = stringResource(
             if (credential != null) R.string.edit_credential_title
             else R.string.add_credential_title

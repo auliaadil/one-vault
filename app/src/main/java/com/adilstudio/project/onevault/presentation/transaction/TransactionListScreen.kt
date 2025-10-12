@@ -44,7 +44,7 @@ import com.adilstudio.project.onevault.domain.model.TransactionCategory
 import com.adilstudio.project.onevault.domain.model.CategoryType
 import com.adilstudio.project.onevault.domain.model.TransactionType
 import com.adilstudio.project.onevault.presentation.component.EmptyState
-import com.adilstudio.project.onevault.presentation.component.GenericScreen
+import com.adilstudio.project.onevault.presentation.component.BaseScreen
 import com.adilstudio.project.onevault.ui.theme.OneVaultTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -74,8 +74,9 @@ fun TransactionListScreen(
         transactionTrackerViewModel.loadTransactions()
     }
 
-    GenericScreen(
+    BaseScreen(
         title = stringResource(R.string.transactions),
+        showNavIcon = true,
         actions = {
             OutlinedButton(onClick = onManageCategories) {
                 Icon(
@@ -282,7 +283,7 @@ fun TransactionListScreenPreview() {
     OneVaultTheme(
         darkTheme = true
     ) {
-        GenericScreen(
+        BaseScreen(
             title = stringResource(R.string.transactions),
             actions = {
                 OutlinedButton(onClick = { }) {
@@ -312,7 +313,6 @@ fun TransactionListScreenPreview() {
                     )
                 }
             },
-            defaultPaddingHorizontal = R.dimen.spacing_none
         ) {
             TransactionListContent(
                 transactions = mockTransactions,

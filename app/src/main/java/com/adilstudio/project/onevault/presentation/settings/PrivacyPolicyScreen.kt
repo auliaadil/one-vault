@@ -11,14 +11,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.adilstudio.project.onevault.R
-import com.adilstudio.project.onevault.presentation.component.GenericScreen
+import com.adilstudio.project.onevault.presentation.component.BaseScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PrivacyPolicyScreen(
     onNavigateBack: () -> Unit
 ) {
-    GenericScreen(
+    BaseScreen(
         title = stringResource(R.string.privacy_policy),
         showNavIcon = true,
     ) { paddingValues ->

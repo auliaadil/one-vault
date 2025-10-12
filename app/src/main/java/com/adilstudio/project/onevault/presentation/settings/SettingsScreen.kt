@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
 import com.adilstudio.project.onevault.BuildConfig
 import com.adilstudio.project.onevault.R
-import com.adilstudio.project.onevault.presentation.component.GenericScreen
+import com.adilstudio.project.onevault.presentation.component.BaseScreen
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,7 +31,7 @@ fun SettingsScreen(
     val errorMessage by viewModel.errorMessage.collectAsState()
     var showCurrencyDialog by remember { mutableStateOf(false) }
 
-    GenericScreen(
+    BaseScreen(
         title = stringResource(R.string.settings),
         errorMessage = errorMessage,
         onClearError = { viewModel.clearErrorMessage() },
