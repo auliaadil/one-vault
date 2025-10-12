@@ -50,7 +50,6 @@ import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.TransactionCategory
 import com.adilstudio.project.onevault.domain.model.CategoryType
 import com.adilstudio.project.onevault.domain.model.TransactionType
-import com.adilstudio.project.onevault.presentation.component.BackNavigationIcon
 import com.adilstudio.project.onevault.presentation.component.GenericScreen
 import org.koin.androidx.compose.koinViewModel
 
@@ -85,9 +84,7 @@ fun TransactionCategoriesScreen(
 
     GenericScreen(
         title = stringResource(R.string.transaction_categories),
-        navigationIcon = {
-            BackNavigationIcon(onNavigateBack = onNavigateBack)
-        },
+        showNavIcon = true,
         successMessage = successMessage,
         errorMessage = error,
         onClearSuccess = { viewModel.clearSuccessMessage() },

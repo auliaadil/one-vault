@@ -47,14 +47,14 @@ fun TransactionDetailBottomSheet(
             modifier = Modifier.padding(padding),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_large))
         ) {
-            DetailField(R.string.title, transaction.title)
+            DetailField(R.string.title, value = transaction.title)
             DetailField(
                 R.string.merchant,
-                if (transaction.merchant.isNullOrBlank()) stringResource(R.string.no_merchant) else transaction.merchant
+                value = if (transaction.merchant.isNullOrBlank()) stringResource(R.string.no_merchant) else transaction.merchant
             )
             DetailField(
                 R.string.amount,
-                RupiahFormatter.formatWithRupiahPrefix(transaction.amount.toLong())
+                value = RupiahFormatter.formatWithRupiahPrefix(transaction.amount.toLong())
             )
             DetailField(
                 labelRes = R.string.transaction_date,
@@ -65,7 +65,7 @@ fun TransactionDetailBottomSheet(
                 categories.find { it.id == id }
             }
             val categoryName = category?.name ?: stringResource(R.string.no_category)
-            DetailField(R.string.category, category?.icon?.let {
+            DetailField(R.string.category, value = category?.icon?.let {
                 "$it $categoryName"
             } ?: categoryName)
 
@@ -74,7 +74,7 @@ fun TransactionDetailBottomSheet(
             }
             DetailField(
                 R.string.account,
-                if (transaction.accountId == null) stringResource(R.string.no_account_selected) else account?.name
+                value = if (transaction.accountId == null) stringResource(R.string.no_account_selected) else account?.name
             )
             transaction.imagePath?.let {
                 DetailField(

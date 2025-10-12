@@ -7,18 +7,19 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -35,6 +36,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.adilstudio.project.onevault.domain.manager.AppSecurityManager
 import com.adilstudio.project.onevault.domain.manager.BiometricAuthManager
+import com.adilstudio.project.onevault.presentation.TopBarViewModel
 import com.adilstudio.project.onevault.presentation.action.ActionBottomSheet
 import com.adilstudio.project.onevault.presentation.biometric.BiometricLockScreen
 import com.adilstudio.project.onevault.presentation.navigation.NavGraph
@@ -42,6 +44,7 @@ import com.adilstudio.project.onevault.presentation.navigation.Screen
 import com.adilstudio.project.onevault.ui.theme.OneVaultTheme
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : FragmentActivity() {
 
@@ -88,8 +91,14 @@ fun MainApp(
     initialRoute: String? = null,
     showScanner: Boolean = false,
     appSecurityManager: AppSecurityManager? = null,
-    onAppExit: () -> Unit = {}
+    onAppExit: () -> Unit = {},
+    topBarViewModel: TopBarViewModel = koinViewModel()
 ) {
+    // Collect the state from the ViewModel
+    val title by topBarViewModel.title.collectAsState()
+    val showNavIcon by topBarViewModel.showNavigationIcon.collectAsState()
+    val actions by topBarViewModel.actions.collectAsState()
+
     OneVaultTheme {
         val navController = rememberNavController()
         val isAppLocked by (appSecurityManager?.isAppLocked?.collectAsState() ?: remember { mutableStateOf(false) })
@@ -107,6 +116,22 @@ fun MainApp(
             )
         } else {
             Scaffold(
+                topBar = {
+                    TopAppBar(
+                        title = { Text(title) },
+                        navigationIcon = {
+                            if (showNavIcon) {
+                                IconButton(onClick = { navController.navigateUp() }) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                        contentDescription = stringResource(R.string.back)
+                                    )
+                                }
+                            }
+                        },
+                        actions = actions
+                    )
+                },
                 modifier = Modifier.fillMaxSize(),
                 bottomBar = {
                     val items = listOf(

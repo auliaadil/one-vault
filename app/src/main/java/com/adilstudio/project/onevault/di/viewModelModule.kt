@@ -1,5 +1,6 @@
 package com.adilstudio.project.onevault.di
 
+import com.adilstudio.project.onevault.presentation.TopBarViewModel
 import com.adilstudio.project.onevault.presentation.transaction.account.AccountViewModel
 import com.adilstudio.project.onevault.presentation.transaction.TransactionTrackerViewModel
 import com.adilstudio.project.onevault.presentation.transaction.category.TransactionCategoryViewModel
@@ -12,6 +13,7 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
+    single { TopBarViewModel() }
     viewModel { TransactionTrackerViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { TransactionCategoryViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { CredentialListViewModel(get(), get()) }

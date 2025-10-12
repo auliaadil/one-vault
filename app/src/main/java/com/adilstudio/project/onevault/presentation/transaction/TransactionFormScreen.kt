@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Delete
@@ -231,14 +230,7 @@ fun TransactionFormScreen(
 
     GenericScreen(
         title = if (isEditing) stringResource(R.string.edit_transaction) else stringResource(R.string.add_transaction),
-        navigationIcon = {
-            IconButton(onClick = onNavigateBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.back)
-                )
-            }
-        },
+        showNavIcon = true,
         actions = {
             if (isEditing && onDelete != null) {
                 IconButton(onClick = { showDeleteDialog = true }) {

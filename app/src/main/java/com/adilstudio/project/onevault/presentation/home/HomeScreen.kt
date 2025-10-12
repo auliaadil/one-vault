@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.adilstudio.project.onevault.R
+import com.adilstudio.project.onevault.presentation.component.GenericScreen
 import com.adilstudio.project.onevault.ui.theme.OneVaultTheme
 
 data class HomeFeature(
@@ -56,29 +57,26 @@ fun HomeScreen(
         )
     )
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = stringResource(R.string.home),
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 24.dp)
-        )
-
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.fillMaxWidth()
+    GenericScreen(
+        title = stringResource(R.string.home)
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
         ) {
-            items(features) { feature ->
-                FeatureCard(
-                    feature = feature,
-                    modifier = Modifier.fillMaxWidth()
-                )
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                items(features) { feature ->
+                    FeatureCard(
+                        feature = feature,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
         }
     }

@@ -40,7 +40,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.Account
-import com.adilstudio.project.onevault.presentation.component.BackNavigationIcon
 import com.adilstudio.project.onevault.presentation.component.EmptyState
 import com.adilstudio.project.onevault.presentation.component.GenericScreen
 import org.koin.androidx.compose.koinViewModel
@@ -76,9 +75,7 @@ fun AccountsScreen(
 
     GenericScreen(
         title = stringResource(R.string.accounts),
-        navigationIcon = {
-            BackNavigationIcon(onNavigateBack = onNavigateBack)
-        },
+        showNavIcon = true,
         successMessage = successMessage,
         errorMessage = error,
         onClearSuccess = { viewModel.clearSuccessMessage() },
