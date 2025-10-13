@@ -61,7 +61,6 @@ import coil.compose.AsyncImage
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.DateUtil
 import com.adilstudio.project.onevault.core.util.ImageUtil
-import com.adilstudio.project.onevault.core.util.NavigationKeys
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.Transaction
 import com.adilstudio.project.onevault.domain.model.TransactionType
@@ -71,6 +70,7 @@ import com.adilstudio.project.onevault.presentation.component.BaseScreen
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import androidx.compose.material3.rememberModalBottomSheetState
 import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDate
 import java.util.Calendar
@@ -93,6 +93,8 @@ fun TransactionFormScreen(
 
     // ML Kit scanning state for scanned image
     var scannedTexts by remember { mutableStateOf<List<String>>(emptyList()) }
+    // var showTextSelectionDialog by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showTextSelectionDialog by remember { mutableStateOf(false) }
     var scanningProgress by remember { mutableStateOf(false) }
 
@@ -283,10 +285,7 @@ fun TransactionFormScreen(
                                 onClick = { selectedTransactionType = transactionType },
                                 modifier = Modifier.weight(1f),
                                 colors = if (selectedTransactionType == transactionType) {
-                                    ButtonDefaults.outlinedButtonColors(
-                                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                                    )
+                                    ButtonDefaults.buttonColors()
                                 } else {
                                     ButtonDefaults.outlinedButtonColors()
                                 }
@@ -526,6 +525,8 @@ fun TransactionFormScreen(
                         )
                     }
 
+                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_xxs)))
+
                     OutlinedButton(
                         onClick = {
                             imagePickerLauncher.launch("image/*")
@@ -679,7 +680,14 @@ fun TransactionFormScreen(
 
     // Text selection dialog for scanned data
     if (showTextSelectionDialog) {
-        TextSelectionDialog(
+        LaunchedEffect(showTextSelectionDialog) {
+            if (showTextSelectionDialog) {
+                sheetState.show()
+            } else {
+                sheetState.hide()
+            }
+        }
+        TextSelectionBottomSheet(
             scannedTexts = scannedTexts,
             onTextSelected = { selectedTitle, selectedAmount, selectedVendor ->
                 // Apply selected text to form fields
@@ -694,7 +702,8 @@ fun TransactionFormScreen(
                 }
                 showTextSelectionDialog = false
             },
-            onDismiss = { showTextSelectionDialog = false }
+            onDismiss = { showTextSelectionDialog = false },
+            sheetState = sheetState
         )
     }
 
