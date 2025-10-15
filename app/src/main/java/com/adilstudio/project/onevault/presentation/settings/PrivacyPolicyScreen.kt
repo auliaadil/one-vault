@@ -3,9 +3,6 @@ package com.adilstudio.project.onevault.presentation.settings
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -14,23 +11,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.adilstudio.project.onevault.R
-import com.adilstudio.project.onevault.presentation.component.GenericScreen
+import com.adilstudio.project.onevault.presentation.component.BaseScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PrivacyPolicyScreen(
-    onNavigateBack: () -> Unit
-) {
-    GenericScreen(
+fun PrivacyPolicyScreen() {
+    BaseScreen(
         title = stringResource(R.string.privacy_policy),
-        navigationIcon = {
-            IconButton(onClick = onNavigateBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.back)
-                )
-            }
-        }
+        showNavIcon = true,
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -106,7 +94,7 @@ private fun PrivacySection(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
+            .padding(vertical = 4.dp)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)

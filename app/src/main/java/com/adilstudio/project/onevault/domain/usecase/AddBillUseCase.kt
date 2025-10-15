@@ -1,8 +1,8 @@
 package com.adilstudio.project.onevault.domain.usecase
 
-import com.adilstudio.project.onevault.domain.model.Bill
-import com.adilstudio.project.onevault.domain.repository.BillRepository
+import com.adilstudio.project.onevault.domain.model.Transaction
+import com.adilstudio.project.onevault.domain.repository.TransactionRepository
 
-class AddBillUseCase(private val repository: BillRepository) {
-    suspend operator fun invoke(bill: Bill) = repository.addBill(bill)
+class AddTransactionUseCase(private val repository: TransactionRepository) {
+    suspend operator fun invoke(transaction: Transaction) = repository.addTransaction(transaction)
 }

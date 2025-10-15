@@ -21,7 +21,7 @@ object ImageUtil {
             val inputStream: InputStream? = context.contentResolver.openInputStream(imageUri)
             inputStream?.let { stream ->
                 // Create unique filename
-                val fileName = "bill_image_${UUID.randomUUID()}.jpg"
+                val fileName = "transaction_image_${UUID.randomUUID()}.jpg"
                 val imagesDir = File(context.filesDir, "images")
                 
                 // Create images directory if it doesn't exist

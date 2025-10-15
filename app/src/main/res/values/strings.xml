@@ -2,39 +2,40 @@
     <string name="app_name">OneVault</string>
     <string name="autofill_service_description">OneVault Autofill Service</string>
 
-    <!-- Bill Management -->
-    <string name="bill_details">Bill Details</string>
-    <string name="add_bill">Add Bill</string>
-    <string name="edit_bill">Edit Bill</string>
-    <string name="delete_bill">Delete Bill</string>
-    <string name="delete_bill_message">Are you sure you want to delete \'%1$s\'? This action cannot be undone.</string>
+    <!-- Transaction Management -->
+    <string name="transaction_details">Transaction Details</string>
+    <string name="add_transaction">Add Transaction</string>
+    <string name="edit_transaction">Edit Transaction</string>
+    <string name="delete_transaction">Delete Transaction</string>
+    <string name="delete_transaction_message">Are you sure you want to delete \'%1$s\'? This action cannot be undone.</string>
     <string name="title">Title</string>
-    <string name="title_placeholder">e.g., Electric Bill, Internet Bill</string>
+    <string name="title_placeholder">e.g., Electric Transaction, Internet Transaction</string>
     <string name="category">Category</string>
     <string name="category_optional">Category (Optional)</string>
     <string name="no_category_selected">No category selected</string>
     <string name="no_category">No Category</string>
     <string name="amount">Amount</string>
-    <string name="amount_placeholder">Enter bill amount</string>
-    <string name="vendor_optional">Vendor (Optional)</string>
-    <string name="no_vendor">No Vendor</string>
-    <string name="vendor_placeholder">e.g., PLN, Telkom, Shopee</string>
-    <string name="bill_date">Bill Date</string>
+    <string name="amount_placeholder">Enter transaction amount</string>
+    <string name="merchant">Merchant</string>
+    <string name="merchant_optional">Merchant (Optional)</string>
+    <string name="no_merchant">No Merchant</string>
+    <string name="merchant_placeholder">e.g., PLN, Telkom, Shopee</string>
+    <string name="transaction_date">Transaction Date</string>
     <string name="attachment">Attachment</string>
     <string name="attachment_optional">Attachment (Optional)</string>
     <string name="choose_image">Choose Image</string>
-    <string name="scan_bill">Scan Bill</string>
+    <string name="scan_transaction">Scan Transaction</string>
     <string name="scanning">Scanning…</string>
-    <string name="save_bill">Save Bill</string>
+    <string name="save_transaction">Save Transaction</string>
     <string name="select_date">Select Date</string>
     <string name="remove_image">Remove Image</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
-    <string name="no_bills_saved">No bills saved yet</string>
-    <string name="tap_plus_to_add_first_bill">Tap the + button to add your first bill</string>
+    <string name="no_transactions_saved">No transactions saved yet</string>
+    <string name="tap_plus_to_add_first_transaction">Tap the + button to add your first transaction</string>
 
-    <!-- Bill Categories -->
-    <string name="bill_categories">Bill Categories</string>
+    <!-- Transaction Categories -->
+    <string name="transaction_categories">Transaction Categories</string>
     <string name="add_category">Add Category</string>
     <string name="edit_category">Edit Category</string>
     <string name="category_name">Category Name</string>
@@ -64,16 +65,21 @@
 
     <!-- Navigation -->
     <string name="back">Back</string>
-    <string name="bills">Bills</string>
-    <string name="bill_tracker">Bill Tracker</string>
+    <string name="home">Home</string>
+    <string name="action">Action</string>
+    <string name="transactions">Transactions</string>
+    <string name="transaction_tracker">Transaction Tracker</string>
     <string name="passwords">Passwords</string>
     <string name="file_vault">File Vault</string>
     <string name="settings">Settings</string>
     <string name="accounts">Accounts</string>
     <string name="manage_accounts">Manage Accounts</string>
     <string name="manage_categories">Manage Categories</string>
+    <string name="categories">Categories</string>
+    <string name="quick_actions">Quick Actions</string>
 
     <!-- Account Management -->
+    <string name="account">Account</string>
     <string name="account_optional">Account (Optional)</string>
     <string name="no_account_selected">No account selected</string>
     <string name="no_account">No Account</string>
@@ -207,7 +213,7 @@
     <string name="vendor_field">Vendor: %1$s</string>
 
     <!-- Scanner Dialog -->
-    <string name="choose_scan_method">Choose how you want to scan your bill:</string>
+    <string name="choose_scan_method">Choose how you want to scan your transaction:</string>
     <string name="scan_with_camera">Scan with Camera</string>
     <string name="scan_from_gallery">Scan from Gallery</string>
     <string name="processing_image">Processing image…</string>
@@ -217,10 +223,10 @@
 
     <!-- Permissions -->
     <string name="camera_permission_required">Camera Permission Required</string>
-    <string name="camera_permission_message">This app needs camera permission to scan bills and extract text information. Please grant camera permission to use this feature.</string>
+    <string name="camera_permission_message">This app needs camera permission to scan transactions and extract text information. Please grant camera permission to use this feature.</string>
     <string name="grant_permission">Grant Permission</string>
 
-    <!-- Bill List -->
+    <!-- Transaction List -->
     <string name="date_label">Date: %1$s</string>
     <string name="category_label">Category: %1$s</string>
     <string name="has_attachment">Has Attachment</string>
@@ -312,9 +318,9 @@
     <string name="timeout_5_minutes">5 minutes</string>
 
     <!-- About Screen -->
-    <string name="app_description">OneVault is a secure, local-first Android application that helps you manage your financial bills, store passwords safely, and organize your important files. All your data is stored locally on your device to ensure maximum privacy and security.</string>
+    <string name="app_description">OneVault is a secure, local-first Android application that helps you manage your financial transactions, store passwords safely, and organize your important files. All your data is stored locally on your device to ensure maximum privacy and security.</string>
     <string name="key_features">Key Features</string>
-    <string name="feature_bill_tracker">Bill Tracker: Track and manage your bills with OCR scanning capability</string>
+    <string name="feature_transaction_tracker">Transaction Tracker: Track and manage your transactions with OCR scanning capability</string>
     <string name="feature_password_manager">Password Manager: Securely store and manage your credentials</string>
     <string name="feature_password_generator">Template-Based Password Generation: Create complex passwords using custom rules</string>
     <string name="feature_biometric_security">Biometric Security: Protect your app with fingerprint or face authentication</string>
@@ -327,15 +333,15 @@
     <string name="privacy_introduction_title">Introduction</string>
     <string name="privacy_introduction_content">OneVault is committed to protecting your privacy. This policy explains how we handle your data and protect your personal information.</string>
     <string name="privacy_information_collect_title">Information We Collect</string>
-    <string name="privacy_information_collect_content">OneVault stores all data locally on your device. We do not collect or transmit any personal information to external servers. Your bills, passwords, and files remain entirely on your device.</string>
+    <string name="privacy_information_collect_content">OneVault stores all data locally on your device. We do not collect or transmit any personal information to external servers. Your transactions, passwords, and files remain entirely on your device.</string>
     <string name="privacy_how_we_use_title">How We Use Your Information</string>
-    <string name="privacy_how_we_use_content">All data processing occurs locally on your device. We use your information solely to provide the app\'s functionality: organizing bills, managing passwords, and storing files securely.</string>
+    <string name="privacy_how_we_use_content">All data processing occurs locally on your device. We use your information solely to provide the app\'s functionality: organizing transactions, managing passwords, and storing files securely.</string>
     <string name="privacy_data_security_title">Data Security</string>
     <string name="privacy_data_security_content">We implement industry-standard encryption to protect your data. All sensitive information is encrypted using AES-256 encryption before being stored on your device.</string>
     <string name="privacy_data_storage_title">Data Storage</string>
     <string name="privacy_data_storage_content">Your data is stored exclusively in your device\'s secure storage. We do not use cloud storage or external databases. You have full control over your data at all times.</string>
     <string name="privacy_third_party_title">Third-Party Services</string>
-    <string name="privacy_third_party_content">OneVault may use Google ML Kit for text recognition during bill scanning. This processing occurs on-device and no data is sent to Google servers.</string>
+    <string name="privacy_third_party_content">OneVault may use Google ML Kit for text recognition during transaction scanning. This processing occurs on-device and no data is sent to Google servers.</string>
     <string name="privacy_your_rights_title">Your Rights</string>
     <string name="privacy_your_rights_content">You have complete control over your data. You can export, delete, or modify any information stored in the app at any time. No third parties have access to your data.</string>
     <string name="privacy_contact_title">Contact Us</string>
@@ -346,14 +352,14 @@
     <string name="import_export_warning">Important: Always keep backups of your exported data in a secure location. Imported data will replace existing data.</string>
     <string name="export_credentials">Export Credentials</string>
     <string name="export_credentials_description">Export all stored passwords and login information to a secure file</string>
-    <string name="export_bills">Export Bills</string>
-    <string name="export_bills_description">Export all bill data including attachments to a backup file</string>
+    <string name="export_transactions">Export Transactions</string>
+    <string name="export_transactions_description">Export all transaction data including attachments to a backup file</string>
     <string name="export_vault_files">Export Vault Files</string>
     <string name="export_vault_files_description">Export all files stored in your vault to a backup location</string>
     <string name="import_credentials">Import Credentials</string>
     <string name="import_credentials_description">Import credentials from a previously exported backup file</string>
-    <string name="import_bills">Import Bills</string>
-    <string name="import_bills_description">Import bill data from a backup file</string>
+    <string name="import_transactions">Import Transactions</string>
+    <string name="import_transactions_description">Import transaction data from a backup file</string>
     <string name="import_vault_files">Import Vault Files</string>
     <string name="import_vault_files_description">Import files from a backup location into your vault</string>
     <string name="export_confirmation_title">Export Data</string>
@@ -365,13 +371,18 @@
 
     <!-- Screen Capture -->
     <string name="screen_capture">Screen Capture</string>
-    <string name="screen_capture_description">Capture the current screen to extract bill information</string>
+    <string name="screen_capture_description">Capture the current screen to extract transaction information</string>
     <string name="start_screen_capture">Start Screen Capture</string>
     <string name="capturing">Capturing…</string>
 
     <!-- Currency Settings -->
     <string name="currency_rupiah_label">Currency: Rupiah (Rp)</string>
     <string name="currency_info_dialog_title">Currency Information</string>
-    <string name="currency_info_dialog_message">Currently, OneVault only supports the Indonesian Rupiah (Rp) for all bill and account transactions. Support for other currencies may be added in future updates.</string>
+    <string name="currency_info_dialog_message">Currently, OneVault only supports the Indonesian Rupiah (Rp) for all transaction and account transactions. Support for other currencies may be added in future updates.</string>
     <string name="currency_info_dialog_ok">OK</string>
+
+    <!-- Transaction Type -->
+    <string name="transaction_type">Transaction Type</string>
+    <string name="income">Income</string>
+    <string name="expense">Expense</string>
 </resources>

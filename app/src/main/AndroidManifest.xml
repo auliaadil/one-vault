@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Camera permission for scanning bills -->
+    <!-- Camera permission for scanning transactions -->
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
@@ -52,24 +52,24 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <!-- Quick Settings Tile Service for Add Bill -->
+        <!-- Quick Settings Tile Service for Add Transaction -->
         <service
-            android:name=".service.AddBillTileService"
+            android:name=".service.AddTransactionTileService"
             android:exported="true"
             android:icon="@drawable/ic_add_notes"
-            android:label="Add Bill"
+            android:label="Add Transaction"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
         </service>
 
-        <!-- Quick Settings Tile Service for Scan Bill -->
+        <!-- Quick Settings Tile Service for Scan Transaction -->
         <service
-            android:name=".service.ScanBillTileService"
+            android:name=".service.ScanTransactionTileService"
             android:exported="true"
             android:icon="@drawable/ic_document_scanner"
-            android:label="Scan Bill"
+            android:label="Scan Transaction"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />

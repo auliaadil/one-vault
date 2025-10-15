@@ -8,7 +8,7 @@ import android.os.Build
 import com.adilstudio.project.onevault.MainActivity
 
 @RequiresApi(Build.VERSION_CODES.N)
-class AddBillTileService : TileService() {
+class AddTransactionTileService : TileService() {
 
     override fun onStartListening() {
         super.onStartListening()
@@ -19,10 +19,10 @@ class AddBillTileService : TileService() {
     override fun onClick() {
         super.onClick()
 
-        // Create intent to open the app and navigate to Add Bill screen
+        // Create intent to open the app and navigate to Add Transaction screen
         val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            putExtra("navigate_to", "add_bill")
+            putExtra("navigate_to", "add_transaction")
         }
 
         // For Android 14+ (API 34+), use the new PendingIntent method
@@ -42,8 +42,8 @@ class AddBillTileService : TileService() {
 
     private fun updateTile() {
         qsTile?.let { tile ->
-            tile.label = "Add Bill"
-            tile.contentDescription = "Quick add bill to OneVault"
+            tile.label = "Add Transaction"
+            tile.contentDescription = "Quick add transaction to OneVault"
             tile.state = android.service.quicksettings.Tile.STATE_INACTIVE
             tile.updateTile()
         }

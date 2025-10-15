@@ -1,11 +1,11 @@
 package com.adilstudio.project.onevault.domain.usecase
 
-import com.adilstudio.project.onevault.domain.repository.BillRepository
+import com.adilstudio.project.onevault.domain.repository.TransactionRepository
 
-class DeleteBillUseCase(
-    private val billRepository: BillRepository
+class DeleteTransactionUseCase(
+    private val transactionRepository: TransactionRepository
 ) {
-    suspend operator fun invoke(billId: Long) {
-        billRepository.deleteBill(billId)
+    suspend operator fun invoke(transactionId: Long) {
+        transactionRepository.deleteTransaction(transactionId)
     }
 }

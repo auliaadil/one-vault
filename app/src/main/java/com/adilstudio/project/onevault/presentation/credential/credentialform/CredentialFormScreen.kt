@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -50,7 +49,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.Credential
-import com.adilstudio.project.onevault.presentation.component.GenericScreen
+import com.adilstudio.project.onevault.presentation.component.BaseScreen
 import org.koin.androidx.compose.koinViewModel
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -97,19 +96,12 @@ fun CredentialFormScreen(
         hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
     }
 
-    GenericScreen(
+    BaseScreen(
         title = stringResource(
             if (credential != null) R.string.edit_credential_title
             else R.string.add_credential_title
         ),
-        navigationIcon = {
-            IconButton(onClick = onNavigateBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.back)
-                )
-            }
-        }
+        showNavIcon = true,
     ) { paddingValues ->
         Column(
             modifier = Modifier

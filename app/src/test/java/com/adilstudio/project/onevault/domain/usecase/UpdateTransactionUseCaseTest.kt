@@ -1,0 +1,47 @@
+package com.adilstudio.project.onevault.domain.usecase
+
+import com.adilstudio.project.onevault.domain.model.Transaction
+import com.adilstudio.project.onevault.domain.model.TransactionType
+import com.adilstudio.project.onevault.domain.repository.TransactionRepository
+import kotlinx.coroutines.test.runTest
+import org.junit.Before
+import org.junit.Test
+import org.mockito.Mock
+import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.verify
+
+class UpdateTransactionUseCaseTest {
+
+    @Mock
+    private lateinit var transactionRepository: TransactionRepository
+
+    private lateinit var updateTransactionUseCase: UpdateTransactionUseCase
+
+    @Before
+    fun setup() {
+        MockitoAnnotations.openMocks(this)
+        updateTransactionUseCase = UpdateTransactionUseCase(transactionRepository)
+    }
+
+    @Test
+    fun `invoke calls repository updateTransaction with correct transaction`() = runTest {
+        // Given
+        val transaction = Transaction(
+            id = 1L,
+            title = "Electric Transaction",
+            categoryId = 12L,
+            amount = 150000.0,
+            merchant = "PLN", // Updated from vendor
+            date = "2024-01-15", // Updated from transactionDate
+            type = TransactionType.EXPENSE, // New field
+            imagePath = "/path/to/image.jpg",
+            accountId = 123L
+        )
+
+        // When
+        updateTransactionUseCase(transaction)
+
+        // Then
+        verify(transactionRepository).updateTransaction(transaction)
+    }
+}

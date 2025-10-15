@@ -8,7 +8,7 @@ import androidx.annotation.RequiresApi
 import com.adilstudio.project.onevault.MainActivity
 
 @RequiresApi(Build.VERSION_CODES.N)
-class ScanBillTileService : TileService() {
+class ScanTransactionTileService : TileService() {
 
     override fun onStartListening() {
         super.onStartListening()
@@ -21,7 +21,7 @@ class ScanBillTileService : TileService() {
         // Open the app and show scanner dialog immediately
         val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            putExtra("navigate_to", "bill_list")
+            putExtra("navigate_to", "transaction_list")
             putExtra("show_scanner", true)
         }
 
@@ -40,8 +40,8 @@ class ScanBillTileService : TileService() {
 
     private fun updateTile() {
         qsTile?.let { tile ->
-            tile.label = "Scan Bill"
-            tile.contentDescription = "Quick scan bill with camera"
+            tile.label = "Scan Transaction"
+            tile.contentDescription = "Quick scan transaction with camera"
             tile.state = android.service.quicksettings.Tile.STATE_INACTIVE
             tile.updateTile()
         }

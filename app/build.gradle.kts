@@ -183,3 +183,11 @@ tasks.register("printVersionInfo") {
         println("=====================================")
     }
 }
+
+sqldelight {
+    databases {
+        create("Database") {
+            packageName.set("com.adilstudio.project.onevault")
+        }
+    }
+}

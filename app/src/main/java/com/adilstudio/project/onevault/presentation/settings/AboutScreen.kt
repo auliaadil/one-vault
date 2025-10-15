@@ -1,13 +1,22 @@
 package com.adilstudio.project.onevault.presentation.settings
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -17,23 +26,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.adilstudio.project.onevault.BuildConfig
 import com.adilstudio.project.onevault.R
-import com.adilstudio.project.onevault.presentation.component.GenericScreen
+import com.adilstudio.project.onevault.presentation.component.BaseScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AboutScreen(
-    onNavigateBack: () -> Unit
-) {
-    GenericScreen(
+fun AboutScreen() {
+    BaseScreen(
         title = stringResource(R.string.about_us),
-        navigationIcon = {
-            IconButton(onClick = onNavigateBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.back)
-                )
-            }
-        }
+        showNavIcon = true,
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -42,16 +42,12 @@ fun AboutScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_xxxl)))
-
             // App Icon
             Image(
                 painter = painterResource(id = R.drawable.ic_launcher_foreground),
                 contentDescription = stringResource(R.string.app_name),
                 modifier = Modifier.size(dimensionResource(R.dimen.app_icon_size))
             )
-
-            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_xxl)))
 
             // App Name
             Text(
@@ -88,6 +84,7 @@ fun AboutScreen(
             // Features
             Card(
                 modifier = Modifier.fillMaxWidth()
+                    .padding(vertical = dimensionResource(R.dimen.spacing_xs))
             ) {
                 Column(
                     modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))
@@ -100,7 +97,7 @@ fun AboutScreen(
 
                     Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_medium)))
 
-                    FeatureItem(stringResource(R.string.feature_bill_tracker))
+                    FeatureItem(stringResource(R.string.feature_transaction_tracker))
                     FeatureItem(stringResource(R.string.feature_password_manager))
                     FeatureItem(stringResource(R.string.feature_password_generator))
                     FeatureItem(stringResource(R.string.feature_biometric_security))
@@ -108,11 +105,10 @@ fun AboutScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_xxxl)))
-
             // Developer Info
             Card(
                 modifier = Modifier.fillMaxWidth()
+                    .padding(vertical = dimensionResource(R.dimen.spacing_xs))
             ) {
                 Column(
                     modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))

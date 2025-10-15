@@ -15,11 +15,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.adilstudio.project.onevault.presentation.bill.account.AccountsScreen
-import com.adilstudio.project.onevault.presentation.bill.BillFormScreen
-import com.adilstudio.project.onevault.presentation.bill.BillListScreen
-import com.adilstudio.project.onevault.presentation.bill.BillTrackerViewModel
-import com.adilstudio.project.onevault.presentation.bill.category.BillCategoriesScreen
+import com.adilstudio.project.onevault.core.util.NavigationKeys
+import com.adilstudio.project.onevault.presentation.transaction.account.AccountsScreen
+import com.adilstudio.project.onevault.presentation.transaction.TransactionFormScreen
+import com.adilstudio.project.onevault.presentation.transaction.TransactionListScreen
+import com.adilstudio.project.onevault.presentation.transaction.TransactionTrackerViewModel
+import com.adilstudio.project.onevault.presentation.transaction.category.TransactionCategoriesScreen
 import com.adilstudio.project.onevault.presentation.credential.CredentialListScreen
 import com.adilstudio.project.onevault.presentation.credential.CredentialListViewModel
 import com.adilstudio.project.onevault.presentation.filevault.FileVaultScreen
@@ -28,14 +29,18 @@ import com.adilstudio.project.onevault.presentation.settings.AboutScreen
 import com.adilstudio.project.onevault.presentation.settings.ImportExportScreen
 import com.adilstudio.project.onevault.presentation.settings.PrivacyPolicyScreen
 import com.adilstudio.project.onevault.presentation.settings.SettingsScreen
+import com.adilstudio.project.onevault.presentation.home.HomeScreen
+import com.adilstudio.project.onevault.presentation.action.ActionBottomSheet
 import org.koin.androidx.compose.koinViewModel
 
 sealed class Screen(val route: String) {
-    object BillList : Screen("bill_list")
-    object AddBill : Screen("add_bill")
-    object EditBill : Screen("edit_bill")
-    object BillCategories : Screen("bill_categories")
-    object BillAccounts : Screen("bill_accounts")
+    object Home : Screen("home")
+    object Action : Screen("action")
+    object TransactionList : Screen("transaction_list")
+    object AddTransaction : Screen("add_transaction")
+    object EditTransaction : Screen("edit_transaction")
+    object TransactionCategories : Screen("transaction_categories")
+    object TransactionAccounts : Screen("transaction_accounts")
     object CredentialList : Screen("credential_list")
     object AddCredential : Screen("add_credential")
     object EditCredential : Screen("edit_credential")
@@ -52,71 +57,78 @@ sealed class Screen(val route: String) {
 fun NavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    startDestination: String = Screen.BillList.route,
+    startDestination: String = Screen.Home.route,
     showScanner: Boolean = false
 ) {
     NavHost(navController, startDestination = startDestination, modifier = modifier) {
-        composable(Screen.BillList.route) {
-            BillListScreen(
-                onAddBill = {
+        composable(Screen.Home.route) {
+            HomeScreen(
+                onNavigateToTransactions = { navController.navigate(Screen.TransactionList.route) },
+                onNavigateToCategories = { navController.navigate(Screen.TransactionCategories.route) },
+                onNavigateToAccounts = { navController.navigate(Screen.TransactionAccounts.route) },
+                onNavigateToCredentials = { navController.navigate(Screen.CredentialList.route) }
+            )
+        }
+        composable(Screen.TransactionList.route) {
+            TransactionListScreen(
+                onAddTransaction = {
                     // Clear any existing scanned image URI when using regular add button
-                    navController.currentBackStackEntry?.savedStateHandle?.remove<Uri>("scannedImageUri")
-                    navController.navigate(Screen.AddBill.route)
+                    navController.currentBackStackEntry?.savedStateHandle?.remove<Uri>(NavigationKeys.SCANNED_IMAGE_URI)
+                    navController.navigate(Screen.AddTransaction.route)
                 },
-                onManageCategories = { navController.navigate(Screen.BillCategories.route) },
-                onEditBill = { bill ->
-                    // Pass the bill ID through navigation arguments
-                    navController.currentBackStackEntry?.savedStateHandle?.set("billId", bill.id)
-                    navController.navigate(Screen.EditBill.route)
+                onManageCategories = { navController.navigate(Screen.TransactionCategories.route) },
+                onEditTransaction = { transaction ->
+                    // Pass the transaction ID through navigation arguments
+                    navController.currentBackStackEntry?.savedStateHandle?.set("transactionId", transaction.id)
+                    navController.navigate(Screen.EditTransaction.route)
                 },
-                onManageAccounts = { navController.navigate(Screen.BillAccounts.route) },
-                onAddBillWithScannedImage = { imageUri ->
-                    // Pass scanned image URI through savedStateHandle and navigate to AddBill
-                    navController.currentBackStackEntry?.savedStateHandle?.set("scannedImageUri", imageUri)
-                    navController.navigate(Screen.AddBill.route)
+                onManageAccounts = { navController.navigate(Screen.TransactionAccounts.route) },
+                onAddTransactionWithScannedImage = { imageUri ->
+                    // Pass scanned image URI through savedStateHandle and navigate to AddTransaction
+                    navController.currentBackStackEntry?.savedStateHandle?.set(NavigationKeys.SCANNED_IMAGE_URI, imageUri)
+                    navController.navigate(Screen.AddTransaction.route)
                 },
                 showScannerDialog = showScanner,
             )
         }
-        composable(Screen.AddBill.route) {
-            val viewModel: BillTrackerViewModel = koinViewModel()
+        composable(Screen.AddTransaction.route) {
+            val viewModel: TransactionTrackerViewModel = koinViewModel()
 
             // Get scanned image URI from previous screen if available
-            val scannedImageUri = navController.previousBackStackEntry?.savedStateHandle?.get<Uri>("scannedImageUri")
+            val scannedImageUri = navController.previousBackStackEntry?.savedStateHandle?.get<Uri>(NavigationKeys.SCANNED_IMAGE_URI)
 
             // Clear the scanned image URI after retrieving it to prevent reuse
             LaunchedEffect(scannedImageUri) {
                 if (scannedImageUri != null) {
-                    navController.previousBackStackEntry?.savedStateHandle?.remove<Uri>("scannedImageUri")
+                    navController.previousBackStackEntry?.savedStateHandle?.remove<Uri>(NavigationKeys.SCANNED_IMAGE_URI)
                 }
             }
 
-            BillFormScreen(
+            TransactionFormScreen(
                 scannedImageUri = scannedImageUri,
-                onSave = { bill ->
-                    viewModel.addBill(bill)
+                onSave = { transaction ->
+                    viewModel.addTransaction(transaction)
                     navController.popBackStack()
-                },
-                onNavigateBack = { navController.popBackStack() }
+                }
             )
         }
-        composable(Screen.EditBill.route) {
-            val viewModel: BillTrackerViewModel = koinViewModel()
-            // Get bill ID from previous screen
-            val billId = navController.previousBackStackEntry?.savedStateHandle?.get<Long>("billId")
+        composable(Screen.EditTransaction.route) {
+            val viewModel: TransactionTrackerViewModel = koinViewModel()
+            // Get transaction ID from previous screen
+            val transactionId = navController.previousBackStackEntry?.savedStateHandle?.get<Long>("transactionId")
 
-            // Load bills and find the specific one
-            LaunchedEffect(billId) {
-                viewModel.loadBills()
+            // Load transactions and find the specific one
+            LaunchedEffect(transactionId) {
+                viewModel.loadTransactions()
             }
 
-            val bills by viewModel.bills.collectAsState()
-            val bill = remember(bills, billId) {
-                bills.find { it.id == billId }
+            val transactions by viewModel.transactions.collectAsState()
+            val transaction = remember(transactions, transactionId) {
+                transactions.find { it.id == transactionId }
             }
 
-            // Show loading while bill is being fetched
-            if (bill == null) {
+            // Show loading while transaction is being fetched
+            if (transaction == null) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -124,17 +136,16 @@ fun NavGraph(
                     CircularProgressIndicator()
                 }
             } else {
-                BillFormScreen(
-                    bill = bill,
-                    onSave = { updatedBill ->
-                        viewModel.updateBill(updatedBill)
+                TransactionFormScreen(
+                    transaction = transaction,
+                    onSave = { updatedTransaction ->
+                        viewModel.updateTransaction(updatedTransaction)
                         navController.popBackStack()
                     },
-                    onDelete = { billId ->
-                        viewModel.deleteBill(billId)
+                    onDelete = { transactionId ->
+                        viewModel.deleteTransaction(transactionId)
                         navController.popBackStack()
                     },
-                    onNavigateBack = { navController.popBackStack() },
                     onCancel = { navController.popBackStack() }
                 )
             }
@@ -210,15 +221,11 @@ fun NavGraph(
                 onExport = { onResult -> /* TODO: Launch CreateDocument and call onResult(uri) */ }
             )
         }
-        composable(Screen.BillCategories.route) {
-            BillCategoriesScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+        composable(Screen.TransactionCategories.route) {
+            TransactionCategoriesScreen()
         }
-        composable(Screen.BillAccounts.route) {
-            AccountsScreen(
-                onNavigateBack = { navController.popBackStack() },
-            )
+        composable(Screen.TransactionAccounts.route) {
+            AccountsScreen()
         }
         composable(Screen.Settings.route) {
             SettingsScreen(
@@ -229,17 +236,20 @@ fun NavGraph(
         }
         composable(Screen.About.route) {
             AboutScreen(
-                onNavigateBack = { navController.popBackStack() }
             )
         }
         composable(Screen.PrivacyPolicy.route) {
             PrivacyPolicyScreen(
-                onNavigateBack = { navController.popBackStack() }
             )
         }
         composable(Screen.ImportExport.route) {
             ImportExportScreen(
                 onNavigateBack = { navController.popBackStack() }
+            )
+        }
+        composable(Screen.Action.route) {
+            ActionBottomSheet(
+                onDismiss = { navController.popBackStack() }
             )
         }
     }

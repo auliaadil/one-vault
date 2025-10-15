@@ -1,31 +1,28 @@
 package com.adilstudio.project.onevault.presentation.component
 
 import android.content.Intent
-import android.net.Uri
-import androidx.annotation.DimenRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.stringResource
-import com.adilstudio.project.onevault.R
-import kotlinx.coroutines.launch
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.material3.SheetValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import coil.compose.AsyncImage
+import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.ImageUtil
+import com.adilstudio.project.onevault.presentation.TopBarViewModel
+import org.koin.androidx.compose.koinViewModel
 
 /**
  * Generic Screen wrapper that provides consistent layout structure
@@ -33,52 +30,50 @@ import com.adilstudio.project.onevault.core.util.ImageUtil
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GenericScreen(
+fun BaseScreen(
     title: String,
     modifier: Modifier = Modifier,
-    navigationIcon: @Composable () -> Unit = {},
+    topBarViewModel: TopBarViewModel = koinViewModel(),
+    showNavIcon: Boolean = false,
     actions: @Composable (RowScope.() -> Unit) = {},
     floatingActionButton: @Composable () -> Unit = {},
     successMessage: String? = null,
     errorMessage: String? = null,
     onClearSuccess: () -> Unit = {},
     onClearError: () -> Unit = {},
-    @DimenRes defaultPaddingHorizontal: Int = R.dimen.spacing_large,
-    content: @Composable (PaddingValues) -> Unit
+    content: @Composable (PaddingValues) -> Unit,
 ) {
+    LaunchedEffect(Unit) {
+        topBarViewModel.updateTopBar(
+            title = title,
+            showNavigationIcon = showNavIcon,
+            actions = actions
+        )
+    }
+
     Box(modifier = modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Top App Bar
-            TopAppBar(
-                title = { Text(text = title) },
-                navigationIcon = navigationIcon,
-                actions = actions
-            )
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
 
-            // Content area
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = dimensionResource(defaultPaddingHorizontal))
-            ) {
-                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
+            // Content
+            Box(modifier = Modifier.fillMaxSize()) {
+                content(
+                    PaddingValues(
+                        horizontal = dimensionResource(R.dimen.spacing_large)
+                    )
+                )
 
-                // Content
-                Box(modifier = Modifier.fillMaxSize()) {
-                    content(PaddingValues())
-
-                    // Floating Action Button positioned at bottom right
+                // Floating Action Button positioned at bottom right
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.BottomEnd
+                ) {
                     Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.BottomEnd
+                        modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))
                     ) {
-                        Box(
-                            modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))
-                        ) {
-                            floatingActionButton()
-                        }
+                        floatingActionButton()
                     }
                 }
             }
@@ -191,21 +186,6 @@ fun EmptyState(
 }
 
 /**
- * Generic back navigation icon
- */
-@Composable
-fun BackNavigationIcon(
-    onNavigateBack: () -> Unit
-) {
-    IconButton(onClick = onNavigateBack) {
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-            contentDescription = stringResource(R.string.back)
-        )
-    }
-}
-
-/**
  * Generic bottom sheet component with customizable header, edit/delete actions, and content slot
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -306,9 +286,9 @@ fun GenericBottomSheet(
 @Composable
 fun DetailField(
     labelRes: Int,
+    modifier: Modifier = Modifier,
     value: String? = null,
     imagePath: String? = null,
-    modifier: Modifier = Modifier,
     fontWeight: FontWeight? = null,
     maxLines: Int = Int.MAX_VALUE,
     trailing: (@Composable () -> Unit)? = null
@@ -320,7 +300,9 @@ fun DetailField(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
-            modifier = modifier.fillMaxWidth().weight(1f),
+            modifier = modifier
+                .fillMaxWidth()
+                .weight(1f),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_xs))
         ) {
             Text(
@@ -341,7 +323,7 @@ fun DetailField(
                 imageToShow?.let { uri ->
                     AsyncImage(
                         model = uri,
-                        contentDescription = "Bill Image",
+                        contentDescription = "Transaction Image",
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(dimensionResource(R.dimen.height_fixed_medium))
