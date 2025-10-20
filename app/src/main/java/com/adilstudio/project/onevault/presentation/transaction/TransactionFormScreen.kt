@@ -71,6 +71,7 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import androidx.compose.material3.rememberModalBottomSheetState
+import com.adilstudio.project.onevault.presentation.MainViewModel
 import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDate
 import java.util.Calendar
@@ -84,12 +85,15 @@ fun TransactionFormScreen(
     onDelete: ((Long) -> Unit)? = null,
     onCancel: () -> Unit = {},
     categoryViewModel: TransactionCategoryViewModel = koinViewModel(),
-    accountViewModel: AccountViewModel = koinViewModel()
+    accountViewModel: AccountViewModel = koinViewModel(),
+    mainViewModel: MainViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
     val categories by categoryViewModel.categories.collectAsState()
     val accounts by accountViewModel.accounts.collectAsState()
     val isEditing = transaction != null
+    val successMessage = if (transaction == null) stringResource(R.string.transaction_saved_success) else stringResource(R.string.transaction_updated_success)
+    var showSuccess by remember { mutableStateOf(false) }
 
     // ML Kit scanning state for scanned image
     var scannedTexts by remember { mutableStateOf<List<String>>(emptyList()) }
@@ -602,6 +606,7 @@ fun TransactionFormScreen(
                             accountId = selectedAccount?.id
                         )
                         onSave(transactionToSave)
+                        showSuccess = true
                     },
                     modifier = if (isEditing) Modifier.weight(1f) else Modifier.fillMaxWidth(),
                     enabled = title.isNotBlank() && amountValue > 0
@@ -725,5 +730,13 @@ fun TransactionFormScreen(
             },
             confirmButton = {}
         )
+    }
+
+    // Show success snackbar after save/update
+    if (showSuccess) {
+        LaunchedEffect(showSuccess) {
+            mainViewModel.showSnackbar(successMessage)
+            showSuccess = false
+        }
     }
 }
