@@ -12,7 +12,12 @@ import com.adilstudio.project.onevault.domain.util.FeatureFlag
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.presentation.component.BaseScreen
 import com.adilstudio.project.onevault.presentation.splitbill.components.*
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.ui.platform.LocalContext
+import android.content.Intent
+import com.adilstudio.project.onevault.core.util.ShareImageGenerator
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Share
+import com.adilstudio.project.onevault.core.util.RupiahFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -20,6 +25,8 @@ fun SplitBillScreen(
     viewModel: SplitBillViewModel
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    var isGeneratingImage by remember { mutableStateOf(false) }
 
     // Determine steps based on OCR feature flag
     val isOcrEnabled = FeatureFlag.isOcrSplitBillEnabled()
@@ -146,16 +153,70 @@ fun SplitBillScreen(
                         }
                     } else {
                         Button(
-                            onClick = { viewModel.saveSplitBill() },
-                            enabled = !uiState.isLoading && uiState.validationErrors.isEmpty()
+                            onClick = {
+                                if (!isGeneratingImage && uiState.validationErrors.isEmpty()) {
+                                    isGeneratingImage = true
+
+                                    // Calculate total amount
+                                    val totalAmount = uiState.items.sumOf { item ->
+                                        val totalQuantity = item.assignedQuantities.values.sum()
+                                        item.price * totalQuantity
+                                    } * (1 + (viewModel.tax / 100.0) + (viewModel.serviceFee / 100.0))
+
+                                    // Generate image
+                                    val shareImageGenerator = ShareImageGenerator(context)
+                                    val imageUri = shareImageGenerator.generateCompleteSplitBillImage(
+                                        billTitle = viewModel.title,
+                                        merchant = viewModel.merchant,
+                                        date = viewModel.date,
+                                        items = uiState.items,
+                                        participants = uiState.calculatedParticipants,
+                                        taxPercent = viewModel.tax,
+                                        serviceFeePercent = viewModel.serviceFee,
+                                        totalAmount = totalAmount
+                                    )
+
+                                    if (imageUri != null) {
+                                        val formattedTotal = RupiahFormatter.formatWithRupiahPrefix(totalAmount.toLong())
+                                        val shareIntent = Intent().apply {
+                                            action = Intent.ACTION_SEND
+                                            type = "image/png"
+                                            putExtra(Intent.EXTRA_STREAM, imageUri)
+                                            putExtra(
+                                                Intent.EXTRA_TEXT,
+                                                "Split Bill: ${viewModel.title} - Total: $formattedTotal"
+                                            )
+                                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                        }
+                                        context.startActivity(
+                                            Intent.createChooser(
+                                                shareIntent,
+                                                "Share split bill"
+                                            )
+                                        )
+                                    }
+
+                                    isGeneratingImage = false
+                                }
+                            },
+                            enabled = !isGeneratingImage && uiState.validationErrors.isEmpty()
                         ) {
-                            if (uiState.isLoading) {
+                            if (isGeneratingImage) {
                                 CircularProgressIndicator(
                                     modifier = Modifier.size(16.dp),
-                                    strokeWidth = 2.dp
+                                    strokeWidth = 2.dp,
+                                    color = MaterialTheme.colorScheme.onPrimary
                                 )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Generating...")
                             } else {
-                                Text("Save Split Bill")
+                                Icon(
+                                    Icons.Default.Share,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Share Image")
                             }
                         }
                     }

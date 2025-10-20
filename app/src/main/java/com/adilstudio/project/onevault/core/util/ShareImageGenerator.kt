@@ -25,6 +25,313 @@ class ShareImageGenerator(private val context: Context) {
     private val subtextColor = "#757575".toColorInt()
     private val dividerColor = "#E0E0E0".toColorInt()
 
+    /**
+     * Generate complete split bill image with all participants' shares
+     */
+    fun generateCompleteSplitBillImage(
+        billTitle: String,
+        merchant: String,
+        date: String,
+        items: List<SplitItem>,
+        participants: List<SplitParticipant>,
+        taxPercent: Double,
+        serviceFeePercent: Double,
+        totalAmount: Double
+    ): android.net.Uri? {
+        try {
+            val width = 800
+            val height = calculateCompleteBillImageHeight(items, participants)
+
+            val bitmap = createBitmap(width, height)
+            val canvas = Canvas(bitmap)
+
+            // Fill background
+            canvas.drawColor(backgroundColor)
+
+            var yPosition = 60f
+            val margin = 40f
+            val contentWidth = width - (margin * 2)
+
+            // Header
+            yPosition = drawCompleteBillHeader(canvas, billTitle, margin, yPosition, contentWidth)
+            yPosition += 20f
+
+            // Bill info
+            yPosition = drawBillInfo(canvas, billTitle, merchant, date, margin, yPosition)
+            yPosition += 30f
+
+            // Bill summary
+            yPosition = drawBillSummary(canvas, items, taxPercent, serviceFeePercent, totalAmount, margin, yPosition, contentWidth)
+            yPosition += 30f
+
+            // All items
+            yPosition = drawAllItems(canvas, items, margin, yPosition, contentWidth)
+            yPosition += 30f
+
+            // All participants shares
+            yPosition = drawAllParticipantsShares(canvas, participants, margin, yPosition, contentWidth)
+            yPosition += 40f
+
+            // Watermark
+            drawWatermark(canvas, width, height)
+
+            // Save to file and return URI
+            return saveBitmapAndGetUri(bitmap, "split_bill_complete")
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        }
+    }
+
+    private fun calculateCompleteBillImageHeight(items: List<SplitItem>, participants: List<SplitParticipant>): Int {
+        val baseHeight = 800
+        val itemsHeight = items.size * 80
+        val participantsHeight = participants.size * 70
+        return baseHeight + itemsHeight + participantsHeight
+    }
+
+    private fun drawCompleteBillHeader(
+        canvas: Canvas,
+        billTitle: String,
+        margin: Float,
+        yPos: Float,
+        contentWidth: Float
+    ): Float {
+        var yPosition = yPos
+
+        // Title
+        val titlePaint = Paint().apply {
+            color = primaryColor
+            textSize = 32f
+            typeface = Typeface.DEFAULT_BOLD
+            isAntiAlias = true
+        }
+        canvas.drawText("Split Bill Summary", margin, yPosition, titlePaint)
+        yPosition += 50f
+
+        // Bill title
+        val namePaint = Paint().apply {
+            color = textColor
+            textSize = 28f
+            typeface = Typeface.DEFAULT_BOLD
+            isAntiAlias = true
+        }
+        canvas.drawText(billTitle, margin, yPosition, namePaint)
+        yPosition += 30f
+
+        // Divider
+        val dividerPaint = Paint().apply { color = dividerColor }
+        canvas.drawRect(margin, yPosition, margin + contentWidth, yPosition + 2f, dividerPaint)
+
+        return yPosition + 20f
+    }
+
+    private fun drawBillSummary(
+        canvas: Canvas,
+        items: List<SplitItem>,
+        taxPercent: Double,
+        serviceFeePercent: Double,
+        totalAmount: Double,
+        margin: Float,
+        yPos: Float,
+        contentWidth: Float
+    ): Float {
+        var yPosition = yPos
+
+        // Section title
+        val sectionPaint = Paint().apply {
+            color = primaryColor
+            textSize = 22f
+            typeface = Typeface.DEFAULT_BOLD
+            isAntiAlias = true
+        }
+        canvas.drawText("Bill Summary", margin, yPosition, sectionPaint)
+        yPosition += 35f
+
+        val labelPaint = Paint().apply {
+            color = textColor
+            textSize = 18f
+            isAntiAlias = true
+        }
+
+        val valuePaint = Paint().apply {
+            color = textColor
+            textSize = 18f
+            typeface = Typeface.DEFAULT_BOLD
+            isAntiAlias = true
+        }
+
+        // Calculate totals
+        val baseAmount = items.sumOf { item ->
+            val totalQuantity = item.assignedQuantities.values.sum()
+            item.price * totalQuantity
+        }
+        val taxAmount = baseAmount * (taxPercent / 100.0)
+        val serviceFeeAmount = baseAmount * (serviceFeePercent / 100.0)
+
+        // Items total
+        canvas.drawText("Subtotal:", margin, yPosition, labelPaint)
+        val subtotalText = RupiahFormatter.formatWithRupiahPrefix(baseAmount.toLong())
+        val subtotalWidth = valuePaint.measureText(subtotalText)
+        canvas.drawText(subtotalText, margin + contentWidth - subtotalWidth, yPosition, valuePaint)
+        yPosition += 30f
+
+        // Tax
+        canvas.drawText("Tax ($taxPercent%):", margin, yPosition, labelPaint)
+        val taxText = RupiahFormatter.formatWithRupiahPrefix(taxAmount.toLong())
+        val taxWidth = valuePaint.measureText(taxText)
+        canvas.drawText(taxText, margin + contentWidth - taxWidth, yPosition, valuePaint)
+        yPosition += 30f
+
+        // Service fee
+        canvas.drawText("Service Fee ($serviceFeePercent%):", margin, yPosition, labelPaint)
+        val serviceFeeText = RupiahFormatter.formatWithRupiahPrefix(serviceFeeAmount.toLong())
+        val serviceFeeWidth = valuePaint.measureText(serviceFeeText)
+        canvas.drawText(serviceFeeText, margin + contentWidth - serviceFeeWidth, yPosition, valuePaint)
+        yPosition += 40f
+
+        // Divider
+        val dividerPaint = Paint().apply { color = dividerColor }
+        canvas.drawRect(margin, yPosition, margin + contentWidth, yPosition + 2f, dividerPaint)
+        yPosition += 30f
+
+        // Total
+        val totalPaint = Paint().apply {
+            color = primaryColor
+            textSize = 22f
+            typeface = Typeface.DEFAULT_BOLD
+            isAntiAlias = true
+        }
+        canvas.drawText("Total Amount:", margin, yPosition, totalPaint)
+        val totalText = RupiahFormatter.formatWithRupiahPrefix(totalAmount.toLong())
+        val totalWidth = totalPaint.measureText(totalText)
+        canvas.drawText(totalText, margin + contentWidth - totalWidth, yPosition, totalPaint)
+
+        return yPosition + 40f
+    }
+
+    private fun drawAllItems(
+        canvas: Canvas,
+        items: List<SplitItem>,
+        margin: Float,
+        yPos: Float,
+        contentWidth: Float
+    ): Float {
+        var yPosition = yPos
+
+        // Section title
+        val sectionPaint = Paint().apply {
+            color = primaryColor
+            textSize = 22f
+            typeface = Typeface.DEFAULT_BOLD
+            isAntiAlias = true
+        }
+        canvas.drawText("Items", margin, yPosition, sectionPaint)
+        yPosition += 35f
+
+        val itemPaint = Paint().apply {
+            color = textColor
+            textSize = 18f
+            isAntiAlias = true
+        }
+
+        val pricePaint = Paint().apply {
+            color = primaryColor
+            textSize = 18f
+            typeface = Typeface.DEFAULT_BOLD
+            isAntiAlias = true
+        }
+
+        val detailPaint = Paint().apply {
+            color = subtextColor
+            textSize = 16f
+            isAntiAlias = true
+        }
+
+        items.forEach { item ->
+            val totalQuantity = item.assignedQuantities.values.sum()
+            val itemTotal = item.price * totalQuantity
+
+            // Item name
+            canvas.drawText(item.description, margin, yPosition, itemPaint)
+
+            // Price (right aligned)
+            val priceText = RupiahFormatter.formatWithRupiahPrefix(itemTotal.toLong())
+            val priceWidth = pricePaint.measureText(priceText)
+            canvas.drawText(priceText, margin + contentWidth - priceWidth, yPosition, pricePaint)
+            yPosition += 25f
+
+            // Quantity and unit price
+            val detailText = "Qty: $totalQuantity × ${RupiahFormatter.formatWithRupiahPrefix(item.price.toLong())}"
+            canvas.drawText(detailText, margin + 20f, yPosition, detailPaint)
+            yPosition += 35f
+        }
+
+        return yPosition
+    }
+
+    private fun drawAllParticipantsShares(
+        canvas: Canvas,
+        participants: List<SplitParticipant>,
+        margin: Float,
+        yPos: Float,
+        contentWidth: Float
+    ): Float {
+        var yPosition = yPos
+
+        // Section title
+        val sectionPaint = Paint().apply {
+            color = primaryColor
+            textSize = 22f
+            typeface = Typeface.DEFAULT_BOLD
+            isAntiAlias = true
+        }
+        canvas.drawText("Participant Shares", margin, yPosition, sectionPaint)
+        yPosition += 35f
+
+        val namePaint = Paint().apply {
+            color = textColor
+            textSize = 18f
+            typeface = Typeface.DEFAULT_BOLD
+            isAntiAlias = true
+        }
+
+        val amountPaint = Paint().apply {
+            color = primaryColor
+            textSize = 18f
+            typeface = Typeface.DEFAULT_BOLD
+            isAntiAlias = true
+        }
+
+        val notePaint = Paint().apply {
+            color = subtextColor
+            textSize = 16f
+            isAntiAlias = true
+        }
+
+        participants.forEach { participant ->
+            // Participant name
+            canvas.drawText(participant.name, margin, yPosition, namePaint)
+
+            // Share amount (right aligned)
+            val shareText = RupiahFormatter.formatWithRupiahPrefix(participant.shareAmount.toLong())
+            val shareWidth = amountPaint.measureText(shareText)
+            canvas.drawText(shareText, margin + contentWidth - shareWidth, yPosition, amountPaint)
+            yPosition += 25f
+
+            // Note if available
+            if (!participant.note.isNullOrBlank()) {
+                canvas.drawText("Note: ${participant.note}", margin + 20f, yPosition, notePaint)
+                yPosition += 25f
+            }
+
+            yPosition += 20f
+        }
+
+        return yPosition
+    }
+
     fun generateParticipantShareImage(
         participant: SplitParticipant,
         assignedItems: List<Pair<SplitItem, Int>>, // Pair of (item, quantity)
@@ -374,10 +681,10 @@ class ShareImageGenerator(private val context: Context) {
         canvas.drawText(watermarkText, x, y, watermarkPaint)
     }
 
-    private fun saveBitmapAndGetUri(bitmap: Bitmap): android.net.Uri? {
+    private fun saveBitmapAndGetUri(bitmap: Bitmap, filenamePrefix: String = "split_bill_share"): android.net.Uri? {
         return try {
             val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-            val filename = "split_bill_share_$timestamp.png"
+            val filename = "${filenamePrefix}_$timestamp.png"
 
             val imagesDir = File(context.cacheDir, "images")
             imagesDir.mkdirs()

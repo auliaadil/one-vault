@@ -262,47 +262,6 @@ class SplitBillViewModel(
         _uiState.value = _uiState.value.copy(currentStep = previousStep)
     }
 
-    fun saveSplitBill() {
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
-
-            try {
-                val totalAmount = splitCalculator.calculateTotalAmount(_uiState.value.items, tax, serviceFee)
-
-                val splitBill = SplitBill(
-                    title = title,
-                    merchant = merchant,
-                    date = date,
-                    tax = tax,
-                    serviceFee = serviceFee,
-                    totalAmount = totalAmount,
-                    imagePath = _uiState.value.ocrResult?.rawText // Store OCR image path if needed
-                )
-
-                val splitBillId = splitBillRepository.addSplitBill(splitBill)
-
-                splitBillRepository.addSplitItems(splitBillId, _uiState.value.items.map {
-                    it.copy(splitBillId = splitBillId)
-                })
-
-                splitBillRepository.addSplitParticipants(splitBillId, _uiState.value.calculatedParticipants.map {
-                    it.copy(splitBillId = splitBillId)
-                })
-
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    splitBill = splitBill.copy(id = splitBillId)
-                )
-
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    errorMessage = "Failed to save split bill: ${e.message}"
-                )
-            }
-        }
-    }
-
     fun exportToTransaction(participantName: String) {
         viewModelScope.launch {
             val splitBillId = _uiState.value.splitBill?.id ?: return@launch
