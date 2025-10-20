@@ -65,7 +65,6 @@ fun CredentialDetailBottomSheet(
 
     GenericBottomSheet(
         title = stringResource(R.string.credential_details),
-        onEdit = { onEdit(credential) },
         onDelete = {}, // handled by deleteDialogText and onDeleteConfirmed
         deleteDialogText = stringResource(R.string.delete_credential_message, credential.serviceName),
         onDeleteConfirmed = {

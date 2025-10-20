@@ -28,7 +28,9 @@ data class SplitBillUiState(
     val suggestedItems: List<SplitItem> = emptyList(), // OCR suggested items
     val participants: List<SplitParticipant> = emptyList(),
     val calculatedParticipants: List<SplitParticipant> = emptyList(),
-    val validationErrors: List<String> = emptyList()
+    val validationErrors: List<String> = emptyList(),
+    val isSaveSuccessful: Boolean = false,
+    val savedSplitBillId: Long? = null
 )
 
 enum class SplitBillStep {
@@ -375,6 +377,66 @@ class SplitBillFormViewModel(
         _uiState.value = _uiState.value.copy(
             currentStep = SplitBillStep.OCR_REVIEW,
             isLoading = false
+        )
+    }
+
+    /**
+     * Saves the split bill to the database
+     */
+    fun saveSplitBill() {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+
+            try {
+                // Calculate total amount
+                val totalAmount = _uiState.value.items.sumOf { item ->
+                    val totalQuantity = item.assignedQuantities.values.sum()
+                    item.price * totalQuantity
+                } * (1 + (tax / 100.0) + (serviceFee / 100.0))
+
+                // Create split bill entity
+                val splitBill = SplitBill(
+                    title = title,
+                    merchant = merchant,
+                    date = date,
+                    tax = tax,
+                    serviceFee = serviceFee,
+                    totalAmount = totalAmount,
+                    imagePath = null,
+                    createdAt = System.currentTimeMillis(),
+                    updatedAt = System.currentTimeMillis()
+                )
+
+                // Save split bill and get the ID
+                val splitBillId = splitBillRepository.addSplitBill(splitBill)
+
+                // Save items
+                splitBillRepository.addSplitItems(splitBillId, _uiState.value.items)
+
+                // Save participants with calculated amounts
+                splitBillRepository.addSplitParticipants(splitBillId, _uiState.value.calculatedParticipants)
+
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    isSaveSuccessful = true,
+                    savedSplitBillId = splitBillId
+                )
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = "Failed to save split bill: ${e.message}"
+                )
+            }
+        }
+    }
+
+    /**
+     * Reset save success state
+     */
+    fun resetSaveSuccess() {
+        _uiState.value = _uiState.value.copy(
+            isSaveSuccessful = false,
+            savedSplitBillId = null
         )
     }
 }

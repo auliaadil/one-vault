@@ -32,4 +32,10 @@ val useCaseModule = module {
     single { UpdateAccountUseCase(get()) }
     single { DeleteAccountUseCase(get()) }
     single { GetAccountsCountUseCase(get()) }
+
+    // Split Bill Use Cases
+    single { GetSplitBillsUseCase(get()) }
+    single { GetSplitBillByIdUseCase(get()) }
+    single { DeleteSplitBillUseCase(get()) }
+    single { ExportParticipantToTransactionUseCase(get()) }
 }

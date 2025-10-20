@@ -195,6 +195,10 @@ fun MainApp(
                                 showActionSheet = false
                                 navController.navigate(Screen.AddCredential.route)
                             },
+                            onAddSplitBill = {
+                                showActionSheet = false
+                                navController.navigate(Screen.AddSplitBill.route)
+                            },
                             onDismiss = { showActionSheet = false }
                         )
                     }

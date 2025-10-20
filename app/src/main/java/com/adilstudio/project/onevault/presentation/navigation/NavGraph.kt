@@ -32,6 +32,7 @@ import com.adilstudio.project.onevault.presentation.settings.SettingsScreen
 import com.adilstudio.project.onevault.presentation.home.HomeScreen
 import com.adilstudio.project.onevault.presentation.action.ActionBottomSheet
 import com.adilstudio.project.onevault.presentation.splitbill.form.SplitBillFormScreen
+import com.adilstudio.project.onevault.presentation.splitbill.list.SplitBillListScreen
 import org.koin.androidx.compose.koinViewModel
 
 sealed class Screen(val route: String) {
@@ -52,6 +53,7 @@ sealed class Screen(val route: String) {
     object Settings : Screen("settings")
     object About : Screen("about")
     object PrivacyPolicy : Screen("privacy_policy")
+    object SplitBill : Screen("split_bill")
     object AddSplitBill : Screen("add_split_bill")
 }
 
@@ -70,7 +72,7 @@ fun NavGraph(
                 onNavigateToAccounts = { navController.navigate(Screen.TransactionAccounts.route) },
                 onNavigateToCredentials = { navController.navigate(Screen.CredentialList.route) },
                 onNavigateToInsights = { /* TODO: Add Insights navigation */ },
-                onNavigateToSplitBill = { navController.navigate(Screen.AddSplitBill.route) },
+                onNavigateToSplitBill = { navController.navigate(Screen.SplitBill.route) },
                 onNavigateToBackupRestore = { /* TODO: Add Backup/Restore navigation */ }
             )
         }
@@ -255,8 +257,15 @@ fun NavGraph(
                 onDismiss = { navController.popBackStack() }
             )
         }
+        composable(Screen.SplitBill.route) {
+            SplitBillListScreen(
+                onAddSplitBill = { navController.navigate(Screen.AddSplitBill.route) }
+            )
+        }
         composable(Screen.AddSplitBill.route) {
-            SplitBillFormScreen(viewModel = koinViewModel())
+            SplitBillFormScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
         }
     }
 }

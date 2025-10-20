@@ -388,6 +388,7 @@
     <string name="expense">Expense</string>
 
     <!-- Split Bill Feature -->
+    <string name="add_split_bill">Add Split Bill</string>
     <string name="split_bill_title">Split Bill</string>
     <string name="capture_receipt_title">Capture Receipt</string>
     <string name="capture_receipt_description">Take a photo of your receipt or bill to automatically extract items and amounts</string>
@@ -421,4 +422,5 @@
     <string name="add_items_from_suggestions_above_or_manually">Add items from suggestions above or manually</string>
     <string name="tap_the_add_button_to_add_items_manually">Tap the add button to add items manually</string>
     <string name="add_item">Add Item</string>
+    <string name="done">Done</string>
 </resources>

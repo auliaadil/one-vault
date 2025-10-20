@@ -64,7 +64,7 @@ fun HomeScreen(
 //            onClick = onNavigateToInsights
 //        ),
         HomeFeature(
-            title = "Split Bill",
+            title = stringResource(R.string.split_bill_title),
             icon = Icons.Filled.Group,
             onClick = onNavigateToSplitBill
         ),
