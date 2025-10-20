@@ -262,14 +262,15 @@ class SplitBillViewModel(
         _uiState.value = _uiState.value.copy(currentStep = previousStep)
     }
 
-    fun exportToTransaction(participantName: String) {
+    fun exportToTransaction(
+        splitBill: SplitBill,
+        splitParticipant: SplitParticipant,
+    ) {
         viewModelScope.launch {
-            val splitBillId = _uiState.value.splitBill?.id ?: return@launch
-
             _uiState.value = _uiState.value.copy(isLoading = true)
 
             try {
-                val success = splitBillRepository.exportParticipantToTransaction(splitBillId, participantName)
+                val success = splitBillRepository.exportParticipantToTransaction(splitBill, splitParticipant)
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     errorMessage = if (success) null else "Failed to export to transaction"
@@ -281,6 +282,32 @@ class SplitBillViewModel(
                 )
             }
         }
+    }
+
+    /**
+     * Generates a SplitBill from the current UI state.
+     */
+    private fun generateSplitBillFromState(): SplitBill {
+        val state = _uiState.value
+        return SplitBill(
+            title = title,
+            merchant = merchant,
+            date = date,
+            tax = tax,
+            serviceFee = serviceFee,
+            totalAmount = state.items.sumOf { it.price },
+            imagePath = null,
+            items = state.items,
+            participants = state.participants
+        )
+    }
+
+    /**
+     * Call this to export the current split bill for a participant.
+     */
+    fun exportCurrentSplitBillToTransaction(participant: SplitParticipant) {
+        val splitBill = generateSplitBillFromState()
+        exportToTransaction(splitBill, participant)
     }
 
     fun clearError() {

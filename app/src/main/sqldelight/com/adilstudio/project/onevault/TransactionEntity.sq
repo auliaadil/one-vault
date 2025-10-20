@@ -1,5 +1,5 @@
 CREATE TABLE TransactionEntity (
-    id INTEGER NOT NULL PRIMARY KEY,
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
     categoryId INTEGER,
     amount REAL NOT NULL,
@@ -17,8 +17,8 @@ selectById:
 SELECT * FROM TransactionEntity WHERE id = ?;
 
 insertTransaction:
-INSERT INTO TransactionEntity(id, title, categoryId, amount, merchant, date, type, imagePath, accountId)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+INSERT INTO TransactionEntity(title, categoryId, amount, merchant, date, type, imagePath, accountId)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 
 updateTransaction:
 UPDATE TransactionEntity SET title = ?, categoryId = ?, amount = ?, merchant = ?, date = ?, type = ?, imagePath = ?, accountId = ? WHERE id = ?;

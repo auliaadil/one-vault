@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.single
 
 class TransactionCategoryRepositoryImpl(database: Database) : TransactionCategoryRepository {
 
-    private val queries = database.billCategoryEntityQueries
+    private val queries = database.transactionCategoryEntityQueries
 
     override fun getCategories(): Flow<List<TransactionCategory>> {
         return queries.selectAll()

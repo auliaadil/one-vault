@@ -206,16 +206,15 @@ class SplitBillRepositoryImpl(
         )
     }
 
-    override suspend fun exportParticipantToTransaction(splitBillId: Long, participantName: String): Boolean {
+    override suspend fun exportParticipantToTransaction(
+        splitBill: SplitBill,
+        splitParticipant: SplitParticipant,
+    ): Boolean {
         return try {
-            val splitBill = getSplitBillWithDetails(splitBillId) ?: return false
-            val participant = splitBill.participants.find { it.name == participantName } ?: return false
-
             val transaction = Transaction(
-                id = 0L, // Fix: Add missing id parameter
-                title = "${splitBill.title} - ${participantName}'s share",
+                title = "Split Bill - ${splitBill.title} - ${splitParticipant.name}'s share",
                 categoryId = null, // Let user assign category
-                amount = participant.shareAmount,
+                amount = splitParticipant.shareAmount,
                 merchant = splitBill.merchant,
                 date = splitBill.date,
                 type = TransactionType.EXPENSE,

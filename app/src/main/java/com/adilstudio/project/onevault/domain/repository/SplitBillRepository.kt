@@ -25,5 +25,8 @@ interface SplitBillRepository {
     suspend fun getSplitBillWithDetails(id: Long): SplitBill?
 
     // Export to Transaction
-    suspend fun exportParticipantToTransaction(splitBillId: Long, participantName: String): Boolean
+    suspend fun exportParticipantToTransaction(
+        splitBill: SplitBill,
+        splitParticipant: SplitParticipant,
+    ): Boolean
 }

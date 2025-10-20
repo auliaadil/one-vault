@@ -177,7 +177,7 @@ fun SummaryStep(
                 ParticipantShareCard(
                     participant = participant,
                     onExportToTransaction = {
-                        viewModel.exportToTransaction(participant.name)
+                        viewModel.exportCurrentSplitBillToTransaction(participant)
                     },
                     onClick = { selectedParticipant = participant },
                     splitBill = splitBill
@@ -198,7 +198,7 @@ fun SummaryStep(
             serviceFeePercent = viewModel.serviceFee,
             onDismiss = { selectedParticipant = null },
             onExportToTransaction = {
-                viewModel.exportToTransaction(participant.name)
+                viewModel.exportCurrentSplitBillToTransaction(participant)
                 selectedParticipant = null
             }
         )
