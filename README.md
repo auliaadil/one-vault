@@ -31,6 +31,12 @@ A secure, local-first Android application for managing your financial transactio
 - **Data Encryption**: Advanced encryption for sensitive information
 - **Privacy First**: No cloud storage or data transmission
 
+### 🤝 Split Bill
+- **Expense Splitting**: Easily split bills and expenses among multiple participants
+- **Item Assignment**: Assign items to participants and calculate individual shares
+- **Export to Transactions**: Convert split bills into transaction records for accurate tracking
+- **OCR Support**: Scan receipts and auto-suggest items for splitting
+
 ## 🏗️ Architecture
 
 OneVault follows **Clean Architecture** principles with modern Android development practices:
@@ -168,6 +174,13 @@ The project includes comprehensive testing:
 - Local data encryption
 - Secure key management
 - Privacy-focused design
+
+### Split Bill
+- Create and manage split bills
+- Assign participants and items
+- Calculate individual shares
+- Export split bills to transaction records
+- OCR scanning for receipt itemization
 
 ## 🤝 Contributing
 

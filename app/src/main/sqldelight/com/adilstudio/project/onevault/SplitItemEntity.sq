@@ -1,0 +1,29 @@
+CREATE TABLE SplitItemEntity (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    splitBillId INTEGER NOT NULL,
+    description TEXT NOT NULL,
+    price REAL NOT NULL,
+    assignedTo TEXT NOT NULL, -- JSON array of participant names
+    FOREIGN KEY (splitBillId) REFERENCES SplitBillEntity(id) ON DELETE CASCADE
+);
+
+selectAllBySplitBillId:
+SELECT * FROM SplitItemEntity WHERE splitBillId = ? ORDER BY id;
+
+selectById:
+SELECT * FROM SplitItemEntity WHERE id = ?;
+
+insertSplitItem:
+INSERT INTO SplitItemEntity(splitBillId, description, price, assignedTo)
+VALUES (?, ?, ?, ?);
+
+updateSplitItem:
+UPDATE SplitItemEntity
+SET description = ?, price = ?, assignedTo = ?
+WHERE id = ?;
+
+deleteSplitItem:
+DELETE FROM SplitItemEntity WHERE id = ?;
+
+deleteBySplitBillId:
+DELETE FROM SplitItemEntity WHERE splitBillId = ?;

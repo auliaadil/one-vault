@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Transaction(
-    val id: Long,
+    val id: Long = 0L,
     val title: String, // Activity, e.g. "Dine In", "Salary"
     val categoryId: Long? = null, // Reference to TransactionCategory
     val amount: Double, // Positive number

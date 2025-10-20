@@ -229,16 +229,6 @@ fun GenericBottomSheet(
                     textAlign = TextAlign.Start
                 )
                 Row {
-                    if (onEdit != null) {
-                        IconButton(onClick = {
-                            onEdit()
-                        }) {
-                            Icon(
-                                Icons.Default.Edit,
-                                contentDescription = stringResource(R.string.edit)
-                            )
-                        }
-                    }
                     if (onDelete != null) {
                         IconButton(onClick = {
                             if (deleteDialogText != null) {

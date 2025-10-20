@@ -1,0 +1,32 @@
+CREATE TABLE SplitParticipantEntity (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    splitBillId INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    shareAmount REAL NOT NULL DEFAULT 0.0,
+    note TEXT,
+    FOREIGN KEY (splitBillId) REFERENCES SplitBillEntity(id) ON DELETE CASCADE
+);
+
+selectAllBySplitBillId:
+SELECT * FROM SplitParticipantEntity WHERE splitBillId = ? ORDER BY name;
+
+selectById:
+SELECT * FROM SplitParticipantEntity WHERE id = ?;
+
+selectByNameAndSplitBillId:
+SELECT * FROM SplitParticipantEntity WHERE name = ? AND splitBillId = ?;
+
+insertSplitParticipant:
+INSERT INTO SplitParticipantEntity(splitBillId, name, shareAmount, note)
+VALUES (?, ?, ?, ?);
+
+updateSplitParticipant:
+UPDATE SplitParticipantEntity
+SET name = ?, shareAmount = ?, note = ?
+WHERE id = ?;
+
+deleteSplitParticipant:
+DELETE FROM SplitParticipantEntity WHERE id = ?;
+
+deleteBySplitBillId:
+DELETE FROM SplitParticipantEntity WHERE splitBillId = ?;

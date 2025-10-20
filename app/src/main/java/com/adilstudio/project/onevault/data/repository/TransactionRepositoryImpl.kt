@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.single
 
 class TransactionRepositoryImpl(private val database: Database) : TransactionRepository {
 
-    private val transactionQueries = database.billEntityQueries
+    private val transactionQueries = database.transactionEntityQueries
     private val accountQueries = database.accountEntityQueries
 
     override fun getTransactions(): Flow<List<Transaction>> {
@@ -62,7 +62,6 @@ class TransactionRepositoryImpl(private val database: Database) : TransactionRep
     override suspend fun addTransaction(transaction: Transaction) {
         // Add the transaction using direct query
         transactionQueries.insertTransaction(
-            id = transaction.id,
             title = transaction.title,
             categoryId = transaction.categoryId,
             amount = transaction.amount,

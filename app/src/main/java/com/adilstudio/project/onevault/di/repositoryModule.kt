@@ -6,6 +6,7 @@ import com.adilstudio.project.onevault.data.repository.TransactionRepositoryImpl
 import com.adilstudio.project.onevault.data.repository.CredentialRepositoryImpl
 import com.adilstudio.project.onevault.data.repository.SettingsRepositoryImpl
 import com.adilstudio.project.onevault.data.repository.VaultFileRepositoryImpl
+import com.adilstudio.project.onevault.data.repository.SplitBillRepositoryImpl
 import com.adilstudio.project.onevault.data.local.PreferenceManager
 import com.adilstudio.project.onevault.core.security.CryptoService
 import com.adilstudio.project.onevault.core.security.CryptoProvider
@@ -15,6 +16,9 @@ import com.adilstudio.project.onevault.domain.repository.TransactionRepository
 import com.adilstudio.project.onevault.domain.repository.CredentialRepository
 import com.adilstudio.project.onevault.domain.repository.SettingsRepository
 import com.adilstudio.project.onevault.domain.repository.VaultFileRepository
+import com.adilstudio.project.onevault.domain.repository.SplitBillRepository
+import com.adilstudio.project.onevault.domain.manager.SplitCalculator
+import com.adilstudio.project.onevault.domain.manager.OcrManager
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -28,4 +32,9 @@ val repositoryModule = module {
     single<TransactionCategoryRepository> { TransactionCategoryRepositoryImpl(get()) }
     single<SettingsRepository> { SettingsRepositoryImpl(get()) }
     single<AccountRepository> { AccountRepositoryImpl(get()) }
+
+    // Split Bill
+    single<SplitBillRepository> { SplitBillRepositoryImpl(get(), get()) }
+    single { SplitCalculator() }
+    single { OcrManager(androidContext()) }
 }

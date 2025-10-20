@@ -32,7 +32,10 @@ fun HomeScreen(
     onNavigateToTransactions: () -> Unit = {},
     onNavigateToCategories: () -> Unit = {},
     onNavigateToAccounts: () -> Unit = {},
-    onNavigateToCredentials: () -> Unit = {}
+    onNavigateToCredentials: () -> Unit = {},
+    onNavigateToInsights: () -> Unit = {},
+    onNavigateToSplitBill: () -> Unit = {},
+    onNavigateToBackupRestore: () -> Unit = {}
 ) {
     val features = listOf(
         HomeFeature(
@@ -54,7 +57,22 @@ fun HomeScreen(
             title = stringResource(R.string.credentials),
             icon = Icons.Filled.Lock,
             onClick = onNavigateToCredentials
-        )
+        ),
+//        HomeFeature(
+//            title = "Insights",
+//            icon = Icons.Filled.BarChart,
+//            onClick = onNavigateToInsights
+//        ),
+        HomeFeature(
+            title = "Split Bill",
+            icon = Icons.Filled.Group,
+            onClick = onNavigateToSplitBill
+        ),
+//        HomeFeature(
+//            title = "Backup Restore",
+//            icon = Icons.Filled.Backup,
+//            onClick = onNavigateToBackupRestore
+//        )
     )
 
     BaseScreen(
@@ -65,6 +83,9 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+            // SummaryCard placeholder for current month's total
+//            SummaryCard()
+            Spacer(modifier = Modifier.height(16.dp))
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -78,6 +99,31 @@ fun HomeScreen(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun SummaryCard() {
+    // TODO: Bind to StatisticsViewModel for current month's total
+    Card(
+        modifier = Modifier
+            .fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+        ) {
+            Text(
+                text = "Current Month Total",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = "Rp 0", // Placeholder, bind to ViewModel
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }
