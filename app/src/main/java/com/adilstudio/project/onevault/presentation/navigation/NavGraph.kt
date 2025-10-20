@@ -252,11 +252,6 @@ fun NavGraph(
                 onNavigateBack = { navController.popBackStack() }
             )
         }
-        composable(Screen.Action.route) {
-            ActionBottomSheet(
-                onDismiss = { navController.popBackStack() }
-            )
-        }
         composable(Screen.SplitBill.route) {
             SplitBillListScreen(
                 onAddSplitBill = { navController.navigate(Screen.AddSplitBill.route) }

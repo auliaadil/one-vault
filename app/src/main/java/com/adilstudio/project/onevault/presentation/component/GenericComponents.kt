@@ -20,7 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import coil.compose.AsyncImage
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.ImageUtil
-import com.adilstudio.project.onevault.presentation.TopBarViewModel
+import com.adilstudio.project.onevault.presentation.MainViewModel
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -32,7 +32,7 @@ import org.koin.androidx.compose.koinViewModel
 fun BaseScreen(
     title: String,
     modifier: Modifier = Modifier,
-    topBarViewModel: TopBarViewModel = koinViewModel(),
+    mainViewModel: MainViewModel = koinViewModel(),
     showNavIcon: Boolean = false,
     actions: @Composable (RowScope.() -> Unit) = {},
     floatingActionButton: @Composable () -> Unit = {},
@@ -43,7 +43,7 @@ fun BaseScreen(
     content: @Composable (PaddingValues) -> Unit,
 ) {
     LaunchedEffect(Unit) {
-        topBarViewModel.updateTopBar(
+        mainViewModel.updateTopBar(
             title = title,
             showNavigationIcon = showNavIcon,
             actions = actions

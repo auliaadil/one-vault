@@ -25,10 +25,8 @@ import com.adilstudio.project.onevault.domain.model.SplitParticipant
 import androidx.compose.ui.platform.LocalContext
 import com.adilstudio.project.onevault.presentation.splitbill.form.SplitBillFormViewModel
 import androidx.compose.runtime.collectAsState
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
-import kotlinx.coroutines.launch
+import com.adilstudio.project.onevault.presentation.MainViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,13 +39,12 @@ fun SummaryStep(
 ) {
     var selectedParticipant by remember { mutableStateOf<SplitParticipant?>(null) }
     val uiState by viewModel.uiState.collectAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
+    val topBarViewModel: MainViewModel = koinViewModel()
 
-    // Show success toast when exportSuccess is true
+    // Show success message via TopBarViewModel
     if (uiState.exportSuccess == true) {
         LaunchedEffect(uiState.exportSuccess) {
-            snackbarHostState.showSnackbar("Exported to transaction successfully!")
+            topBarViewModel.showSnackbar(stringResource(R.string.exported_to_transaction_success_message))
             viewModel.clearExportSuccess()
         }
     }
@@ -221,8 +218,6 @@ fun SummaryStep(
                 }
             )
         }
-
-        SnackbarHost(hostState = snackbarHostState, modifier = Modifier.align(Alignment.BottomCenter))
     }
 }
 

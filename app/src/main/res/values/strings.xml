@@ -423,4 +423,5 @@
     <string name="tap_the_add_button_to_add_items_manually">Tap the add button to add items manually</string>
     <string name="add_item">Add Item</string>
     <string name="done">Done</string>
+    <string name="exported_to_transaction_success_message">Exported to transaction successfully!</string>
 </resources>
