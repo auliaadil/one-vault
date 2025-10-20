@@ -11,7 +11,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.adilstudio.project.onevault.domain.util.FeatureFlag
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.presentation.component.BaseScreen
-import com.adilstudio.project.onevault.presentation.splitbill.components.*
+import com.adilstudio.project.onevault.presentation.splitbill.form.components.*
 import androidx.compose.ui.platform.LocalContext
 import android.content.Intent
 import com.adilstudio.project.onevault.core.util.ShareImageGenerator
@@ -19,12 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.ui.res.stringResource
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
-import com.adilstudio.project.onevault.presentation.splitbill.form.components.ImageCaptureStep
-import com.adilstudio.project.onevault.presentation.splitbill.form.components.ItemAssignmentStep
-import com.adilstudio.project.onevault.presentation.splitbill.form.components.OcrProcessingStep
-import com.adilstudio.project.onevault.presentation.splitbill.form.components.ParticipantInputStep
-import com.adilstudio.project.onevault.presentation.splitbill.form.components.SetupSplitBillStep
-import com.adilstudio.project.onevault.presentation.splitbill.form.components.SummaryStep
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -186,8 +180,8 @@ fun SplitBillFormScreen(
                                     if (imageUri != null) {
                                         val formattedTotal = RupiahFormatter.formatWithRupiahPrefix(totalAmount.toLong())
                                         val shareIntent = Intent().apply {
-                                            Intent.setAction = Intent.ACTION_SEND
-                                            Intent.setType = "image/png"
+                                            action = Intent.ACTION_SEND
+                                            type = "image/png"
                                             putExtra(Intent.EXTRA_STREAM, imageUri)
                                             putExtra(
                                                 Intent.EXTRA_TEXT,

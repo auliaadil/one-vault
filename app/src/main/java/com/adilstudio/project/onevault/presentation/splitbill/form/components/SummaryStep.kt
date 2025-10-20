@@ -556,8 +556,8 @@ fun ParticipantDetailBottomSheet(
 
                                 if (imageUri != null) {
                                     val shareIntent = Intent().apply {
-                                        Intent.setAction = Intent.ACTION_SEND
-                                        Intent.setType = "image/png"
+                                        action = Intent.ACTION_SEND
+                                        type = "image/png"
                                         putExtra(Intent.EXTRA_STREAM, imageUri)
                                         putExtra(
                                             Intent.EXTRA_TEXT,
