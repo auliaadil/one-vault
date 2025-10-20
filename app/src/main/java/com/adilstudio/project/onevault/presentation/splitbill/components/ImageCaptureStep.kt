@@ -11,10 +11,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
+import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.util.FeatureFlag
 import com.adilstudio.project.onevault.presentation.splitbill.SplitBillViewModel
 import java.io.File
@@ -66,7 +69,7 @@ fun ImageCaptureStep(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(vertical = 16.dp),
+            .padding(vertical = dimensionResource(R.dimen.spacing_large)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -75,29 +78,29 @@ fun ImageCaptureStep(
             Icon(
                 Icons.Default.CameraAlt,
                 contentDescription = null,
-                modifier = Modifier.size(120.dp),
+                modifier = Modifier.size(dimensionResource(R.dimen.icon_size_xxl)),
                 tint = MaterialTheme.colorScheme.primary
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_xxxl)))
 
             Text(
-                text = "Capture Receipt",
+                text = stringResource(R.string.capture_receipt_title),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_large)))
 
             Text(
-                text = "Take a photo of your receipt or bill to automatically extract items and amounts",
+                text = stringResource(R.string.capture_receipt_description),
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_xl)))
 
             Button(
                 onClick = launchCamera,
@@ -110,7 +113,7 @@ fun ImageCaptureStep(
                 Text("Take Photo")
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_medium)))
 
             OutlinedButton(
                 onClick = {
@@ -125,7 +128,7 @@ fun ImageCaptureStep(
                 Text("Choose from Gallery")
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_xxxl)))
 
             TextButton(
                 onClick = { viewModel.skipImageCapture() }
@@ -137,11 +140,11 @@ fun ImageCaptureStep(
             Icon(
                 Icons.Default.Receipt,
                 contentDescription = null,
-                modifier = Modifier.size(120.dp),
+                modifier = Modifier.size(dimensionResource(R.dimen.icon_size_xxl)),
                 tint = MaterialTheme.colorScheme.primary
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_xxxl)))
 
             Text(
                 text = "Create Split Bill",
@@ -150,7 +153,7 @@ fun ImageCaptureStep(
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_large)))
 
             Text(
                 text = "Enter your bill details manually to split costs among participants",
@@ -159,7 +162,7 @@ fun ImageCaptureStep(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_xl)))
 
             Button(
                 onClick = { viewModel.skipImageCapture() },

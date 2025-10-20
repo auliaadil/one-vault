@@ -17,6 +17,7 @@ import android.content.Intent
 import com.adilstudio.project.onevault.core.util.ShareImageGenerator
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.ui.res.stringResource
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,7 +54,7 @@ fun SplitBillScreen(
     }
 
     BaseScreen(
-        title = "Split Bill",
+        title = stringResource(R.string.split_bill_title),
         showNavIcon = true,
     ) { paddingValues ->
         Column(
@@ -69,7 +70,7 @@ fun SplitBillScreen(
                 trackColor = MaterialTheme.colorScheme.secondary,
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_large)))
 
             // Step content with animation - Use weight to take available space
             Box(
@@ -81,7 +82,7 @@ fun SplitBillScreen(
                         slideInHorizontally { width -> width } + fadeIn() togetherWith
                                 slideOutHorizontally { width -> -width } + fadeOut()
                     },
-                    label = "step_transition",
+                    label = stringResource(R.string.split_bill_title),
                     modifier = Modifier.fillMaxSize()
                 ) { step ->
                     when (step) {

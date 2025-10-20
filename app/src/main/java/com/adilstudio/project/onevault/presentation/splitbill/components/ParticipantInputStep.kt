@@ -9,8 +9,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.SplitParticipant
 import com.adilstudio.project.onevault.presentation.splitbill.SplitBillViewModel
 
@@ -24,12 +27,12 @@ fun ParticipantInputStep(
     var newParticipantName by remember { mutableStateOf("") }
 
     LazyColumn(
-        modifier = modifier.padding(vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = modifier.padding(vertical = dimensionResource(R.dimen.spacing_large)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_large))
     ) {
         item {
             Text(
-                text = "Add Participants",
+                text = stringResource(R.string.add_participants_title),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
@@ -37,25 +40,24 @@ fun ParticipantInputStep(
 
         item {
             Card {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.padding(dimensionResource(R.dimen.spacing_large))) {
                     OutlinedTextField(
                         value = newParticipantName,
                         onValueChange = { newParticipantName = it },
-                        label = { Text("Participant Name") },
+                        label = { Text(stringResource(R.string.participant_placeholder)) },
                         modifier = Modifier.fillMaxWidth(),
-                        trailingIcon = {
-                            IconButton(
-                                onClick = {
-                                    if (newParticipantName.isNotBlank()) {
-                                        viewModel.addParticipant(newParticipantName)
-                                        newParticipantName = ""
-                                    }
-                                }
-                            ) {
-                                Icon(Icons.Default.Add, contentDescription = "Add Participant")
-                            }
-                        }
+                        singleLine = true
                     )
+                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
+                    Button(
+                        onClick = {
+                            viewModel.addParticipant(newParticipantName)
+                            newParticipantName = ""
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(stringResource(R.string.add_button))
+                    }
                 }
             }
         }

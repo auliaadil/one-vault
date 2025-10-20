@@ -11,8 +11,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.DateUtil
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.core.util.ShareImageGenerator
@@ -36,12 +39,12 @@ fun SummaryStep(
     val uiState by viewModel.uiState.collectAsState()
 
     LazyColumn(
-        modifier = modifier.padding(vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = modifier.padding(vertical = dimensionResource(R.dimen.spacing_large)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_large))
     ) {
         item {
             Text(
-                text = "Split Bill Summary",
+                text = stringResource(R.string.summary_title),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )

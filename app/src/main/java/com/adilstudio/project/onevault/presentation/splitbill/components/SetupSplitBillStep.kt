@@ -11,10 +11,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.SplitItem
 import com.adilstudio.project.onevault.domain.util.FeatureFlag
 import com.adilstudio.project.onevault.presentation.splitbill.SplitBillViewModel
@@ -49,13 +52,13 @@ fun SetupSplitBillStep(
     }
 
     LazyColumn(
+        modifier = modifier.padding(vertical = dimensionResource(R.dimen.spacing_large)),
         state = listState,
-        modifier = modifier.padding(vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_large))
     ) {
         item {
             Text(
-                text = if (FeatureFlag.isOcrSplitBillEnabled()) "Review and Setup" else "Setup Split Bill",
+                text = stringResource(R.string.split_bill_title),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
@@ -65,7 +68,7 @@ fun SetupSplitBillStep(
             Card {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "Basic Information",
+                        text = stringResource(R.string.basic_information),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -75,8 +78,8 @@ fun SetupSplitBillStep(
                     OutlinedTextField(
                         value = viewModel.title,
                         onValueChange = { viewModel.updateTitle(it) },
-                        label = { Text("Title") },
-                        placeholder = { Text("Enter bill title") },
+                        label = { Text(stringResource(R.string.title)) },
+                        placeholder = { Text(stringResource(R.string.enter_bill_title)) },
                         modifier = Modifier.fillMaxWidth()
                     )
 
@@ -85,8 +88,8 @@ fun SetupSplitBillStep(
                     OutlinedTextField(
                         value = viewModel.merchant,
                         onValueChange = { viewModel.updateMerchant(it) },
-                        label = { Text("Merchant") },
-                        placeholder = { Text("Enter merchant name") },
+                        label = { Text(stringResource(R.string.merchant)) },
+                        placeholder = { Text(stringResource(R.string.enter_merchant_name)) },
                         modifier = Modifier.fillMaxWidth()
                     )
 
@@ -98,11 +101,11 @@ fun SetupSplitBillStep(
                     OutlinedTextField(
                         value = displayDate,
                         onValueChange = { },
-                        label = { Text("Date") },
+                        label = { Text(stringResource(R.string.date)) },
                         readOnly = true,
                         trailingIcon = {
                             IconButton(onClick = { showDatePicker = true }) {
-                                Icon(Icons.Default.DateRange, contentDescription = "Select Date")
+                                Icon(Icons.Default.DateRange, contentDescription = stringResource(R.string.select_date))
                             }
                         },
                         modifier = Modifier.fillMaxWidth()
@@ -121,7 +124,7 @@ fun SetupSplitBillStep(
                                 val value = it.replace("%", "").toDoubleOrNull() ?: 0.0
                                 viewModel.updateTax(value)
                             },
-                            label = { Text("Tax") },
+                            label = { Text(stringResource(R.string.tax)) },
                             suffix = { Text("%") },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             modifier = Modifier.weight(1f)
@@ -134,7 +137,7 @@ fun SetupSplitBillStep(
                                 val value = it.replace("%", "").toDoubleOrNull() ?: 0.0
                                 viewModel.updateServiceFee(value)
                             },
-                            label = { Text("Service Fee") },
+                            label = { Text(stringResource(R.string.service_fee)) },
                             suffix = { Text("%") },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             modifier = Modifier.weight(1f)
@@ -148,12 +151,12 @@ fun SetupSplitBillStep(
         if (FeatureFlag.isOcrSplitBillEnabled() && uiState.suggestedItems.isNotEmpty()) {
             item {
                 Text(
-                    text = "Suggested Items from Receipt",
+                    text = stringResource(R.string.suggested_items_from_receipt),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Tap to add items to your split bill",
+                    text = stringResource(R.string.tap_to_add_items_to_your_split_bill),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -175,7 +178,7 @@ fun SetupSplitBillStep(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Items in Split Bill",
+                    text = stringResource(R.string.items_in_split_bill),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -200,15 +203,15 @@ fun SetupSplitBillStep(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "No items added yet",
+                                text = stringResource(R.string.no_items_added_yet),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
                                 text = if (FeatureFlag.isOcrSplitBillEnabled()) {
-                                    "Add items from suggestions above or manually"
+                                    stringResource(R.string.add_items_from_suggestions_above_or_manually)
                                 } else {
-                                    "Tap the add button to add items manually"
+                                    stringResource(R.string.tap_the_add_button_to_add_items_manually)
                                 },
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -239,7 +242,7 @@ fun SetupSplitBillStep(
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Add Item")
+                Text(stringResource(R.string.add_item))
             }
         }
     }

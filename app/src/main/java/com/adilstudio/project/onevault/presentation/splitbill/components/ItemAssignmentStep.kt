@@ -10,10 +10,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.SplitItem
 import com.adilstudio.project.onevault.domain.model.SplitParticipant
@@ -28,17 +31,17 @@ fun ItemAssignmentStep(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LazyColumn(
-        modifier = modifier.padding(vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = modifier.padding(vertical = dimensionResource(R.dimen.spacing_large)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_large))
     ) {
         item {
             Text(
-                text = "Assign Items to Participants",
+                text = stringResource(R.string.assign_items_title),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "Set quantity for each participant per item",
+                text = stringResource(R.string.assign_items_description),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

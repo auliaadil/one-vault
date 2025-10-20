@@ -8,10 +8,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import com.adilstudio.project.onevault.R
 
 @Composable
 fun OcrProcessingStep(
@@ -19,11 +22,11 @@ fun OcrProcessingStep(
 ) {
     // Animated processing messages
     val processingMessages = listOf(
-        "Analyzing receipt image...",
-        "Extracting text content...",
-        "Identifying line items...",
-        "Detecting merchant and totals...",
-        "Finalizing results..."
+        stringResource(R.string.ocr_processing_message_1),
+        stringResource(R.string.ocr_processing_message_2),
+        stringResource(R.string.ocr_processing_message_3),
+        stringResource(R.string.ocr_processing_message_4),
+        stringResource(R.string.ocr_processing_message_5)
     )
 
     var currentMessageIndex by remember { mutableStateOf(0) }
@@ -39,7 +42,7 @@ fun OcrProcessingStep(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(vertical = dimensionResource(R.dimen.spacing_large)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
