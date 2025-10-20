@@ -12,6 +12,7 @@ import com.adilstudio.project.onevault.domain.util.FeatureFlag
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.presentation.component.BaseScreen
 import com.adilstudio.project.onevault.presentation.splitbill.components.*
+import androidx.compose.foundation.layout.navigationBarsPadding
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -117,9 +118,9 @@ fun SplitBillScreen(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = dimensionResource(R.dimen.spacing_small)),
+                    .padding(vertical = dimensionResource(R.dimen.spacing_xs))
+                    .imePadding(),
                 shape = MaterialTheme.shapes.medium,
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
             ) {
                 Row(
                     modifier = Modifier

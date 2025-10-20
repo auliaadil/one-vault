@@ -208,7 +208,7 @@ fun SetupSplitBillStep(
                                 text = if (FeatureFlag.isOcrSplitBillEnabled()) {
                                     "Add items from suggestions above or manually"
                                 } else {
-                                    "Tap the + button to add items manually"
+                                    "Tap the add button to add items manually"
                                 },
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
