@@ -1,4 +1,4 @@
-package com.adilstudio.project.onevault.presentation.splitbill.components
+package com.adilstudio.project.onevault.presentation.splitbill.form.components
 
 import android.content.Intent
 import androidx.compose.foundation.clickable
@@ -23,13 +23,13 @@ import com.adilstudio.project.onevault.domain.model.SplitBill
 import com.adilstudio.project.onevault.domain.model.SplitItem
 import com.adilstudio.project.onevault.domain.model.SplitParticipant
 import androidx.compose.ui.platform.LocalContext
-import com.adilstudio.project.onevault.presentation.splitbill.SplitBillViewModel
+import com.adilstudio.project.onevault.presentation.splitbill.form.SplitBillFormViewModel
 import androidx.compose.runtime.collectAsState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SummaryStep(
-    viewModel: SplitBillViewModel,
+    viewModel: SplitBillFormViewModel,
     calculatedParticipants: List<SplitParticipant>,
     splitBill: SplitBill?,
     validationErrors: List<String>,
@@ -556,8 +556,8 @@ fun ParticipantDetailBottomSheet(
 
                                 if (imageUri != null) {
                                     val shareIntent = Intent().apply {
-                                        action = Intent.ACTION_SEND
-                                        type = "image/png"
+                                        Intent.setAction = Intent.ACTION_SEND
+                                        Intent.setType = "image/png"
                                         putExtra(Intent.EXTRA_STREAM, imageUri)
                                         putExtra(
                                             Intent.EXTRA_TEXT,

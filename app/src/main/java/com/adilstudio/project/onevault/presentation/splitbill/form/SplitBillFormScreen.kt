@@ -1,4 +1,4 @@
-package com.adilstudio.project.onevault.presentation.splitbill
+package com.adilstudio.project.onevault.presentation.splitbill.form
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
@@ -19,11 +19,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.ui.res.stringResource
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
+import com.adilstudio.project.onevault.presentation.splitbill.form.components.ImageCaptureStep
+import com.adilstudio.project.onevault.presentation.splitbill.form.components.ItemAssignmentStep
+import com.adilstudio.project.onevault.presentation.splitbill.form.components.OcrProcessingStep
+import com.adilstudio.project.onevault.presentation.splitbill.form.components.ParticipantInputStep
+import com.adilstudio.project.onevault.presentation.splitbill.form.components.SetupSplitBillStep
+import com.adilstudio.project.onevault.presentation.splitbill.form.components.SummaryStep
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SplitBillScreen(
-    viewModel: SplitBillViewModel
+fun SplitBillFormScreen(
+    viewModel: SplitBillFormViewModel
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -180,8 +186,8 @@ fun SplitBillScreen(
                                     if (imageUri != null) {
                                         val formattedTotal = RupiahFormatter.formatWithRupiahPrefix(totalAmount.toLong())
                                         val shareIntent = Intent().apply {
-                                            action = Intent.ACTION_SEND
-                                            type = "image/png"
+                                            Intent.setAction = Intent.ACTION_SEND
+                                            Intent.setType = "image/png"
                                             putExtra(Intent.EXTRA_STREAM, imageUri)
                                             putExtra(
                                                 Intent.EXTRA_TEXT,

@@ -1,6 +1,7 @@
-package com.adilstudio.project.onevault.presentation.splitbill
+package com.adilstudio.project.onevault.presentation.splitbill.form
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -39,7 +40,7 @@ enum class SplitBillStep {
     SUMMARY
 }
 
-class SplitBillViewModel(
+class SplitBillFormViewModel(
     private val splitBillRepository: SplitBillRepository,
     private val splitCalculator: SplitCalculator,
     private val ocrManager: OcrManager
@@ -52,11 +53,11 @@ class SplitBillViewModel(
         private set
     var merchant by mutableStateOf("")
         private set
-    var date by mutableStateOf(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date()))
+    var date: String by mutableStateOf(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date()))
         private set
-    var tax by mutableStateOf(0.0)
+    var tax by mutableDoubleStateOf(0.0)
         private set
-    var serviceFee by mutableStateOf(0.0)
+    var serviceFee by mutableDoubleStateOf(0.0)
         private set
 
     fun processOcrResult(ocrResult: OcrResult) {

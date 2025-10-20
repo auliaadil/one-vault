@@ -1,4 +1,4 @@
-package com.adilstudio.project.onevault.presentation.splitbill.components
+package com.adilstudio.project.onevault.presentation.splitbill.form.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,12 +20,12 @@ import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.SplitItem
 import com.adilstudio.project.onevault.domain.model.SplitParticipant
-import com.adilstudio.project.onevault.presentation.splitbill.SplitBillViewModel
+import com.adilstudio.project.onevault.presentation.splitbill.form.SplitBillFormViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ItemAssignmentStep(
-    viewModel: SplitBillViewModel,
+    viewModel: SplitBillFormViewModel,
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
