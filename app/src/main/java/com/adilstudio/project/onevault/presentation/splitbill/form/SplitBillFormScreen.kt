@@ -1,24 +1,50 @@
 package com.adilstudio.project.onevault.presentation.splitbill.form
 
-import androidx.compose.animation.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.adilstudio.project.onevault.domain.util.FeatureFlag
 import com.adilstudio.project.onevault.R
+import com.adilstudio.project.onevault.domain.util.FeatureFlag
 import com.adilstudio.project.onevault.presentation.component.BaseScreen
-import com.adilstudio.project.onevault.presentation.splitbill.form.components.*
-import androidx.compose.ui.platform.LocalContext
-import android.content.Intent
-import com.adilstudio.project.onevault.core.util.ShareImageGenerator
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.ui.res.stringResource
-import com.adilstudio.project.onevault.core.util.RupiahFormatter
+import com.adilstudio.project.onevault.presentation.splitbill.form.components.ImageCaptureStep
+import com.adilstudio.project.onevault.presentation.splitbill.form.components.ItemAssignmentStep
+import com.adilstudio.project.onevault.presentation.splitbill.form.components.OcrProcessingStep
+import com.adilstudio.project.onevault.presentation.splitbill.form.components.ParticipantInputStep
+import com.adilstudio.project.onevault.presentation.splitbill.form.components.SetupSplitBillStep
+import com.adilstudio.project.onevault.presentation.splitbill.form.components.SplitBillSuccessBottomSheet
+import com.adilstudio.project.onevault.presentation.splitbill.form.components.SummaryStep
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,7 +54,6 @@ fun SplitBillFormScreen(
     onNavigateBack: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
 
     // Determine steps based on OCR feature flag
     val isOcrEnabled = FeatureFlag.isOcrSplitBillEnabled()

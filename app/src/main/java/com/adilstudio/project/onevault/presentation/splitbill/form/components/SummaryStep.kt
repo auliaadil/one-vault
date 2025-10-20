@@ -39,12 +39,13 @@ fun SummaryStep(
 ) {
     var selectedParticipant by remember { mutableStateOf<SplitParticipant?>(null) }
     val uiState by viewModel.uiState.collectAsState()
-    val topBarViewModel: MainViewModel = koinViewModel()
+    val mainViewModel: MainViewModel = koinViewModel()
+    val successMessage = stringResource(R.string.exported_to_transaction_success_message)
 
     // Show success message via TopBarViewModel
     if (uiState.exportSuccess == true) {
         LaunchedEffect(uiState.exportSuccess) {
-            topBarViewModel.showSnackbar(stringResource(R.string.exported_to_transaction_success_message))
+            mainViewModel.showSnackbar(successMessage)
             viewModel.clearExportSuccess()
         }
     }
