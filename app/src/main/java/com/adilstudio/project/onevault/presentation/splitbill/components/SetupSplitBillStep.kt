@@ -3,6 +3,7 @@ package com.adilstudio.project.onevault.presentation.splitbill.components
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -31,8 +32,24 @@ fun SetupSplitBillStep(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var showDatePicker by remember { mutableStateOf(false) }
+    val listState = rememberLazyListState()
+
+    // Auto-scroll when items are added
+    LaunchedEffect(uiState.items.size) {
+        if (uiState.items.isNotEmpty()) {
+            // Calculate the index to scroll to (items section + newly added item)
+            val baseItemsCount = 3 // Basic info, suggested items header (if any), items header
+            val suggestedItemsCount = if (FeatureFlag.isOcrSplitBillEnabled() && uiState.suggestedItems.isNotEmpty()) {
+                1 + uiState.suggestedItems.size // header + suggested items
+            } else 0
+            val targetIndex = baseItemsCount + suggestedItemsCount + uiState.items.size
+
+            listState.animateScrollToItem(targetIndex)
+        }
+    }
 
     LazyColumn(
+        state = listState,
         modifier = modifier.padding(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -162,10 +179,6 @@ fun SetupSplitBillStep(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
-
-                IconButton(onClick = { viewModel.addItem() }) {
-                    Icon(Icons.Default.Add, contentDescription = "Add Item")
-                }
             }
         }
 
@@ -212,6 +225,21 @@ fun SetupSplitBillStep(
                     onPriceChange = { viewModel.updateItemPrice(item.id, it) },
                     onRemove = { viewModel.removeItem(item.id) },
                 )
+            }
+        }
+
+        item {
+            OutlinedButton(
+                onClick = { viewModel.addItem() },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Add Item")
             }
         }
     }

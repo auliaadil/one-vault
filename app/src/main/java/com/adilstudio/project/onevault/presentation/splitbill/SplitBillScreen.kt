@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.adilstudio.project.onevault.domain.util.FeatureFlag
+import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.presentation.component.BaseScreen
 import com.adilstudio.project.onevault.presentation.splitbill.components.*
 
@@ -79,22 +81,27 @@ fun SplitBillScreen(
                             viewModel = viewModel,
                             modifier = Modifier.fillMaxSize()
                         )
+
                         SplitBillStep.OCR_PROCESSING -> OcrProcessingStep(
                             modifier = Modifier.fillMaxSize()
                         )
+
                         SplitBillStep.OCR_REVIEW -> SetupSplitBillStep(
                             viewModel = viewModel,
                             modifier = Modifier.fillMaxSize()
                         )
+
                         SplitBillStep.PARTICIPANT_INPUT -> ParticipantInputStep(
                             viewModel = viewModel,
                             participants = uiState.participants,
                             modifier = Modifier.fillMaxSize()
                         )
+
                         SplitBillStep.ITEM_ASSIGNMENT -> ItemAssignmentStep(
                             viewModel = viewModel,
                             modifier = Modifier.fillMaxSize()
                         )
+
                         SplitBillStep.SUMMARY -> SummaryStep(
                             viewModel = viewModel,
                             calculatedParticipants = uiState.calculatedParticipants,
@@ -109,9 +116,10 @@ fun SplitBillScreen(
             // Navigation buttons - Fixed at bottom
             Card(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(vertical = dimensionResource(R.dimen.spacing_small)),
                 shape = MaterialTheme.shapes.medium,
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp) // Add elevation to make it more prominent
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
             ) {
                 Row(
                     modifier = Modifier
