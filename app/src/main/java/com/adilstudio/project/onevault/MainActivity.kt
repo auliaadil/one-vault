@@ -110,7 +110,7 @@ fun MainApp(
         val mainViewModel: MainViewModel = koinViewModel()
         val snackbarHostState = remember { SnackbarHostState() }
 
-        // Collect snackbar messages from TopBarViewModel
+        // Collect snackbar messages from MainViewModel
         LaunchedEffect(Unit) {
             mainViewModel.snackbarMessage.collectLatest { message ->
                 snackbarHostState.showSnackbar(message)

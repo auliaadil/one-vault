@@ -35,14 +35,14 @@ fun SummaryStep(
     calculatedParticipants: List<SplitParticipant>,
     splitBill: SplitBill?,
     validationErrors: List<String>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    mainViewModel: MainViewModel = koinViewModel()
 ) {
     var selectedParticipant by remember { mutableStateOf<SplitParticipant?>(null) }
     val uiState by viewModel.uiState.collectAsState()
-    val mainViewModel: MainViewModel = koinViewModel()
     val successMessage = stringResource(R.string.exported_to_transaction_success_message)
 
-    // Show success message via TopBarViewModel
+    // Show success message via MainViewModel
     if (uiState.exportSuccess == true) {
         LaunchedEffect(uiState.exportSuccess) {
             mainViewModel.showSnackbar(successMessage)
@@ -668,12 +668,5 @@ fun ParticipantDetailBottomSheet(
                 }
             )
         }
-    }
-}
-
-@Composable
-fun SuccessToast(message: String, snackbarHostState: SnackbarHostState) {
-    LaunchedEffect(message) {
-        snackbarHostState.showSnackbar(message)
     }
 }

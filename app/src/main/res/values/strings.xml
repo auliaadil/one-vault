@@ -424,4 +424,12 @@
     <string name="add_item">Add Item</string>
     <string name="done">Done</string>
     <string name="exported_to_transaction_success_message">Exported to transaction successfully!</string>
+    <string name="transaction_saved_success">Transaction saved successfully!</string>
+    <string name="transaction_updated_success">Transaction updated successfully!</string>
+    <string name="credential_saved_success">Credential saved successfully!</string>
+    <string name="credential_updated_success">Credential updated successfully!</string>
+    <string name="category_saved_success">Category saved successfully!</string>
+    <string name="category_updated_success">Category updated successfully!</string>
+    <string name="account_saved_success">Account saved successfully!</string>
+    <string name="account_updated_success">Account updated successfully!</string>
 </resources>

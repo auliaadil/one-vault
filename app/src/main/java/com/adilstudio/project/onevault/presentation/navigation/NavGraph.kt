@@ -30,7 +30,6 @@ import com.adilstudio.project.onevault.presentation.settings.ImportExportScreen
 import com.adilstudio.project.onevault.presentation.settings.PrivacyPolicyScreen
 import com.adilstudio.project.onevault.presentation.settings.SettingsScreen
 import com.adilstudio.project.onevault.presentation.home.HomeScreen
-import com.adilstudio.project.onevault.presentation.action.ActionBottomSheet
 import com.adilstudio.project.onevault.presentation.splitbill.form.SplitBillFormScreen
 import com.adilstudio.project.onevault.presentation.splitbill.list.SplitBillListScreen
 import org.koin.androidx.compose.koinViewModel
@@ -172,8 +171,7 @@ fun NavGraph(
         }
         composable(Screen.AddCredential.route) {
             CredentialFormScreen(
-                credential = null, // For new credentials
-                onNavigateBack = { navController.popBackStack() }
+                credential = null // For new credentials
             )
         }
         composable(Screen.EditCredential.route) {
@@ -202,8 +200,7 @@ fun NavGraph(
                 }
             } else {
                 CredentialFormScreen(
-                    credential = credential,
-                    onNavigateBack = { navController.popBackStack() }
+                    credential = credential
                 )
             }
         }
