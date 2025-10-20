@@ -34,7 +34,6 @@ fun TransactionDetailBottomSheet(
 ) {
     GenericBottomSheet(
         title = stringResource(R.string.transaction_details),
-        onEdit = { onEdit(transaction) },
         onDelete = {}, // handled by deleteDialogText and onDeleteConfirmed
         deleteDialogText = stringResource(R.string.delete_transaction_message, transaction.title),
         onDeleteConfirmed = {

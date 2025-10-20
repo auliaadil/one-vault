@@ -1,33 +1,59 @@
-package com.adilstudio.project.onevault.presentation.splitbill
+package com.adilstudio.project.onevault.presentation.splitbill.form
 
-import androidx.compose.animation.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.adilstudio.project.onevault.domain.util.FeatureFlag
 import com.adilstudio.project.onevault.R
+import com.adilstudio.project.onevault.domain.util.FeatureFlag
 import com.adilstudio.project.onevault.presentation.component.BaseScreen
-import com.adilstudio.project.onevault.presentation.splitbill.components.*
-import androidx.compose.ui.platform.LocalContext
-import android.content.Intent
-import com.adilstudio.project.onevault.core.util.ShareImageGenerator
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.ui.res.stringResource
-import com.adilstudio.project.onevault.core.util.RupiahFormatter
+import com.adilstudio.project.onevault.presentation.splitbill.form.components.ImageCaptureStep
+import com.adilstudio.project.onevault.presentation.splitbill.form.components.ItemAssignmentStep
+import com.adilstudio.project.onevault.presentation.splitbill.form.components.OcrProcessingStep
+import com.adilstudio.project.onevault.presentation.splitbill.form.components.ParticipantInputStep
+import com.adilstudio.project.onevault.presentation.splitbill.form.components.SetupSplitBillStep
+import com.adilstudio.project.onevault.presentation.splitbill.form.components.SplitBillSuccessBottomSheet
+import com.adilstudio.project.onevault.presentation.splitbill.form.components.SummaryStep
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SplitBillScreen(
-    viewModel: SplitBillViewModel
+fun SplitBillFormScreen(
+    viewModel: SplitBillFormViewModel = koinViewModel(),
+    onNavigateBack: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
-    var isGeneratingImage by remember { mutableStateOf(false) }
 
     // Determine steps based on OCR feature flag
     val isOcrEnabled = FeatureFlag.isOcrSplitBillEnabled()
@@ -51,6 +77,30 @@ fun SplitBillScreen(
             // Show snack bar or toast
             viewModel.clearError()
         }
+    }
+
+    // Show success dialog when save is successful
+    if (uiState.isSaveSuccessful) {
+        // Calculate total amount for display
+        val totalAmount = uiState.items.sumOf { item ->
+            val totalQuantity = item.assignedQuantities.values.sum()
+            item.price * totalQuantity
+        } * (1 + (viewModel.tax / 100.0) + (viewModel.serviceFee / 100.0))
+
+        SplitBillSuccessBottomSheet(
+            title = viewModel.title,
+            merchant = viewModel.merchant,
+            date = viewModel.date,
+            items = uiState.items,
+            participants = uiState.calculatedParticipants,
+            taxPercent = viewModel.tax,
+            serviceFeePercent = viewModel.serviceFee,
+            totalAmount = totalAmount,
+            onDismiss = {
+                viewModel.resetSaveSuccess()
+                onNavigateBack()
+            }
+        )
     }
 
     BaseScreen(
@@ -155,69 +205,22 @@ fun SplitBillScreen(
                     } else {
                         Button(
                             onClick = {
-                                if (!isGeneratingImage && uiState.validationErrors.isEmpty()) {
-                                    isGeneratingImage = true
-
-                                    // Calculate total amount
-                                    val totalAmount = uiState.items.sumOf { item ->
-                                        val totalQuantity = item.assignedQuantities.values.sum()
-                                        item.price * totalQuantity
-                                    } * (1 + (viewModel.tax / 100.0) + (viewModel.serviceFee / 100.0))
-
-                                    // Generate image
-                                    val shareImageGenerator = ShareImageGenerator(context)
-                                    val imageUri = shareImageGenerator.generateCompleteSplitBillImage(
-                                        billTitle = viewModel.title,
-                                        merchant = viewModel.merchant,
-                                        date = viewModel.date,
-                                        items = uiState.items,
-                                        participants = uiState.calculatedParticipants,
-                                        taxPercent = viewModel.tax,
-                                        serviceFeePercent = viewModel.serviceFee,
-                                        totalAmount = totalAmount
-                                    )
-
-                                    if (imageUri != null) {
-                                        val formattedTotal = RupiahFormatter.formatWithRupiahPrefix(totalAmount.toLong())
-                                        val shareIntent = Intent().apply {
-                                            action = Intent.ACTION_SEND
-                                            type = "image/png"
-                                            putExtra(Intent.EXTRA_STREAM, imageUri)
-                                            putExtra(
-                                                Intent.EXTRA_TEXT,
-                                                "Split Bill: ${viewModel.title} - Total: $formattedTotal"
-                                            )
-                                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                        }
-                                        context.startActivity(
-                                            Intent.createChooser(
-                                                shareIntent,
-                                                "Share split bill"
-                                            )
-                                        )
-                                    }
-
-                                    isGeneratingImage = false
+                                if (uiState.validationErrors.isEmpty()) {
+                                    viewModel.saveSplitBill()
                                 }
                             },
-                            enabled = !isGeneratingImage && uiState.validationErrors.isEmpty()
+                            enabled = !uiState.isLoading && uiState.validationErrors.isEmpty()
                         ) {
-                            if (isGeneratingImage) {
+                            if (uiState.isLoading) {
                                 CircularProgressIndicator(
                                     modifier = Modifier.size(16.dp),
                                     strokeWidth = 2.dp,
                                     color = MaterialTheme.colorScheme.onPrimary
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text("Generating...")
+                                Text("Saving...")
                             } else {
-                                Icon(
-                                    Icons.Default.Share,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text("Share Image")
+                                Text("Save Split Bill")
                             }
                         }
                     }

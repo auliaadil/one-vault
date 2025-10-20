@@ -30,8 +30,8 @@ import com.adilstudio.project.onevault.presentation.settings.ImportExportScreen
 import com.adilstudio.project.onevault.presentation.settings.PrivacyPolicyScreen
 import com.adilstudio.project.onevault.presentation.settings.SettingsScreen
 import com.adilstudio.project.onevault.presentation.home.HomeScreen
-import com.adilstudio.project.onevault.presentation.action.ActionBottomSheet
-import com.adilstudio.project.onevault.presentation.splitbill.SplitBillScreen
+import com.adilstudio.project.onevault.presentation.splitbill.form.SplitBillFormScreen
+import com.adilstudio.project.onevault.presentation.splitbill.list.SplitBillListScreen
 import org.koin.androidx.compose.koinViewModel
 
 sealed class Screen(val route: String) {
@@ -53,6 +53,7 @@ sealed class Screen(val route: String) {
     object About : Screen("about")
     object PrivacyPolicy : Screen("privacy_policy")
     object SplitBill : Screen("split_bill")
+    object AddSplitBill : Screen("add_split_bill")
 }
 
 @Composable
@@ -170,8 +171,7 @@ fun NavGraph(
         }
         composable(Screen.AddCredential.route) {
             CredentialFormScreen(
-                credential = null, // For new credentials
-                onNavigateBack = { navController.popBackStack() }
+                credential = null // For new credentials
             )
         }
         composable(Screen.EditCredential.route) {
@@ -200,8 +200,7 @@ fun NavGraph(
                 }
             } else {
                 CredentialFormScreen(
-                    credential = credential,
-                    onNavigateBack = { navController.popBackStack() }
+                    credential = credential
                 )
             }
         }
@@ -250,13 +249,15 @@ fun NavGraph(
                 onNavigateBack = { navController.popBackStack() }
             )
         }
-        composable(Screen.Action.route) {
-            ActionBottomSheet(
-                onDismiss = { navController.popBackStack() }
+        composable(Screen.SplitBill.route) {
+            SplitBillListScreen(
+                onAddSplitBill = { navController.navigate(Screen.AddSplitBill.route) }
             )
         }
-        composable(Screen.SplitBill.route) {
-            SplitBillScreen(viewModel = koinViewModel())
+        composable(Screen.AddSplitBill.route) {
+            SplitBillFormScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
         }
     }
 }

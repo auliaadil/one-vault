@@ -1,6 +1,7 @@
-package com.adilstudio.project.onevault.presentation.splitbill
+package com.adilstudio.project.onevault.presentation.splitbill.form
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -27,7 +28,10 @@ data class SplitBillUiState(
     val suggestedItems: List<SplitItem> = emptyList(), // OCR suggested items
     val participants: List<SplitParticipant> = emptyList(),
     val calculatedParticipants: List<SplitParticipant> = emptyList(),
-    val validationErrors: List<String> = emptyList()
+    val validationErrors: List<String> = emptyList(),
+    val isSaveSuccessful: Boolean = false,
+    val savedSplitBillId: Long? = null,
+    val exportSuccess: Boolean? = null // Success flag for export operation
 )
 
 enum class SplitBillStep {
@@ -39,7 +43,7 @@ enum class SplitBillStep {
     SUMMARY
 }
 
-class SplitBillViewModel(
+class SplitBillFormViewModel(
     private val splitBillRepository: SplitBillRepository,
     private val splitCalculator: SplitCalculator,
     private val ocrManager: OcrManager
@@ -52,11 +56,11 @@ class SplitBillViewModel(
         private set
     var merchant by mutableStateOf("")
         private set
-    var date by mutableStateOf(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date()))
+    var date: String by mutableStateOf(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date()))
         private set
-    var tax by mutableStateOf(0.0)
+    var tax by mutableDoubleStateOf(0.0)
         private set
-    var serviceFee by mutableStateOf(0.0)
+    var serviceFee by mutableDoubleStateOf(0.0)
         private set
 
     fun processOcrResult(ocrResult: OcrResult) {
@@ -273,15 +277,21 @@ class SplitBillViewModel(
                 val success = splitBillRepository.exportParticipantToTransaction(splitBill, splitParticipant)
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = if (success) null else "Failed to export to transaction"
+                    errorMessage = if (success) null else "Failed to export to transaction",
+                    exportSuccess = success // Set success flag
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = "Failed to export: ${e.message}"
+                    errorMessage = e.message,
+                    exportSuccess = false
                 )
             }
         }
+    }
+
+    fun clearExportSuccess() {
+        _uiState.value = _uiState.value.copy(exportSuccess = null)
     }
 
     /**
@@ -374,6 +384,66 @@ class SplitBillViewModel(
         _uiState.value = _uiState.value.copy(
             currentStep = SplitBillStep.OCR_REVIEW,
             isLoading = false
+        )
+    }
+
+    /**
+     * Saves the split bill to the database
+     */
+    fun saveSplitBill() {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+
+            try {
+                // Calculate total amount
+                val totalAmount = _uiState.value.items.sumOf { item ->
+                    val totalQuantity = item.assignedQuantities.values.sum()
+                    item.price * totalQuantity
+                } * (1 + (tax / 100.0) + (serviceFee / 100.0))
+
+                // Create split bill entity
+                val splitBill = SplitBill(
+                    title = title,
+                    merchant = merchant,
+                    date = date,
+                    tax = tax,
+                    serviceFee = serviceFee,
+                    totalAmount = totalAmount,
+                    imagePath = null,
+                    createdAt = System.currentTimeMillis(),
+                    updatedAt = System.currentTimeMillis()
+                )
+
+                // Save split bill and get the ID
+                val splitBillId = splitBillRepository.addSplitBill(splitBill)
+
+                // Save items
+                splitBillRepository.addSplitItems(splitBillId, _uiState.value.items)
+
+                // Save participants with calculated amounts
+                splitBillRepository.addSplitParticipants(splitBillId, _uiState.value.calculatedParticipants)
+
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    isSaveSuccessful = true,
+                    savedSplitBillId = splitBillId
+                )
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = "Failed to save split bill: ${e.message}"
+                )
+            }
+        }
+    }
+
+    /**
+     * Reset save success state
+     */
+    fun resetSaveSuccess() {
+        _uiState.value = _uiState.value.copy(
+            isSaveSuccessful = false,
+            savedSplitBillId = null
         )
     }
 }

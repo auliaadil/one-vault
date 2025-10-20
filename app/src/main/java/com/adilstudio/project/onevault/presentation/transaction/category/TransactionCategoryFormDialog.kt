@@ -22,6 +22,8 @@ import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.TransactionCategory
 import com.adilstudio.project.onevault.domain.model.CategoryType
 import com.adilstudio.project.onevault.domain.model.TransactionType
+import com.adilstudio.project.onevault.presentation.MainViewModel
+import org.koin.androidx.compose.koinViewModel
 import androidx.core.graphics.toColorInt
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,7 +31,8 @@ import androidx.core.graphics.toColorInt
 fun CategoryFormDialog(
     category: TransactionCategory? = null,
     onDismiss: () -> Unit,
-    onSave: (name: String, icon: String, color: String, type: CategoryType, transactionType: TransactionType) -> Unit
+    onSave: (name: String, icon: String, color: String, type: CategoryType, transactionType: TransactionType) -> Unit,
+    mainViewModel: MainViewModel = koinViewModel()
 ) {
     var name by remember { mutableStateOf(category?.name ?: "") }
     var selectedIcon by remember { mutableStateOf(category?.icon ?: "📋") }
@@ -56,6 +59,9 @@ fun CategoryFormDialog(
         "#FFEB3B", "#FFC107", "#FF9800", "#FF5722", "#795548", "#607D8B",
         "#000000", "#FFFFFF", "#BDBDBD", "#212121", "#FAFAFA", "#FFFAFA"
     )
+    val savedMessage = stringResource(R.string.category_saved_success)
+    val updatedMessage = stringResource(R.string.category_updated_success)
+    var showSuccess by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -247,6 +253,7 @@ fun CategoryFormDialog(
                 onClick = {
                     if (name.isNotBlank()) {
                         onSave(name.trim(), selectedIcon, selectedColor, selectedType, selectedTransactionType)
+                        showSuccess = true
                     }
                 },
                 enabled = name.isNotBlank()
@@ -260,6 +267,14 @@ fun CategoryFormDialog(
             }
         }
     )
+
+    if (showSuccess) {
+        LaunchedEffect(showSuccess) {
+            val message = if (category == null) savedMessage else updatedMessage
+            mainViewModel.showSnackbar(message)
+            showSuccess = false
+        }
+    }
 }
 
 @Composable

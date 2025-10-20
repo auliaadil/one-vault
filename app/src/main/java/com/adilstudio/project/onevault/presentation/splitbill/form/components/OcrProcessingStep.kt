@@ -1,4 +1,4 @@
-package com.adilstudio.project.onevault.presentation.splitbill.components
+package com.adilstudio.project.onevault.presentation.splitbill.form.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.*

@@ -1,6 +1,6 @@
 package com.adilstudio.project.onevault.di
 
-import com.adilstudio.project.onevault.presentation.TopBarViewModel
+import com.adilstudio.project.onevault.presentation.MainViewModel
 import com.adilstudio.project.onevault.presentation.transaction.account.AccountViewModel
 import com.adilstudio.project.onevault.presentation.transaction.TransactionTrackerViewModel
 import com.adilstudio.project.onevault.presentation.transaction.category.TransactionCategoryViewModel
@@ -9,12 +9,13 @@ import com.adilstudio.project.onevault.presentation.credential.CredentialListVie
 import com.adilstudio.project.onevault.presentation.filevault.FileVaultViewModel
 import com.adilstudio.project.onevault.presentation.credential.credentialform.CredentialFormViewModel
 import com.adilstudio.project.onevault.presentation.settings.SettingsViewModel
-import com.adilstudio.project.onevault.presentation.splitbill.SplitBillViewModel
+import com.adilstudio.project.onevault.presentation.splitbill.form.SplitBillFormViewModel
+import com.adilstudio.project.onevault.presentation.splitbill.list.SplitBillListViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
-    single { TopBarViewModel() }
+    single { MainViewModel() }
     viewModel { TransactionTrackerViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { TransactionCategoryViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { CredentialListViewModel(get(), get()) }
@@ -23,5 +24,6 @@ val viewModelModule = module {
     viewModel { AccountViewModel(get(), get(), get(), get(), get()) }
     viewModel { CredentialFormViewModel(get(), get(), get(), get()) }
     viewModel { BiometricLockViewModel(get()) }
-    viewModel { SplitBillViewModel(get(), get(), get()) }
+    viewModel { SplitBillFormViewModel(get(), get(), get()) }
+    viewModel { SplitBillListViewModel(get(), get()) }
 }

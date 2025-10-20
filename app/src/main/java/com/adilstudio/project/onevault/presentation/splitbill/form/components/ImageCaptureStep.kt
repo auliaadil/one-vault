@@ -1,4 +1,4 @@
-package com.adilstudio.project.onevault.presentation.splitbill.components
+package com.adilstudio.project.onevault.presentation.splitbill.form.components
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -19,13 +19,13 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.util.FeatureFlag
-import com.adilstudio.project.onevault.presentation.splitbill.SplitBillViewModel
+import com.adilstudio.project.onevault.presentation.splitbill.form.SplitBillFormViewModel
 import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ImageCaptureStep(
-    viewModel: SplitBillViewModel,
+    viewModel: SplitBillFormViewModel,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
