@@ -31,6 +31,7 @@ import com.adilstudio.project.onevault.presentation.settings.PrivacyPolicyScreen
 import com.adilstudio.project.onevault.presentation.settings.SettingsScreen
 import com.adilstudio.project.onevault.presentation.home.HomeScreen
 import com.adilstudio.project.onevault.presentation.action.ActionBottomSheet
+import com.adilstudio.project.onevault.presentation.splitbill.SplitBillScreen
 import org.koin.androidx.compose.koinViewModel
 
 sealed class Screen(val route: String) {
@@ -51,6 +52,7 @@ sealed class Screen(val route: String) {
     object Settings : Screen("settings")
     object About : Screen("about")
     object PrivacyPolicy : Screen("privacy_policy")
+    object SplitBill : Screen("split_bill")
 }
 
 @Composable
@@ -66,7 +68,10 @@ fun NavGraph(
                 onNavigateToTransactions = { navController.navigate(Screen.TransactionList.route) },
                 onNavigateToCategories = { navController.navigate(Screen.TransactionCategories.route) },
                 onNavigateToAccounts = { navController.navigate(Screen.TransactionAccounts.route) },
-                onNavigateToCredentials = { navController.navigate(Screen.CredentialList.route) }
+                onNavigateToCredentials = { navController.navigate(Screen.CredentialList.route) },
+                onNavigateToInsights = { /* TODO: Add Insights navigation */ },
+                onNavigateToSplitBill = { navController.navigate(Screen.SplitBill.route) },
+                onNavigateToBackupRestore = { /* TODO: Add Backup/Restore navigation */ }
             )
         }
         composable(Screen.TransactionList.route) {
@@ -235,12 +240,10 @@ fun NavGraph(
             )
         }
         composable(Screen.About.route) {
-            AboutScreen(
-            )
+            AboutScreen()
         }
         composable(Screen.PrivacyPolicy.route) {
-            PrivacyPolicyScreen(
-            )
+            PrivacyPolicyScreen()
         }
         composable(Screen.ImportExport.route) {
             ImportExportScreen(
@@ -251,6 +254,9 @@ fun NavGraph(
             ActionBottomSheet(
                 onDismiss = { navController.popBackStack() }
             )
+        }
+        composable(Screen.SplitBill.route) {
+            SplitBillScreen(viewModel = koinViewModel())
         }
     }
 }

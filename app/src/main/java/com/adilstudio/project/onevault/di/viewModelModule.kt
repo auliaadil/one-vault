@@ -9,6 +9,7 @@ import com.adilstudio.project.onevault.presentation.credential.CredentialListVie
 import com.adilstudio.project.onevault.presentation.filevault.FileVaultViewModel
 import com.adilstudio.project.onevault.presentation.credential.credentialform.CredentialFormViewModel
 import com.adilstudio.project.onevault.presentation.settings.SettingsViewModel
+import com.adilstudio.project.onevault.presentation.splitbill.SplitBillViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -22,4 +23,5 @@ val viewModelModule = module {
     viewModel { AccountViewModel(get(), get(), get(), get(), get()) }
     viewModel { CredentialFormViewModel(get(), get(), get(), get()) }
     viewModel { BiometricLockViewModel(get()) }
+    viewModel { SplitBillViewModel(get(), get(), get()) }
 }
