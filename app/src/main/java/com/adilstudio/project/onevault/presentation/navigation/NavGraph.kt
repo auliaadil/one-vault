@@ -247,7 +247,6 @@ fun NavGraph(
         }
         composable(Screen.ImportExport.route) {
             ImportExportScreen(
-                onNavigateBack = { navController.popBackStack() }
             )
         }
         composable(Screen.Action.route) {

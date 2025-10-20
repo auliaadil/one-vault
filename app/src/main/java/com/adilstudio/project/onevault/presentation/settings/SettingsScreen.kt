@@ -55,13 +55,12 @@ fun SettingsScreen(
                 onClick = onNavigateToPrivacyPolicy
             )
 
-            /* TODO: Implement Import/Export feature
+            // Import/Export
             SettingsItem(
                 icon = Icons.Default.ImportExport,
                 title = stringResource(R.string.import_export),
                 onClick = onNavigateToImportExport
             )
-             */
 
             // Biometric Toggle
             SettingsToggleItem(

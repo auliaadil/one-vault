@@ -32,4 +32,8 @@ val useCaseModule = module {
     single { UpdateAccountUseCase(get()) }
     single { DeleteAccountUseCase(get()) }
     single { GetAccountsCountUseCase(get()) }
+
+    // Backup Use Cases
+    single { ExportVaultUseCase(get()) }
+    single { ImportVaultUseCase(get()) }
 }

@@ -350,7 +350,7 @@
     <string name="privacy_last_updated">Last updated: August 2025</string>
 
     <!-- Import/Export Screen -->
-    <string name="import_export_warning">Important: Always keep backups of your exported data in a secure location. Imported data will replace existing data.</string>
+    <string name="import_export_warning">Important: Backup files are encrypted and can only be restored in OneVault. Keep your backup files secure.</string>
     <string name="export_credentials">Export Credentials</string>
     <string name="export_credentials_description">Export all stored passwords and login information to a secure file</string>
     <string name="export_transactions">Export Transactions</string>
@@ -369,6 +369,22 @@
     <string name="import_confirmation_title">Import Data</string>
     <string name="import_confirmation_message">This will replace your current data with the data from the backup file. This action cannot be undone.</string>
     <string name="import_text">Import</string>
+
+    <!-- Import/Export -->
+    <string name="export_vault_data">Export Vault Data</string>
+    <string name="import_vault_data">Import Vault Data</string>
+    <string name="export_complete_backup">Export Complete Backup</string>
+    <string name="import_complete_backup">Import Complete Backup</string>
+    <string name="export_description">Export all your vault data as an encrypted backup file.</string>
+    <string name="import_description">Restore your vault data from an encrypted backup file.</string>
+    <string name="export_backup_description">Export all transactions, credentials, accounts, and vault files as a single encrypted .onevault file</string>
+    <string name="import_backup_description">Restore all vault data from a .onevault backup file</string>
+    <string name="backup_warning">Important: Backup files are encrypted and can only be restored in OneVault. Keep your backup files secure.</string>
+    <string name="export_dialog_title">Export Vault Data</string>
+    <string name="export_dialog_message">This will create an encrypted backup file containing all your vault data. Choose a secure location to save the backup.</string>
+    <string name="import_dialog_title">Import Vault Data</string>
+    <string name="import_dialog_message">This will restore vault data from a backup file. Your current data will be replaced. Make sure you have a recent backup before proceeding.</string>
+    <string name="processing">Processing…</string>
 
     <!-- Screen Capture -->
     <string name="screen_capture">Screen Capture</string>
