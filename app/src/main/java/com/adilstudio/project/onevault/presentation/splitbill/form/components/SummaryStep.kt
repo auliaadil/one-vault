@@ -25,6 +25,10 @@ import com.adilstudio.project.onevault.domain.model.SplitParticipant
 import androidx.compose.ui.platform.LocalContext
 import com.adilstudio.project.onevault.presentation.splitbill.form.SplitBillFormViewModel
 import androidx.compose.runtime.collectAsState
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,174 +41,188 @@ fun SummaryStep(
 ) {
     var selectedParticipant by remember { mutableStateOf<SplitParticipant?>(null) }
     val uiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
-    LazyColumn(
-        modifier = modifier.padding(vertical = dimensionResource(R.dimen.spacing_large)),
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_large))
-    ) {
-        item {
-            Text(
-                text = stringResource(R.string.summary_title),
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
-            )
+    // Show success toast when exportSuccess is true
+    if (uiState.exportSuccess == true) {
+        LaunchedEffect(uiState.exportSuccess) {
+            snackbarHostState.showSnackbar("Exported to transaction successfully!")
+            viewModel.clearExportSuccess()
         }
+    }
 
-        // Validation errors
-        if (validationErrors.isNotEmpty()) {
+    Box(modifier = modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = modifier.padding(vertical = dimensionResource(R.dimen.spacing_large)),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_large))
+        ) {
             item {
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.errorContainer
-                    )
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                Icons.Default.Error,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.error
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = "Validation Errors",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.error
-                            )
+                Text(
+                    text = stringResource(R.string.summary_title),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            // Validation errors
+            if (validationErrors.isNotEmpty()) {
+                item {
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer
+                        )
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    Icons.Default.Error,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "Validation Errors",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            validationErrors.forEach { error ->
+                                Text(
+                                    text = "• $error",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onErrorContainer
+                                )
+                            }
                         }
+                    }
+                }
+            }
+
+            // Bill details
+            item {
+                Card {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = "Bill Details",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        validationErrors.forEach { error ->
-                            Text(
-                                text = "• $error",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onErrorContainer
-                            )
+                        DetailRow("Title:", viewModel.title)
+                        DetailRow("Merchant:", viewModel.merchant.ifEmpty { "Not specified" })
+
+                        // Format date using DateUtil (ISO string to LocalDate to display format)
+                        val localDate = DateUtil.isoStringToLocalDate(viewModel.date)
+                        val displayDate =
+                            localDate?.let { DateUtil.formatDateForDisplay(it) } ?: viewModel.date
+                        DetailRow("Date:", displayDate)
+
+                        // Calculate total base amount from all assigned items
+                        val totalPrice = uiState.items.sumOf { item ->
+                            val totalQuantity = item.assignedQuantities.values.sum()
+                            item.price * totalQuantity
                         }
-                    }
-                }
-            }
-        }
+                        val taxPercent = viewModel.tax
+                        val serviceFeePercent = viewModel.serviceFee
+                        val taxAmount = totalPrice * (taxPercent / 100.0)
+                        val serviceFeeAmount = totalPrice * (serviceFeePercent / 100.0)
 
-        // Bill details
-        item {
-            Card {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "Bill Details",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
+                        DetailRow(
+                            "Total Base Amount:",
+                            RupiahFormatter.formatWithRupiahPrefix(totalPrice.toLong())
+                        )
+                        DetailRow(
+                            "Tax:",
+                            "$taxPercent% (" + RupiahFormatter.formatWithRupiahPrefix(taxAmount.toLong()) + ")"
+                        )
+                        DetailRow(
+                            "Service Fee:",
+                            "$serviceFeePercent% (" + RupiahFormatter.formatWithRupiahPrefix(
+                                serviceFeeAmount.toLong()
+                            ) + ")"
+                        )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-                    DetailRow("Title:", viewModel.title)
-                    DetailRow("Merchant:", viewModel.merchant.ifEmpty { "Not specified" })
-
-                    // Format date using DateUtil (ISO string to LocalDate to display format)
-                    val localDate = DateUtil.isoStringToLocalDate(viewModel.date)
-                    val displayDate =
-                        localDate?.let { DateUtil.formatDateForDisplay(it) } ?: viewModel.date
-                    DetailRow("Date:", displayDate)
-
-                    // Calculate total base amount from all assigned items
-                    val totalPrice = uiState.items.sumOf { item ->
-                        val totalQuantity = item.assignedQuantities.values.sum()
-                        item.price * totalQuantity
-                    }
-                    val taxPercent = viewModel.tax
-                    val serviceFeePercent = viewModel.serviceFee
-                    val taxAmount = totalPrice * (taxPercent / 100.0)
-                    val serviceFeeAmount = totalPrice * (serviceFeePercent / 100.0)
-
-                    DetailRow(
-                        "Total Base Amount:",
-                        RupiahFormatter.formatWithRupiahPrefix(totalPrice.toLong())
-                    )
-                    DetailRow(
-                        "Tax:",
-                        "$taxPercent% (" + RupiahFormatter.formatWithRupiahPrefix(taxAmount.toLong()) + ")"
-                    )
-                    DetailRow(
-                        "Service Fee:",
-                        "$serviceFeePercent% (" + RupiahFormatter.formatWithRupiahPrefix(
-                            serviceFeeAmount.toLong()
-                        ) + ")"
-                    )
-
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-
-                    // Calculate total amount including tax and service fee for each participant
-                    val totalAmount = calculatedParticipants.sumOf { it.shareAmount }
-                    DetailRow(
-                        label = "Total Amount:",
-                        value = RupiahFormatter.formatWithRupiahPrefix(totalAmount.toLong()),
-                        isTotal = true
-                    )
-                }
-            }
-        }
-
-        // Participant shares
-        item {
-            Text(
-                text = "Participant Shares",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-        }
-
-        if (calculatedParticipants.isEmpty()) {
-            item {
-                Card {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(32.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "No participants to calculate",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        // Calculate total amount including tax and service fee for each participant
+                        val totalAmount = calculatedParticipants.sumOf { it.shareAmount }
+                        DetailRow(
+                            label = "Total Amount:",
+                            value = RupiahFormatter.formatWithRupiahPrefix(totalAmount.toLong()),
+                            isTotal = true
                         )
                     }
                 }
             }
-        } else {
-            items(calculatedParticipants) { participant ->
-                ParticipantShareCard(
-                    participant = participant,
-                    onExportToTransaction = {
-                        viewModel.exportCurrentSplitBillToTransaction(participant)
-                    },
-                    onClick = { selectedParticipant = participant },
-                    splitBill = splitBill
+
+            // Participant shares
+            item {
+                Text(
+                    text = "Participant Shares",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
                 )
             }
-        }
-    }
 
-    // Participant Detail Bottom Sheet
-    selectedParticipant?.let { participant ->
-        ParticipantDetailBottomSheet(
-            participant = participant,
-            billTitle = viewModel.title,
-            merchant = viewModel.merchant,
-            date = viewModel.date,
-            items = uiState.items,
-            taxPercent = viewModel.tax,
-            serviceFeePercent = viewModel.serviceFee,
-            onDismiss = { selectedParticipant = null },
-            onExportToTransaction = {
-                viewModel.exportCurrentSplitBillToTransaction(participant)
-                selectedParticipant = null
+            if (calculatedParticipants.isEmpty()) {
+                item {
+                    Card {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "No participants to calculate",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+            } else {
+                items(calculatedParticipants) { participant ->
+                    ParticipantShareCard(
+                        participant = participant,
+                        onExportToTransaction = {
+                            viewModel.exportCurrentSplitBillToTransaction(participant)
+                        },
+                        onClick = { selectedParticipant = participant },
+                        splitBill = splitBill
+                    )
+                }
             }
-        )
+        }
+
+        // Participant Detail Bottom Sheet
+        selectedParticipant?.let { participant ->
+            ParticipantDetailBottomSheet(
+                participant = participant,
+                billTitle = viewModel.title,
+                merchant = viewModel.merchant,
+                date = viewModel.date,
+                items = uiState.items,
+                taxPercent = viewModel.tax,
+                serviceFeePercent = viewModel.serviceFee,
+                onDismiss = { selectedParticipant = null },
+                onExportToTransaction = {
+                    viewModel.exportCurrentSplitBillToTransaction(participant)
+                    selectedParticipant = null
+                }
+            )
+        }
+
+        SnackbarHost(hostState = snackbarHostState, modifier = Modifier.align(Alignment.BottomCenter))
     }
 }
 
@@ -654,5 +672,12 @@ fun ParticipantDetailBottomSheet(
                 }
             )
         }
+    }
+}
+
+@Composable
+fun SuccessToast(message: String, snackbarHostState: SnackbarHostState) {
+    LaunchedEffect(message) {
+        snackbarHostState.showSnackbar(message)
     }
 }

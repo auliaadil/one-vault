@@ -30,7 +30,8 @@ data class SplitBillUiState(
     val calculatedParticipants: List<SplitParticipant> = emptyList(),
     val validationErrors: List<String> = emptyList(),
     val isSaveSuccessful: Boolean = false,
-    val savedSplitBillId: Long? = null
+    val savedSplitBillId: Long? = null,
+    val exportSuccess: Boolean? = null // Success flag for export operation
 )
 
 enum class SplitBillStep {
@@ -276,15 +277,21 @@ class SplitBillFormViewModel(
                 val success = splitBillRepository.exportParticipantToTransaction(splitBill, splitParticipant)
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = if (success) null else "Failed to export to transaction"
+                    errorMessage = if (success) null else "Failed to export to transaction",
+                    exportSuccess = success // Set success flag
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = "Failed to export: ${e.message}"
+                    errorMessage = e.message,
+                    exportSuccess = false
                 )
             }
         }
+    }
+
+    fun clearExportSuccess() {
+        _uiState.value = _uiState.value.copy(exportSuccess = null)
     }
 
     /**
