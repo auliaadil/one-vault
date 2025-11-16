@@ -25,7 +25,6 @@ app/src/main/assets/models/
 
 # Others
 *.log
-.github/
 
 # Keystore files
 *.jks
