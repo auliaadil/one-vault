@@ -7,18 +7,26 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.adilstudio.project.onevault.R
+import com.adilstudio.project.onevault.domain.model.Currency
 import com.adilstudio.project.onevault.domain.repository.SettingsRepository
+import com.adilstudio.project.onevault.domain.usecase.GetCurrencyUseCase
+import com.adilstudio.project.onevault.domain.usecase.SetCurrencyUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val getCurrencyUseCase: GetCurrencyUseCase,
+    private val setCurrencyUseCase: SetCurrencyUseCase
 ) : ViewModel() {
 
     private val _biometricEnabled = MutableStateFlow(false)
     val biometricEnabled: StateFlow<Boolean> = _biometricEnabled.asStateFlow()
+
+    private val _currency = MutableStateFlow(Currency.IDR)
+    val currency: StateFlow<Currency> = _currency.asStateFlow()
 
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
@@ -32,6 +40,20 @@ class SettingsViewModel(
             settingsRepository.getBiometricEnabled().collect { enabled ->
                 _biometricEnabled.value = enabled
             }
+        }
+        viewModelScope.launch {
+            getCurrencyUseCase().collect { currency ->
+                _currency.value = currency
+            }
+        }
+    }
+
+    fun setCurrency(currency: Currency) {
+        viewModelScope.launch {
+            setCurrencyUseCase(currency)
+            _currency.value = currency
+            // Update the static currency reference so it's immediately available everywhere
+            Currency.setCurrent(currency)
         }
     }
 

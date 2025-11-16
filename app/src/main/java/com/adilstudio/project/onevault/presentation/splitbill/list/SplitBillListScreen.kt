@@ -14,10 +14,10 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.DateUtil
-import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.SplitBill
 import com.adilstudio.project.onevault.presentation.component.EmptyState
 import com.adilstudio.project.onevault.presentation.component.BaseScreen
+import com.adilstudio.project.onevault.presentation.component.AutoCurrencyText
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -165,10 +165,9 @@ fun SplitBillCard(
                     horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_small)),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = RupiahFormatter.formatWithRupiahPrefix(splitBill.totalAmount.toLong()),
+                    AutoCurrencyText(
+                        amount = splitBill.totalAmount,
                         style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
                     )
                     Text(

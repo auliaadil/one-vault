@@ -15,12 +15,13 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.DateUtil
-import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.Account
+import com.adilstudio.project.onevault.domain.model.Currency
 import com.adilstudio.project.onevault.domain.model.Transaction
 import com.adilstudio.project.onevault.domain.model.TransactionCategory
 import com.adilstudio.project.onevault.presentation.component.DetailField
 import com.adilstudio.project.onevault.presentation.component.GenericBottomSheet
+import com.adilstudio.project.onevault.presentation.component.formatCurrency
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,6 +33,8 @@ fun TransactionDetailBottomSheet(
     onEdit: (Transaction) -> Unit,
     onDelete: (Long) -> Unit
 ) {
+    val currency = Currency.current
+
     GenericBottomSheet(
         title = stringResource(R.string.transaction_details),
         onDelete = {}, // handled by deleteDialogText and onDeleteConfirmed
@@ -53,7 +56,7 @@ fun TransactionDetailBottomSheet(
             )
             DetailField(
                 R.string.amount,
-                value = RupiahFormatter.formatWithRupiahPrefix(transaction.amount.toLong())
+                value = formatCurrency(transaction.amount, currency)
             )
             DetailField(
                 labelRes = R.string.transaction_date,

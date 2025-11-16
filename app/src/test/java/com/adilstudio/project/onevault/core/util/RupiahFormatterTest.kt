@@ -88,31 +88,31 @@ class RupiahFormatterTest {
 
     @Test
     fun `formatRupiahDisplay should format zero as empty string`() {
-        val result = RupiahFormatter.formatRupiahDisplay(0L)
+        val result = CurrencyFormatter.formatDisplay(0L)
         assertEquals("", result)
     }
 
     @Test
     fun `formatRupiahDisplay should format small numbers without separators`() {
-        val result = RupiahFormatter.formatRupiahDisplay(999L)
+        val result = CurrencyFormatter.formatDisplay(999L)
         assertEquals("999", result)
     }
 
     @Test
     fun `formatRupiahDisplay should format thousands with dots`() {
-        val result = RupiahFormatter.formatRupiahDisplay(1000L)
+        val result = CurrencyFormatter.formatDisplay(1000L)
         assertEquals("1.000", result)
     }
 
     @Test
     fun `formatRupiahDisplay should format large numbers with multiple dots`() {
-        val result = RupiahFormatter.formatRupiahDisplay(1234567L)
+        val result = CurrencyFormatter.formatDisplay(1234567L)
         assertEquals("1.234.567", result)
     }
 
     @Test
     fun `formatRupiahDisplay should format millions correctly`() {
-        val result = RupiahFormatter.formatRupiahDisplay(2500000L)
+        val result = CurrencyFormatter.formatDisplay(2500000L)
         assertEquals("2.500.000", result)
     }
 
@@ -163,25 +163,25 @@ class RupiahFormatterTest {
 
     @Test
     fun `formatWithRupiahPrefix should handle zero amount`() {
-        val result = RupiahFormatter.formatWithRupiahPrefix(0L)
+        val result = CurrencyFormatter.formatWithPrefix(0L)
         assertEquals("Rp 0", result)
     }
 
     @Test
     fun `formatWithRupiahPrefix should format small amounts`() {
-        val result = RupiahFormatter.formatWithRupiahPrefix(500L)
+        val result = CurrencyFormatter.formatWithPrefix(500L)
         assertEquals("Rp 500", result)
     }
 
     @Test
     fun `formatWithRupiahPrefix should format large amounts with separators`() {
-        val result = RupiahFormatter.formatWithRupiahPrefix(1500000L)
+        val result = CurrencyFormatter.formatWithPrefix(1500000L)
         assertEquals("Rp 1.500.000", result)
     }
 
     @Test
     fun `formatWithRupiahPrefix should format thousands correctly`() {
-        val result = RupiahFormatter.formatWithRupiahPrefix(25000L)
+        val result = CurrencyFormatter.formatWithPrefix(25000L)
         assertEquals("Rp 25.000", result)
     }
 
@@ -206,7 +206,7 @@ class RupiahFormatterTest {
 
     @Test
     fun `formatRupiahDisplay should handle maximum long value`() {
-        val result = RupiahFormatter.formatRupiahDisplay(Long.MAX_VALUE)
+        val result = CurrencyFormatter.formatDisplay(Long.MAX_VALUE)
         assertNotNull(result)
         assertTrue(result.isNotEmpty())
     }
@@ -222,7 +222,7 @@ class RupiahFormatterTest {
     fun `round trip test - extract then format should maintain value`() {
         val originalText = "RP 1.234.567"
         val extracted = RupiahFormatter.extractNumberFromRupiahText(originalText)
-        val formatted = RupiahFormatter.formatRupiahDisplay(extracted)
+        val formatted = CurrencyFormatter.formatDisplay(extracted)
         val parsed = RupiahFormatter.parseDisplayToLong(formatted)
 
         assertEquals(1234567L, extracted)
@@ -232,7 +232,7 @@ class RupiahFormatterTest {
     @Test
     fun `round trip test - format then parse should maintain value`() {
         val originalValue = 2500000L
-        val formatted = RupiahFormatter.formatRupiahDisplay(originalValue)
+        val formatted = CurrencyFormatter.formatDisplay(originalValue)
         val parsed = RupiahFormatter.parseDisplayToLong(formatted)
 
         assertEquals(originalValue, parsed)

@@ -38,11 +38,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.adilstudio.project.onevault.R
+import com.adilstudio.project.onevault.core.util.CurrencyFormatter
 import com.adilstudio.project.onevault.core.util.DateUtil
 import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.Transaction
 import com.adilstudio.project.onevault.domain.model.TransactionCategory
 import com.adilstudio.project.onevault.domain.model.CategoryType
+import com.adilstudio.project.onevault.domain.model.Currency
 import com.adilstudio.project.onevault.domain.model.TransactionType
 import com.adilstudio.project.onevault.presentation.component.EmptyState
 import com.adilstudio.project.onevault.presentation.component.BaseScreen
@@ -189,7 +191,10 @@ fun TransactionCard(
                 )
                 Text(transaction.title, style = MaterialTheme.typography.titleMedium)
                 Text(
-                    text = RupiahFormatter.formatWithRupiahPrefix(transaction.amount.toLong()),
+                    text = CurrencyFormatter.formatWithPrefix(
+                        transaction.amount.toLong(),
+                        Currency.current
+                    ),
                     style = MaterialTheme.typography.titleLarge,
                     color = if (transaction.amount >= 0)
                         MaterialTheme.colorScheme.primary
@@ -252,11 +257,61 @@ fun TransactionListScreenPreview() {
     // Create mock categories for preview
     val currentTime = System.currentTimeMillis()
     val mockCategories = listOf(
-        TransactionCategory(id = 1, name = "Gas", icon = "🔥", color = "#FF5722", type = CategoryType.UTILITIES, transactionType = TransactionType.EXPENSE, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
-        TransactionCategory(id = 2, name = "Groceries", icon = "🛒", color = "#8BC34A", type = CategoryType.FOOD_AND_DINING, transactionType = TransactionType.EXPENSE, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
-        TransactionCategory(id = 3, name = "Dining Out", icon = "🍽️", color = "#FF9800", type = CategoryType.FOOD_AND_DINING, transactionType = TransactionType.EXPENSE, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
-        TransactionCategory(id = 4, name = "Coffee & Beverages", icon = "☕", color = "#8D6E63", type = CategoryType.FOOD_AND_DINING, transactionType = TransactionType.EXPENSE, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
-        TransactionCategory(id = 5, name = "School Fees", icon = "🎓", color = "#2196F3", type = CategoryType.EDUCATION, transactionType = TransactionType.EXPENSE, isEditable = false, createdAt = currentTime, updatedAt = currentTime),
+        TransactionCategory(
+            id = 1,
+            name = "Gas",
+            icon = "🔥",
+            color = "#FF5722",
+            type = CategoryType.UTILITIES,
+            transactionType = TransactionType.EXPENSE,
+            isEditable = false,
+            createdAt = currentTime,
+            updatedAt = currentTime
+        ),
+        TransactionCategory(
+            id = 2,
+            name = "Groceries",
+            icon = "🛒",
+            color = "#8BC34A",
+            type = CategoryType.FOOD_AND_DINING,
+            transactionType = TransactionType.EXPENSE,
+            isEditable = false,
+            createdAt = currentTime,
+            updatedAt = currentTime
+        ),
+        TransactionCategory(
+            id = 3,
+            name = "Dining Out",
+            icon = "🍽️",
+            color = "#FF9800",
+            type = CategoryType.FOOD_AND_DINING,
+            transactionType = TransactionType.EXPENSE,
+            isEditable = false,
+            createdAt = currentTime,
+            updatedAt = currentTime
+        ),
+        TransactionCategory(
+            id = 4,
+            name = "Coffee & Beverages",
+            icon = "☕",
+            color = "#8D6E63",
+            type = CategoryType.FOOD_AND_DINING,
+            transactionType = TransactionType.EXPENSE,
+            isEditable = false,
+            createdAt = currentTime,
+            updatedAt = currentTime
+        ),
+        TransactionCategory(
+            id = 5,
+            name = "School Fees",
+            icon = "🎓",
+            color = "#2196F3",
+            type = CategoryType.EDUCATION,
+            transactionType = TransactionType.EXPENSE,
+            isEditable = false,
+            createdAt = currentTime,
+            updatedAt = currentTime
+        ),
     )
     val mockTransactions = listOf(
         Transaction(

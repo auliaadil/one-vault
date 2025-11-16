@@ -16,12 +16,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.core.util.DateUtil
-import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.core.util.ShareImageGenerator
+import com.adilstudio.project.onevault.domain.model.Currency
 import com.adilstudio.project.onevault.domain.model.SplitBill
 import com.adilstudio.project.onevault.domain.model.SplitParticipant
 import com.adilstudio.project.onevault.domain.usecase.ExportParticipantToTransactionUseCase
 import com.adilstudio.project.onevault.presentation.component.GenericBottomSheet
+import com.adilstudio.project.onevault.presentation.component.AutoCurrencyText
+import com.adilstudio.project.onevault.presentation.component.formatCurrency
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -37,6 +39,7 @@ fun SplitBillDetailBottomSheet(
     val exportTransactionUseCase: ExportParticipantToTransactionUseCase = koinInject()
     var showParticipantDetail by remember { mutableStateOf<SplitParticipant?>(null) }
     var isSharing by remember { mutableStateOf(false) }
+    val currency = Currency.current
 
     GenericBottomSheet(
         title = "Split Bill Details",
@@ -78,7 +81,7 @@ fun SplitBillDetailBottomSheet(
 
                         DetailRow(
                             "Total Amount",
-                            RupiahFormatter.formatWithRupiahPrefix(splitBill.totalAmount.toLong())
+                            formatCurrency(splitBill.totalAmount, currency)
                         )
 
                         if (splitBill.tax > 0) {
@@ -126,10 +129,9 @@ fun SplitBillDetailBottomSheet(
                                     )
                                 }
                             }
-                            Text(
-                                text = RupiahFormatter.formatWithRupiahPrefix(item.price.toLong()),
+                            AutoCurrencyText(
+                                amount = item.price,
                                 style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -184,10 +186,9 @@ fun SplitBillDetailBottomSheet(
                                 }
                             }
                             Column(horizontalAlignment = Alignment.End) {
-                                Text(
-                                    text = RupiahFormatter.formatWithRupiahPrefix(participant.shareAmount.toLong()),
+                                AutoCurrencyText(
+                                    amount = participant.shareAmount,
                                     style = MaterialTheme.typography.bodyLarge,
-                                    fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.primary
                                 )
                             }
@@ -222,9 +223,7 @@ fun SplitBillDetailBottomSheet(
                                         putExtra(Intent.EXTRA_STREAM, imageUri)
                                         putExtra(
                                             Intent.EXTRA_TEXT,
-                                            "Split Bill: ${splitBill.title} - Total: ${
-                                                RupiahFormatter.formatWithRupiahPrefix(splitBill.totalAmount.toLong())
-                                            }"
+                                            "Split Bill: ${splitBill.title} - Total: ${formatCurrency(splitBill.totalAmount, currency)}"
                                         )
                                         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                                     }
@@ -317,6 +316,7 @@ private fun ParticipantDetailDialog(
     val context = LocalContext.current
     var isSharing by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val currency = Currency.current
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -339,7 +339,7 @@ private fun ParticipantDetailDialog(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = RupiahFormatter.formatWithRupiahPrefix(participant.shareAmount.toLong()),
+                    text = formatCurrency(participant.shareAmount, currency),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -383,7 +383,7 @@ private fun ParticipantDetailDialog(
                                 style = MaterialTheme.typography.bodySmall
                             )
                             Text(
-                                text = RupiahFormatter.formatWithRupiahPrefix((item.price * quantity).toLong()),
+                                text = formatCurrency(item.price * quantity, currency),
                                 style = MaterialTheme.typography.bodySmall,
                                 fontWeight = FontWeight.Medium
                             )
@@ -424,9 +424,7 @@ private fun ParticipantDetailDialog(
                                         putExtra(Intent.EXTRA_STREAM, imageUri)
                                         putExtra(
                                             Intent.EXTRA_TEXT,
-                                            "Split bill share for ${participant.name}: ${
-                                                RupiahFormatter.formatWithRupiahPrefix(participant.shareAmount.toLong())
-                                            }"
+                                            "Split bill share for ${participant.name}: ${formatCurrency(participant.shareAmount, currency)}"
                                         )
                                         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                                     }

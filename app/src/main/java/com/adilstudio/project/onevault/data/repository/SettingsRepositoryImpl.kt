@@ -13,4 +13,10 @@ class SettingsRepositoryImpl(
     }
 
     override fun getBiometricEnabled(): Flow<Boolean> = preferenceManager.getBiometricEnabledFlow()
+
+    override suspend fun setCurrency(currencyCode: String) {
+        preferenceManager.setCurrency(currencyCode)
+    }
+
+    override fun getCurrency(): Flow<String> = preferenceManager.getCurrencyFlow()
 }

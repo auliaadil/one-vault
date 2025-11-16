@@ -38,4 +38,8 @@ val useCaseModule = module {
     single { GetSplitBillByIdUseCase(get()) }
     single { DeleteSplitBillUseCase(get()) }
     single { ExportParticipantToTransactionUseCase(get()) }
+
+    // Settings Use Cases
+    single { GetCurrencyUseCase(get()) }
+    single { SetCurrencyUseCase(get()) }
 }
