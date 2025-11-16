@@ -9,6 +9,7 @@ import android.graphics.Typeface
 import androidx.core.content.FileProvider
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.toColorInt
+import com.adilstudio.project.onevault.domain.model.Currency
 import com.adilstudio.project.onevault.domain.model.SplitItem
 import com.adilstudio.project.onevault.domain.model.SplitParticipant
 import java.io.File
@@ -24,6 +25,7 @@ class ShareImageGenerator(private val context: Context) {
     private val textColor = "#222222".toColorInt()
     private val subtextColor = "#757575".toColorInt()
     private val dividerColor = "#E0E0E0".toColorInt()
+    private val currency: Currency = Currency.current
 
     /**
      * Generate complete split bill image with all participants' shares
@@ -61,7 +63,16 @@ class ShareImageGenerator(private val context: Context) {
             yPosition += 30f
 
             // Bill summary
-            yPosition = drawBillSummary(canvas, items, taxPercent, serviceFeePercent, totalAmount, margin, yPosition, contentWidth)
+            yPosition = drawBillSummary(
+                canvas,
+                items,
+                taxPercent,
+                serviceFeePercent,
+                totalAmount,
+                margin,
+                yPosition,
+                contentWidth
+            )
             yPosition += 30f
 
             // All items
@@ -69,7 +80,8 @@ class ShareImageGenerator(private val context: Context) {
             yPosition += 30f
 
             // All participants shares
-            yPosition = drawAllParticipantsShares(canvas, participants, margin, yPosition, contentWidth)
+            yPosition =
+                drawAllParticipantsShares(canvas, participants, margin, yPosition, contentWidth)
             yPosition += 40f
 
             // Watermark
@@ -84,7 +96,10 @@ class ShareImageGenerator(private val context: Context) {
         }
     }
 
-    private fun calculateCompleteBillImageHeight(items: List<SplitItem>, participants: List<SplitParticipant>): Int {
+    private fun calculateCompleteBillImageHeight(
+        items: List<SplitItem>,
+        participants: List<SplitParticipant>
+    ): Int {
         val baseHeight = 800
         val itemsHeight = items.size * 80
         val participantsHeight = participants.size * 70
@@ -172,23 +187,28 @@ class ShareImageGenerator(private val context: Context) {
 
         // Items total
         canvas.drawText("Subtotal:", margin, yPosition, labelPaint)
-        val subtotalText = RupiahFormatter.formatWithRupiahPrefix(baseAmount.toLong())
+        val subtotalText = CurrencyFormatter.formatWithPrefix(baseAmount.toLong(), currency)
         val subtotalWidth = valuePaint.measureText(subtotalText)
         canvas.drawText(subtotalText, margin + contentWidth - subtotalWidth, yPosition, valuePaint)
         yPosition += 30f
 
         // Tax
         canvas.drawText("Tax ($taxPercent%):", margin, yPosition, labelPaint)
-        val taxText = RupiahFormatter.formatWithRupiahPrefix(taxAmount.toLong())
+        val taxText = CurrencyFormatter.formatWithPrefix(taxAmount.toLong(), currency)
         val taxWidth = valuePaint.measureText(taxText)
         canvas.drawText(taxText, margin + contentWidth - taxWidth, yPosition, valuePaint)
         yPosition += 30f
 
         // Service fee
         canvas.drawText("Service Fee ($serviceFeePercent%):", margin, yPosition, labelPaint)
-        val serviceFeeText = RupiahFormatter.formatWithRupiahPrefix(serviceFeeAmount.toLong())
+        val serviceFeeText = CurrencyFormatter.formatWithPrefix(serviceFeeAmount.toLong(), currency)
         val serviceFeeWidth = valuePaint.measureText(serviceFeeText)
-        canvas.drawText(serviceFeeText, margin + contentWidth - serviceFeeWidth, yPosition, valuePaint)
+        canvas.drawText(
+            serviceFeeText,
+            margin + contentWidth - serviceFeeWidth,
+            yPosition,
+            valuePaint
+        )
         yPosition += 40f
 
         // Divider
@@ -204,7 +224,7 @@ class ShareImageGenerator(private val context: Context) {
             isAntiAlias = true
         }
         canvas.drawText("Total Amount:", margin, yPosition, totalPaint)
-        val totalText = RupiahFormatter.formatWithRupiahPrefix(totalAmount.toLong())
+        val totalText = CurrencyFormatter.formatWithPrefix(totalAmount.toLong(), currency)
         val totalWidth = totalPaint.measureText(totalText)
         canvas.drawText(totalText, margin + contentWidth - totalWidth, yPosition, totalPaint)
 
@@ -257,13 +277,19 @@ class ShareImageGenerator(private val context: Context) {
             canvas.drawText(item.description, margin, yPosition, itemPaint)
 
             // Price (right aligned)
-            val priceText = RupiahFormatter.formatWithRupiahPrefix(itemTotal.toLong())
+            val priceText = CurrencyFormatter.formatWithPrefix(itemTotal.toLong(), currency)
             val priceWidth = pricePaint.measureText(priceText)
             canvas.drawText(priceText, margin + contentWidth - priceWidth, yPosition, pricePaint)
             yPosition += 25f
 
             // Quantity and unit price
-            val detailText = "Qty: $totalQuantity × ${RupiahFormatter.formatWithRupiahPrefix(item.price.toLong())}"
+            val detailText =
+                "Qty: $totalQuantity × ${
+                    CurrencyFormatter.formatWithPrefix(
+                        item.price.toLong(),
+                        currency
+                    )
+                }"
             canvas.drawText(detailText, margin + 20f, yPosition, detailPaint)
             yPosition += 35f
         }
@@ -315,7 +341,8 @@ class ShareImageGenerator(private val context: Context) {
             canvas.drawText(participant.name, margin, yPosition, namePaint)
 
             // Share amount (right aligned)
-            val shareText = RupiahFormatter.formatWithRupiahPrefix(participant.shareAmount.toLong())
+            val shareText =
+                CurrencyFormatter.formatWithPrefix(participant.shareAmount.toLong(), currency)
             val shareWidth = amountPaint.measureText(shareText)
             canvas.drawText(shareText, margin + contentWidth - shareWidth, yPosition, amountPaint)
             yPosition += 25f
@@ -508,7 +535,8 @@ class ShareImageGenerator(private val context: Context) {
             typeface = Typeface.DEFAULT_BOLD
             isAntiAlias = true
         }
-        val shareText = RupiahFormatter.formatWithRupiahPrefix(participant.shareAmount.toLong())
+        val shareText =
+            CurrencyFormatter.formatWithPrefix(participant.shareAmount.toLong(), currency)
         canvas.drawText(shareText, margin, yPosition, amountPaint)
 
         return yPosition + 35f
@@ -559,14 +587,19 @@ class ShareImageGenerator(private val context: Context) {
             canvas.drawText(item.description, margin, yPosition, itemPaint)
 
             // Price (right aligned)
-            val priceText = RupiahFormatter.formatWithRupiahPrefix(itemTotal.toLong())
+            val priceText = CurrencyFormatter.formatWithPrefix(itemTotal.toLong(), currency)
             val priceWidth = pricePaint.measureText(priceText)
             canvas.drawText(priceText, margin + contentWidth - priceWidth, yPosition, pricePaint)
             yPosition += 25f
 
             // Quantity and unit price
             val detailText =
-                "Qty: $quantity × ${RupiahFormatter.formatWithRupiahPrefix(item.price.toLong())}"
+                "Qty: $quantity × ${
+                    CurrencyFormatter.formatWithPrefix(
+                        item.price.toLong(),
+                        currency
+                    )
+                }"
             canvas.drawText(detailText, margin + 20f, yPosition, detailPaint)
             yPosition += 35f
         }
@@ -623,7 +656,7 @@ class ShareImageGenerator(private val context: Context) {
 
         // Items total
         canvas.drawText("Items Total:", margin, yPosition, labelPaint)
-        val itemsTotalText = RupiahFormatter.formatWithRupiahPrefix(baseAmount.toLong())
+        val itemsTotalText = CurrencyFormatter.formatWithPrefix(baseAmount.toLong(), currency)
         val itemsTotalWidth = valuePaint.measureText(itemsTotalText)
         canvas.drawText(
             itemsTotalText,
@@ -635,14 +668,15 @@ class ShareImageGenerator(private val context: Context) {
 
         // Tax
         canvas.drawText("Tax ($taxPercent%):", margin, yPosition, labelPaint)
-        val taxText = RupiahFormatter.formatWithRupiahPrefix(participantTax.toLong())
+        val taxText = CurrencyFormatter.formatWithPrefix(participantTax.toLong(), currency)
         val taxWidth = valuePaint.measureText(taxText)
         canvas.drawText(taxText, margin + contentWidth - taxWidth, yPosition, valuePaint)
         yPosition += 30f
 
         // Service fee
         canvas.drawText("Service Fee ($serviceFeePercent%):", margin, yPosition, labelPaint)
-        val serviceFeeText = RupiahFormatter.formatWithRupiahPrefix(participantServiceFee.toLong())
+        val serviceFeeText =
+            CurrencyFormatter.formatWithPrefix(participantServiceFee.toLong(), currency)
         val serviceFeeWidth = valuePaint.measureText(serviceFeeText)
         canvas.drawText(
             serviceFeeText,
@@ -659,7 +693,8 @@ class ShareImageGenerator(private val context: Context) {
 
         // Total
         canvas.drawText("Total Share:", margin, yPosition, totalPaint)
-        val totalText = RupiahFormatter.formatWithRupiahPrefix(participant.shareAmount.toLong())
+        val totalText =
+            CurrencyFormatter.formatWithPrefix(participant.shareAmount.toLong(), currency)
         val totalWidth = totalPaint.measureText(totalText)
         canvas.drawText(totalText, margin + contentWidth - totalWidth, yPosition, totalPaint)
 
@@ -681,7 +716,10 @@ class ShareImageGenerator(private val context: Context) {
         canvas.drawText(watermarkText, x, y, watermarkPaint)
     }
 
-    private fun saveBitmapAndGetUri(bitmap: Bitmap, filenamePrefix: String = "split_bill_share"): android.net.Uri? {
+    private fun saveBitmapAndGetUri(
+        bitmap: Bitmap,
+        filenamePrefix: String = "split_bill_share"
+    ): android.net.Uri? {
         return try {
             val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
             val filename = "${filenamePrefix}_$timestamp.png"

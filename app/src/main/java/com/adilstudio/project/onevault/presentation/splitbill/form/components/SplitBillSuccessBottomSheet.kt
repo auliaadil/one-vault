@@ -1,12 +1,35 @@
 package com.adilstudio.project.onevault.presentation.splitbill.form.components
 
 import android.content.Intent
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -16,10 +39,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.adilstudio.project.onevault.R
-import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.core.util.ShareImageGenerator
 import com.adilstudio.project.onevault.domain.model.SplitItem
 import com.adilstudio.project.onevault.domain.model.SplitParticipant
+import com.adilstudio.project.onevault.presentation.component.formatCurrency
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,6 +62,7 @@ fun SplitBillSuccessBottomSheet(
     val scope = rememberCoroutineScope()
     var isSharing by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val currency = com.adilstudio.project.onevault.domain.model.Currency.current
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -99,7 +123,7 @@ fun SplitBillSuccessBottomSheet(
                             color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                         Text(
-                            text = RupiahFormatter.formatWithRupiahPrefix(totalAmount.toLong()),
+                            text = formatCurrency(totalAmount, currency),
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -163,7 +187,7 @@ fun SplitBillSuccessBottomSheet(
                             )
 
                             if (imageUri != null) {
-                                val formattedTotal = RupiahFormatter.formatWithRupiahPrefix(totalAmount.toLong())
+                                val formattedTotal = formatCurrency(totalAmount, currency)
                                 val shareIntent = Intent().apply {
                                     action = Intent.ACTION_SEND
                                     type = "image/png"
@@ -214,4 +238,3 @@ fun SplitBillSuccessBottomSheet(
         }
     }
 }
-

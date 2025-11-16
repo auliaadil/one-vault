@@ -2,30 +2,65 @@ package com.adilstudio.project.onevault.presentation.splitbill.form.components
 
 import android.content.Intent
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.AccountBalance
+import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.adilstudio.project.onevault.R
+import com.adilstudio.project.onevault.core.util.CurrencyFormatter
 import com.adilstudio.project.onevault.core.util.DateUtil
-import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.core.util.ShareImageGenerator
+import com.adilstudio.project.onevault.domain.model.Currency
 import com.adilstudio.project.onevault.domain.model.SplitBill
 import com.adilstudio.project.onevault.domain.model.SplitItem
 import com.adilstudio.project.onevault.domain.model.SplitParticipant
-import androidx.compose.ui.platform.LocalContext
-import com.adilstudio.project.onevault.presentation.splitbill.form.SplitBillFormViewModel
-import androidx.compose.runtime.collectAsState
 import com.adilstudio.project.onevault.presentation.MainViewModel
+import com.adilstudio.project.onevault.presentation.splitbill.form.SplitBillFormViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,6 +75,7 @@ fun SummaryStep(
 ) {
     var selectedParticipant by remember { mutableStateOf<SplitParticipant?>(null) }
     val uiState by viewModel.uiState.collectAsState()
+    val currency = Currency.current
 
     // Show success message via MainViewModel when export succeeds
     uiState.exportSuccessMessage?.let { message ->
@@ -135,16 +171,19 @@ fun SummaryStep(
 
                         DetailRow(
                             "Total Base Amount:",
-                            RupiahFormatter.formatWithRupiahPrefix(totalPrice.toLong())
+                            CurrencyFormatter.formatWithPrefix(totalPrice.toLong(), currency)
                         )
                         DetailRow(
                             "Tax:",
-                            "$taxPercent% (" + RupiahFormatter.formatWithRupiahPrefix(taxAmount.toLong()) + ")"
+                            "$taxPercent% (" + CurrencyFormatter.formatWithPrefix(
+                                taxAmount.toLong(),
+                                currency
+                            ) + ")"
                         )
                         DetailRow(
                             "Service Fee:",
-                            "$serviceFeePercent% (" + RupiahFormatter.formatWithRupiahPrefix(
-                                serviceFeeAmount.toLong()
+                            "$serviceFeePercent% (" + CurrencyFormatter.formatWithPrefix(
+                                serviceFeeAmount.toLong(), currency
                             ) + ")"
                         )
 
@@ -154,7 +193,10 @@ fun SummaryStep(
                         val totalAmount = calculatedParticipants.sumOf { it.shareAmount }
                         DetailRow(
                             label = "Total Amount:",
-                            value = RupiahFormatter.formatWithRupiahPrefix(totalAmount.toLong()),
+                            value = CurrencyFormatter.formatWithPrefix(
+                                totalAmount.toLong(),
+                                currency
+                            ),
                             isTotal = true
                         )
                     }
@@ -252,6 +294,8 @@ fun ParticipantShareCard(
     onClick: () -> Unit,
     splitBill: SplitBill?
 ) {
+    val currency = Currency.current
+
     Card(
         modifier = Modifier.clickable { onClick() }
     ) {
@@ -278,7 +322,10 @@ fun ParticipantShareCard(
                             fontWeight = FontWeight.Medium
                         )
                         Text(
-                            text = RupiahFormatter.formatWithRupiahPrefix(participant.shareAmount.toLong()),
+                            text = CurrencyFormatter.formatWithPrefix(
+                                participant.shareAmount.toLong(),
+                                currency
+                            ),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold
@@ -334,6 +381,7 @@ fun ParticipantDetailBottomSheet(
     onDismiss: () -> Unit,
     onExportToTransaction: () -> Unit
 ) {
+    val currency = Currency.current
     val context = LocalContext.current
     var showExportDialog by remember { mutableStateOf(false) }
     var isSharing by remember { mutableStateOf(false) }
@@ -392,7 +440,10 @@ fun ParticipantDetailBottomSheet(
 
                         DetailRow(
                             label = "Total Share:",
-                            value = RupiahFormatter.formatWithRupiahPrefix(participant.shareAmount.toLong()),
+                            value = CurrencyFormatter.formatWithPrefix(
+                                participant.shareAmount.toLong(),
+                                currency
+                            ),
                             isTotal = true
                         )
 
@@ -459,8 +510,8 @@ fun ParticipantDetailBottomSheet(
                                     )
                                     Text(
                                         text = "Qty: $quantity × ${
-                                            RupiahFormatter.formatWithRupiahPrefix(
-                                                item.price.toLong()
+                                            CurrencyFormatter.formatWithPrefix(
+                                                item.price.toLong(), currency
                                             )
                                         }",
                                         style = MaterialTheme.typography.bodyMedium,
@@ -468,7 +519,10 @@ fun ParticipantDetailBottomSheet(
                                     )
                                 }
                                 Text(
-                                    text = RupiahFormatter.formatWithRupiahPrefix(itemTotal.toLong()),
+                                    text = CurrencyFormatter.formatWithPrefix(
+                                        itemTotal.toLong(),
+                                        currency
+                                    ),
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.primary
@@ -499,22 +553,28 @@ fun ParticipantDetailBottomSheet(
 
                         DetailRow(
                             "Items Total:",
-                            RupiahFormatter.formatWithRupiahPrefix(baseAmount.toLong())
+                            CurrencyFormatter.formatWithPrefix(baseAmount.toLong(), currency)
                         )
                         DetailRow(
                             "Tax ($taxPercent%):",
-                            RupiahFormatter.formatWithRupiahPrefix(participantTax.toLong())
+                            CurrencyFormatter.formatWithPrefix(participantTax.toLong(), currency)
                         )
                         DetailRow(
                             "Service Fee ($serviceFeePercent%):",
-                            RupiahFormatter.formatWithRupiahPrefix(participantServiceFee.toLong())
+                            CurrencyFormatter.formatWithPrefix(
+                                participantServiceFee.toLong(),
+                                currency
+                            )
                         )
 
                         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
                         DetailRow(
                             label = "Total Share:",
-                            value = RupiahFormatter.formatWithRupiahPrefix(participant.shareAmount.toLong()),
+                            value = CurrencyFormatter.formatWithPrefix(
+                                participant.shareAmount.toLong(),
+                                currency
+                            ),
                             isTotal = true
                         )
                     }
@@ -575,7 +635,10 @@ fun ParticipantDetailBottomSheet(
                                         putExtra(
                                             Intent.EXTRA_TEXT,
                                             "Split bill share for ${participant.name}: ${
-                                                RupiahFormatter.formatWithRupiahPrefix(participant.shareAmount.toLong())
+                                                CurrencyFormatter.formatWithPrefix(
+                                                    participant.shareAmount.toLong(),
+                                                    currency
+                                                )
                                             }"
                                         )
                                         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -639,7 +702,12 @@ fun ParticipantDetailBottomSheet(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            "Amount: ${RupiahFormatter.formatWithRupiahPrefix(participant.shareAmount.toLong())}",
+                            "Amount: ${
+                                CurrencyFormatter.formatWithPrefix(
+                                    participant.shareAmount.toLong(),
+                                    currency
+                                )
+                            }",
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary

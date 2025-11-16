@@ -18,11 +18,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.adilstudio.project.onevault.R
+import com.adilstudio.project.onevault.domain.model.Currency
 import com.adilstudio.project.onevault.domain.model.SplitItem
 import com.adilstudio.project.onevault.domain.util.FeatureFlag
 import com.adilstudio.project.onevault.presentation.splitbill.form.SplitBillFormViewModel
 import com.adilstudio.project.onevault.core.util.DateUtil
-import com.adilstudio.project.onevault.core.util.RupiahFormatter
+import com.adilstudio.project.onevault.presentation.component.formatCurrency
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -282,7 +283,7 @@ fun ItemCard(
     item: SplitItem,
     onDescriptionChange: (String) -> Unit,
     onPriceChange: (Double) -> Unit,
-    onRemove: () -> Unit,
+    onRemove: () -> Unit
 ) {
     Card {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -317,7 +318,7 @@ fun ItemCard(
                         supportingText = {
                             if (item.price > 0) {
                                 Text(
-                                    text = RupiahFormatter.formatWithRupiahPrefix(item.price.toLong()),
+                                    text = formatCurrency(item.price, Currency.current),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.primary
                                 )
@@ -339,8 +340,10 @@ fun ItemCard(
 fun SuggestedItemCard(
     item: SplitItem,
     onAddItem: (SplitItem) -> Unit,
-    onRemove: (SplitItem) -> Unit,
+    onRemove: (SplitItem) -> Unit
 ) {
+    val currency = Currency.current
+
     Card(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
@@ -360,7 +363,7 @@ fun SuggestedItemCard(
                     fontWeight = FontWeight.Medium
                 )
                 Text(
-                    text = RupiahFormatter.formatRupiahDisplay(item.price.toLong()),
+                    text = formatCurrency(item.price, currency, showSymbol = false),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary
                 )

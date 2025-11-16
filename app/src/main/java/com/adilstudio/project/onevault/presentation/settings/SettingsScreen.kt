@@ -28,6 +28,7 @@ fun SettingsScreen(
     val context = LocalContext.current
     val activity = context as? FragmentActivity
     val biometricEnabled by viewModel.biometricEnabled.collectAsState()
+    val currency by viewModel.currency.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
     var showCurrencyDialog by remember { mutableStateOf(false) }
 
@@ -55,14 +56,6 @@ fun SettingsScreen(
                 onClick = onNavigateToPrivacyPolicy
             )
 
-            /* TODO: Implement Import/Export feature
-            SettingsItem(
-                icon = Icons.Default.ImportExport,
-                title = stringResource(R.string.import_export),
-                onClick = onNavigateToImportExport
-            )
-             */
-
             // Biometric Toggle
             SettingsToggleItem(
                 icon = Icons.Default.Fingerprint,
@@ -82,24 +75,13 @@ fun SettingsScreen(
                 }
             )
 
-            // Currency
-            SettingsItem(
+            // Currency Selection
+            SettingsClickableItem(
                 icon = Icons.Default.AttachMoney,
                 title = stringResource(R.string.currency_rupiah_label),
+                subtitle = "${currency.displayName} (${currency.symbol})",
                 onClick = { showCurrencyDialog = true }
             )
-            if (showCurrencyDialog) {
-                AlertDialog(
-                    onDismissRequest = { showCurrencyDialog = false },
-                    confirmButton = {
-                        TextButton(onClick = { showCurrencyDialog = false }) {
-                            Text(stringResource(R.string.currency_info_dialog_ok))
-                        }
-                    },
-                    title = { Text(stringResource(R.string.currency_info_dialog_title)) },
-                    text = { Text(stringResource(R.string.currency_info_dialog_message)) }
-                )
-            }
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -123,6 +105,18 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_large)))
         }
+    }
+
+    // Currency Selection Dialog
+    if (showCurrencyDialog) {
+        CurrencySelectionBottomSheet(
+            currentCurrency = currency,
+            onDismiss = { showCurrencyDialog = false },
+            onCurrencySelected = { selectedCurrency ->
+                viewModel.setCurrency(selectedCurrency)
+                showCurrencyDialog = false
+            }
+        )
     }
 }
 

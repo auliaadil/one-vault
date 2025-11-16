@@ -9,8 +9,9 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import com.adilstudio.project.onevault.R
-import com.adilstudio.project.onevault.core.util.RupiahFormatter
+import com.adilstudio.project.onevault.core.util.CurrencyFormatter
 import com.adilstudio.project.onevault.domain.model.Account
+import com.adilstudio.project.onevault.domain.model.Currency
 import com.adilstudio.project.onevault.presentation.MainViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -20,14 +21,13 @@ fun AddEditAccountDialog(
     account: Account? = null,
     onDismiss: () -> Unit,
     onSave: (name: String, amount: Double, description: String) -> Unit,
-    mainViewModel: MainViewModel = koinViewModel(),
 ) {
     var name by remember { mutableStateOf(account?.name ?: "") }
     var amountValue by remember { mutableStateOf(account?.amount?.toLong() ?: 0L) }
     var amountDisplay by remember {
         mutableStateOf(
             if (account?.amount != null)
-                RupiahFormatter.formatRupiahDisplay(account.amount.toLong())
+                CurrencyFormatter.formatDisplay(account.amount.toLong(), Currency.current)
             else ""
         )
     }
@@ -75,7 +75,10 @@ fun AddEditAccountDialog(
                                 val longValue = digitsOnly.toLongOrNull() ?: 0L
                                 val finalValue = if (isNegative) -longValue else longValue
                                 amountValue = finalValue
-                                amountDisplay = RupiahFormatter.formatRupiahDisplay(finalValue)
+                                amountDisplay = CurrencyFormatter.formatDisplay(
+                                    finalValue,
+                                    Currency.current
+                                )
                             }
                         } else {
                             amountValue = 0L
