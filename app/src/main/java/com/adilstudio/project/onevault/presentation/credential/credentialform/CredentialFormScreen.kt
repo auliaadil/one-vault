@@ -60,7 +60,8 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 fun CredentialFormScreen(
     credential: Credential? = null, // For editing existing credentials
     viewModel: CredentialFormViewModel = koinViewModel(),
-    mainViewModel: MainViewModel = koinViewModel()
+    mainViewModel: MainViewModel = koinViewModel(),
+    onNavigateBack: () -> Unit = {}
 ) {
     val serviceName by viewModel.serviceName.collectAsState()
     val userAccount by viewModel.userAccount.collectAsState()
@@ -84,11 +85,12 @@ fun CredentialFormScreen(
     }
 
     // Show global snackbar when successMessage is set
-    if (successMessage != null) {
-        LaunchedEffect(successMessage) {
-            val message = if (credential == null) savedMessage else updatedMessage
-            mainViewModel.showSnackbar(message)
+    successMessage?.let {
+        LaunchedEffect(it) {
+            mainViewModel.showSnackbar(it)
             viewModel.clearSuccessMessage()
+            // Navigate back after showing success message
+            onNavigateBack()
         }
     }
 

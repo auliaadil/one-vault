@@ -30,13 +30,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.util.FeatureFlag
+import com.adilstudio.project.onevault.presentation.MainViewModel
 import com.adilstudio.project.onevault.presentation.component.BaseScreen
 import com.adilstudio.project.onevault.presentation.splitbill.form.components.ImageCaptureStep
 import com.adilstudio.project.onevault.presentation.splitbill.form.components.ItemAssignmentStep
@@ -51,6 +51,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun SplitBillFormScreen(
     viewModel: SplitBillFormViewModel = koinViewModel(),
+    mainViewModel: MainViewModel = koinViewModel(),
     onNavigateBack: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -74,8 +75,16 @@ fun SplitBillFormScreen(
     // Handle error messages
     uiState.errorMessage?.let { message ->
         LaunchedEffect(message) {
-            // Show snack bar or toast
+            mainViewModel.showSnackbar(message)
             viewModel.clearError()
+        }
+    }
+
+    // Show success message as snackbar for split bill save
+    uiState.saveSuccessMessage?.let { message ->
+        LaunchedEffect(message) {
+            mainViewModel.showSnackbar(message)
+            viewModel.clearSuccessMessage()
         }
     }
 

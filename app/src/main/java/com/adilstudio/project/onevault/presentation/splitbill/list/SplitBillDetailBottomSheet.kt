@@ -34,7 +34,7 @@ fun SplitBillDetailBottomSheet(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val exportUseCase: ExportParticipantToTransactionUseCase = koinInject()
+    val exportTransactionUseCase: ExportParticipantToTransactionUseCase = koinInject()
     var showParticipantDetail by remember { mutableStateOf<SplitParticipant?>(null) }
     var isSharing by remember { mutableStateOf(false) }
 
@@ -272,9 +272,9 @@ fun SplitBillDetailBottomSheet(
             participant = participant,
             splitBill = splitBill,
             onDismiss = { showParticipantDetail = null },
-            onExport = {
+            onExportTransaction = {
                 scope.launch {
-                    val success = exportUseCase(splitBill, participant)
+                    val success = exportTransactionUseCase(splitBill, participant)
                     if (success) {
                         // Show success message
                         showParticipantDetail = null
@@ -312,7 +312,7 @@ private fun ParticipantDetailDialog(
     participant: SplitParticipant,
     splitBill: SplitBill,
     onDismiss: () -> Unit,
-    onExport: () -> Unit
+    onExportTransaction: () -> Unit
 ) {
     val context = LocalContext.current
     var isSharing by remember { mutableStateOf(false) }
@@ -449,7 +449,7 @@ private fun ParticipantDetailDialog(
                         Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(18.dp))
                     }
                 }
-                Button(onClick = onExport) {
+                Button(onClick = onExportTransaction) {
                     Text("Save to Transaction")
                 }
             }

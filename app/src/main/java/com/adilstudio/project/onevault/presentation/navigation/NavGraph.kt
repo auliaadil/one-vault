@@ -171,7 +171,8 @@ fun NavGraph(
         }
         composable(Screen.AddCredential.route) {
             CredentialFormScreen(
-                credential = null // For new credentials
+                credential = null, // For new credentials
+                onNavigateBack = { navController.popBackStack() }
             )
         }
         composable(Screen.EditCredential.route) {
@@ -200,7 +201,8 @@ fun NavGraph(
                 }
             } else {
                 CredentialFormScreen(
-                    credential = credential
+                    credential = credential,
+                    onNavigateBack = { navController.popBackStack() }
                 )
             }
         }

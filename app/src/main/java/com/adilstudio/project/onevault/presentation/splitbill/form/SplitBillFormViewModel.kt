@@ -31,7 +31,8 @@ data class SplitBillUiState(
     val validationErrors: List<String> = emptyList(),
     val isSaveSuccessful: Boolean = false,
     val savedSplitBillId: Long? = null,
-    val exportSuccess: Boolean? = null // Success flag for export operation
+    val saveSuccessMessage: String? = null,
+    val exportSuccessMessage: String? = null
 )
 
 enum class SplitBillStep {
@@ -278,20 +279,21 @@ class SplitBillFormViewModel(
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     errorMessage = if (success) null else "Failed to export to transaction",
-                    exportSuccess = success // Set success flag
+                    exportSuccessMessage = if (success) "Exported to transaction successfully!" else null // Set export success message
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = e.message,
-                    exportSuccess = false
+                    errorMessage = e.message
                 )
             }
         }
     }
 
     fun clearExportSuccess() {
-        _uiState.value = _uiState.value.copy(exportSuccess = null)
+        _uiState.value = _uiState.value.copy(
+            exportSuccessMessage = null // Also clear export success message
+        )
     }
 
     /**
@@ -426,7 +428,8 @@ class SplitBillFormViewModel(
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     isSaveSuccessful = true,
-                    savedSplitBillId = splitBillId
+                    savedSplitBillId = splitBillId,
+                    saveSuccessMessage = "Split bill saved successfully"
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
@@ -443,7 +446,18 @@ class SplitBillFormViewModel(
     fun resetSaveSuccess() {
         _uiState.value = _uiState.value.copy(
             isSaveSuccessful = false,
-            savedSplitBillId = null
+            savedSplitBillId = null,
+            saveSuccessMessage = null
+        )
+    }
+
+    /**
+     * Clear success message (for backward compatibility)
+     */
+    fun clearSuccessMessage() {
+        _uiState.value = _uiState.value.copy(
+            saveSuccessMessage = null,
+            exportSuccessMessage = null
         )
     }
 }

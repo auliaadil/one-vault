@@ -40,12 +40,11 @@ fun SummaryStep(
 ) {
     var selectedParticipant by remember { mutableStateOf<SplitParticipant?>(null) }
     val uiState by viewModel.uiState.collectAsState()
-    val successMessage = stringResource(R.string.exported_to_transaction_success_message)
 
-    // Show success message via MainViewModel
-    if (uiState.exportSuccess == true) {
-        LaunchedEffect(uiState.exportSuccess) {
-            mainViewModel.showSnackbar(successMessage)
+    // Show success message via MainViewModel when export succeeds
+    uiState.exportSuccessMessage?.let { message ->
+        LaunchedEffect(message) {
+            mainViewModel.showSnackbar(message)
             viewModel.clearExportSuccess()
         }
     }
