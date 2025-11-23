@@ -9,26 +9,34 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import com.adilstudio.project.onevault.R
-import com.adilstudio.project.onevault.core.util.RupiahFormatter
+import com.adilstudio.project.onevault.core.util.CurrencyFormatter
 import com.adilstudio.project.onevault.domain.model.Account
+import com.adilstudio.project.onevault.domain.model.Currency
+import com.adilstudio.project.onevault.presentation.MainViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditAccountDialog(
     account: Account? = null,
     onDismiss: () -> Unit,
-    onSave: (name: String, amount: Double, description: String) -> Unit
+    onSave: (name: String, amount: Double, description: String) -> Unit,
 ) {
     var name by remember { mutableStateOf(account?.name ?: "") }
     var amountValue by remember { mutableStateOf(account?.amount?.toLong() ?: 0L) }
     var amountDisplay by remember {
         mutableStateOf(
             if (account?.amount != null)
-                RupiahFormatter.formatRupiahDisplay(account.amount.toLong())
+                CurrencyFormatter.formatDisplay(account.amount.toLong(), Currency.current)
             else ""
         )
     }
     var description by remember { mutableStateOf(account?.description ?: "") }
+
+    val mainViewModel: MainViewModel = koinViewModel()
+    val savedMessage = stringResource(R.string.account_saved_success)
+    val updatedMessage = stringResource(R.string.account_updated_success)
+    var showSuccess by remember { mutableStateOf(false) }
 
     val isEditing = account != null
     val isValid = name.isNotBlank()
@@ -67,7 +75,10 @@ fun AddEditAccountDialog(
                                 val longValue = digitsOnly.toLongOrNull() ?: 0L
                                 val finalValue = if (isNegative) -longValue else longValue
                                 amountValue = finalValue
-                                amountDisplay = RupiahFormatter.formatRupiahDisplay(finalValue)
+                                amountDisplay = CurrencyFormatter.formatDisplay(
+                                    finalValue,
+                                    Currency.current
+                                )
                             }
                         } else {
                             amountValue = 0L
@@ -102,6 +113,7 @@ fun AddEditAccountDialog(
             Button(
                 onClick = {
                     onSave(name, amountValue.toDouble(), description)
+                    showSuccess = true
                 },
                 enabled = isValid
             ) {
@@ -114,4 +126,12 @@ fun AddEditAccountDialog(
             }
         }
     )
+
+    if (showSuccess) {
+        LaunchedEffect(showSuccess) {
+            val message = if (account == null) savedMessage else updatedMessage
+            mainViewModel.showSnackbar(message)
+            showSuccess = false
+        }
+    }
 }

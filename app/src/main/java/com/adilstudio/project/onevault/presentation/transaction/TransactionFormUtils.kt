@@ -1,6 +1,7 @@
 package com.adilstudio.project.onevault.presentation.transaction
 
-import com.adilstudio.project.onevault.core.util.RupiahFormatter
+import com.adilstudio.project.onevault.core.util.CurrencyFormatter
+import com.adilstudio.project.onevault.domain.model.Currency
 
 /**
  * Utility functions for TransactionForm operations
@@ -10,13 +11,13 @@ object TransactionFormUtils {
     /**
      * Extracts numeric amount from scanned text
      */
-    fun extractAmountFromText(text: String): Double {
+    fun extractAmountFromText(text: String, currency: Currency): Double {
         // Remove common currency symbols and formatting
         val cleanText = text
-            .replace("Rp", "", ignoreCase = true)
-            .replace("IDR", "", ignoreCase = true)
-            .replace(".", "") // Remove thousand separators
-            .replace(",", "") // Remove thousand separators
+            .replace(currency.symbol, "", ignoreCase = true)
+            .replace(currency.code, "", ignoreCase = true)
+            .replace(currency.thousandSeparator.toString(), "")
+            .replace(currency.decimalSeparator.toString(), "")
             .replace(" ", "")
 
         // Extract numbers from the cleaned text
@@ -29,9 +30,9 @@ object TransactionFormUtils {
     /**
      * Formats display values for form fields from scanned data
      */
-    fun getFormattedAmountDisplay(amount: Double): String {
+    fun getFormattedAmountDisplay(amount: Double, currency: Currency): String {
         return if (amount > 0) {
-            RupiahFormatter.formatRupiahDisplay(amount.toLong())
+            CurrencyFormatter.formatDisplay(amount.toLong(), currency)
         } else {
             ""
         }

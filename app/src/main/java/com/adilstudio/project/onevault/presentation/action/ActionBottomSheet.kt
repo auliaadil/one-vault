@@ -29,6 +29,7 @@ fun ActionBottomSheet(
     onAddTransaction: () -> Unit = {},
     onScanTransaction: () -> Unit = {},
     onAddCredential: () -> Unit = {},
+    onAddSplitBill: () -> Unit = {},
     onDismiss: () -> Unit = {}
 ) {
     val actions = listOf(
@@ -53,6 +54,14 @@ fun ActionBottomSheet(
             icon = Icons.Filled.VpnKey,
             onClick = {
                 onAddCredential()
+                onDismiss()
+            }
+        ),
+        ActionItem(
+            title = stringResource(R.string.add_split_bill),
+            icon = Icons.Filled.Group,
+            onClick = {
+                onAddSplitBill()
                 onDismiss()
             }
         )

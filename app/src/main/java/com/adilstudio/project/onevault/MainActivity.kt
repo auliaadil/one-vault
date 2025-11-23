@@ -4,8 +4,8 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -18,6 +18,8 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -26,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,12 +40,13 @@ import androidx.navigation.compose.rememberNavController
 import com.adilstudio.project.onevault.core.util.NavigationKeys
 import com.adilstudio.project.onevault.domain.manager.AppSecurityManager
 import com.adilstudio.project.onevault.domain.manager.BiometricAuthManager
-import com.adilstudio.project.onevault.presentation.TopBarViewModel
+import com.adilstudio.project.onevault.presentation.MainViewModel
 import com.adilstudio.project.onevault.presentation.action.ActionBottomSheet
 import com.adilstudio.project.onevault.presentation.biometric.BiometricLockScreen
 import com.adilstudio.project.onevault.presentation.navigation.NavGraph
 import com.adilstudio.project.onevault.presentation.navigation.Screen
 import com.adilstudio.project.onevault.ui.theme.OneVaultTheme
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.compose.koinViewModel
@@ -93,16 +97,25 @@ fun MainApp(
     showScanner: Boolean = false,
     appSecurityManager: AppSecurityManager? = null,
     onAppExit: () -> Unit = {},
-    topBarViewModel: TopBarViewModel = koinViewModel()
+    mainViewModel: MainViewModel = koinViewModel()
 ) {
     // Collect the state from the ViewModel
-    val title by topBarViewModel.title.collectAsState()
-    val showNavIcon by topBarViewModel.showNavigationIcon.collectAsState()
-    val actions by topBarViewModel.actions.collectAsState()
+    val title by mainViewModel.title.collectAsState()
+    val showNavIcon by mainViewModel.showNavigationIcon.collectAsState()
+    val actions by mainViewModel.actions.collectAsState()
 
     OneVaultTheme {
         val navController = rememberNavController()
         val isAppLocked by (appSecurityManager?.isAppLocked?.collectAsState() ?: remember { mutableStateOf(false) })
+        val mainViewModel: MainViewModel = koinViewModel()
+        val snackbarHostState = remember { SnackbarHostState() }
+
+        // Collect snackbar messages from MainViewModel
+        LaunchedEffect(Unit) {
+            mainViewModel.snackbarMessage.collectLatest { message ->
+                snackbarHostState.showSnackbar(message)
+            }
+        }
 
         // State for action bottom sheet
         var showActionSheet by remember { mutableStateOf(false) }
@@ -142,22 +155,36 @@ fun MainApp(
                     // Only show bottom navigation on Home and Settings screens
                     if (currentRoute == Screen.Home.route || currentRoute == Screen.Settings.route) {
                         val items = listOf(
-                            Triple(stringResource(R.string.home), Screen.Home.route, Icons.Filled.Home),
-                            Triple(stringResource(R.string.action), "action_sheet", Icons.Filled.Add),
-                            Triple(stringResource(R.string.settings), Screen.Settings.route, Icons.Filled.Settings),
+                            Triple(
+                                stringResource(R.string.home),
+                                Screen.Home.route,
+                                Icons.Filled.Home
+                            ),
+                            Triple(
+                                stringResource(R.string.action),
+                                Screen.Action.route,
+                                Icons.Filled.Add
+                            ),
+                            Triple(
+                                stringResource(R.string.settings),
+                                Screen.Settings.route,
+                                Icons.Filled.Settings
+                            ),
                         )
                         NavigationBar {
                             items.forEach { (label, route, icon) ->
                                 NavigationBarItem(
                                     icon = { Icon(icon, contentDescription = label) },
                                     label = { Text(label) },
-                                    selected = currentRoute == route || (route == "action_sheet" && showActionSheet),
+                                    selected = currentRoute == route || (route == Screen.Action.route && showActionSheet),
                                     onClick = {
-                                        if (route == "action_sheet") {
+                                        if (route == Screen.Action.route) {
                                             showActionSheet = true
                                         } else if (currentRoute != route) {
                                             navController.navigate(route) {
-                                                popUpTo(navController.graph.startDestinationId) { saveState = true }
+                                                popUpTo(navController.graph.startDestinationId) {
+                                                    saveState = true
+                                                }
                                                 launchSingleTop = true
                                                 restoreState = true
                                             }
@@ -184,7 +211,9 @@ fun MainApp(
                         ActionBottomSheet(
                             onAddTransaction = {
                                 showActionSheet = false
-                                navController.currentBackStackEntry?.savedStateHandle?.remove<Uri>(NavigationKeys.SCANNED_IMAGE_URI)
+                                navController.currentBackStackEntry?.savedStateHandle?.remove<Uri>(
+                                    NavigationKeys.SCANNED_IMAGE_URI
+                                )
                                 navController.navigate(Screen.AddTransaction.route)
                             },
                             onScanTransaction = {
@@ -194,6 +223,10 @@ fun MainApp(
                             onAddCredential = {
                                 showActionSheet = false
                                 navController.navigate(Screen.AddCredential.route)
+                            },
+                            onAddSplitBill = {
+                                showActionSheet = false
+                                navController.navigate(Screen.AddSplitBill.route)
                             },
                             onDismiss = { showActionSheet = false }
                         )
@@ -207,9 +240,21 @@ fun MainApp(
                         onImageCaptured = { imageUri ->
                             showScannerDialog = false
                             // Pass scanned image URI through savedStateHandle and navigate to AddTransaction
-                            navController.currentBackStackEntry?.savedStateHandle?.set(NavigationKeys.SCANNED_IMAGE_URI, imageUri)
+                            navController.currentBackStackEntry?.savedStateHandle?.set(
+                                NavigationKeys.SCANNED_IMAGE_URI,
+                                imageUri
+                            )
                             navController.navigate(Screen.AddTransaction.route)
                         }
+                    )
+                }
+
+                // Place SnackbarHost at the bottom
+                Box(modifier = Modifier.fillMaxSize()) {
+                    SnackbarHost(
+                        hostState = snackbarHostState,
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
                     )
                 }
             }

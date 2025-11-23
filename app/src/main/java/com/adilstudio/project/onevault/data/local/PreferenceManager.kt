@@ -45,8 +45,21 @@ class PreferenceManager(private val context: Context) {
         }
     }
 
+    suspend fun setCurrency(currencyCode: String) {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_CURRENCY] = currencyCode
+        }
+    }
+
+    fun getCurrencyFlow(): Flow<String> {
+        return context.dataStore.data.map { preferences ->
+            preferences[KEY_CURRENCY] ?: "IDR" // Default to Indonesian Rupiah
+        }
+    }
+
     companion object {
         private val KEY_BIOMETRIC_ENABLED = booleanPreferencesKey("biometric_enabled")
         private val KEY_DEFAULT_CREDENTIAL_TEMPLATE = stringPreferencesKey("default_credential_template")
+        private val KEY_CURRENCY = stringPreferencesKey("currency")
     }
 }

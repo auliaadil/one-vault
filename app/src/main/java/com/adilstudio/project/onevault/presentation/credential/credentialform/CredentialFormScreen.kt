@@ -49,6 +49,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.adilstudio.project.onevault.R
 import com.adilstudio.project.onevault.domain.model.Credential
+import com.adilstudio.project.onevault.presentation.MainViewModel
 import com.adilstudio.project.onevault.presentation.component.BaseScreen
 import org.koin.androidx.compose.koinViewModel
 import sh.calvin.reorderable.ReorderableItem
@@ -58,8 +59,9 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @Composable
 fun CredentialFormScreen(
     credential: Credential? = null, // For editing existing credentials
-    onNavigateBack: () -> Unit = {},
-    viewModel: CredentialFormViewModel = koinViewModel()
+    viewModel: CredentialFormViewModel = koinViewModel(),
+    mainViewModel: MainViewModel = koinViewModel(),
+    onNavigateBack: () -> Unit = {}
 ) {
     val serviceName by viewModel.serviceName.collectAsState()
     val userAccount by viewModel.userAccount.collectAsState()
@@ -74,17 +76,21 @@ fun CredentialFormScreen(
 
     var showPassword by remember { mutableStateOf(false) }
 
+    val savedMessage = stringResource(R.string.credential_saved_success)
+    val updatedMessage = stringResource(R.string.credential_updated_success)
+
     // Load existing credential if provided
     LaunchedEffect(credential) {
         credential?.let { viewModel.loadCredential(it) }
     }
 
-    // Handle success message
-    LaunchedEffect(successMessage) {
-        successMessage?.let {
-            // Navigate back on successful save
-            onNavigateBack()
+    // Show global snackbar when successMessage is set
+    successMessage?.let {
+        LaunchedEffect(it) {
+            mainViewModel.showSnackbar(it)
             viewModel.clearSuccessMessage()
+            // Navigate back after showing success message
+            onNavigateBack()
         }
     }
 

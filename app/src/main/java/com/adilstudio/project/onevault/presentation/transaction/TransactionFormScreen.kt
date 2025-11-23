@@ -42,6 +42,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -59,18 +60,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import coil.compose.AsyncImage
 import com.adilstudio.project.onevault.R
+import com.adilstudio.project.onevault.core.util.CurrencyFormatter
 import com.adilstudio.project.onevault.core.util.DateUtil
 import com.adilstudio.project.onevault.core.util.ImageUtil
-import com.adilstudio.project.onevault.core.util.RupiahFormatter
+import com.adilstudio.project.onevault.domain.model.Currency
 import com.adilstudio.project.onevault.domain.model.Transaction
 import com.adilstudio.project.onevault.domain.model.TransactionType
+import com.adilstudio.project.onevault.presentation.MainViewModel
+import com.adilstudio.project.onevault.presentation.component.BaseScreen
 import com.adilstudio.project.onevault.presentation.transaction.account.AccountViewModel
 import com.adilstudio.project.onevault.presentation.transaction.category.TransactionCategoryViewModel
-import com.adilstudio.project.onevault.presentation.component.BaseScreen
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-import androidx.compose.material3.rememberModalBottomSheetState
 import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDate
 import java.util.Calendar
@@ -84,12 +86,19 @@ fun TransactionFormScreen(
     onDelete: ((Long) -> Unit)? = null,
     onCancel: () -> Unit = {},
     categoryViewModel: TransactionCategoryViewModel = koinViewModel(),
-    accountViewModel: AccountViewModel = koinViewModel()
+    accountViewModel: AccountViewModel = koinViewModel(),
+    mainViewModel: MainViewModel = koinViewModel()
 ) {
+    val currency = Currency.current
     val context = LocalContext.current
     val categories by categoryViewModel.categories.collectAsState()
     val accounts by accountViewModel.accounts.collectAsState()
     val isEditing = transaction != null
+    val successMessage =
+        if (transaction == null) stringResource(R.string.transaction_saved_success) else stringResource(
+            R.string.transaction_updated_success
+        )
+    var showSuccess by remember { mutableStateOf(false) }
 
     // ML Kit scanning state for scanned image
     var scannedTexts by remember { mutableStateOf<List<String>>(emptyList()) }
@@ -102,7 +111,11 @@ fun TransactionFormScreen(
     var title by remember { mutableStateOf(transaction?.title ?: "") }
 
     // Add TransactionType state - initialize from transaction or default to EXPENSE
-    var selectedTransactionType by remember { mutableStateOf(transaction?.type ?: TransactionType.EXPENSE) }
+    var selectedTransactionType by remember {
+        mutableStateOf(
+            transaction?.type ?: TransactionType.EXPENSE
+        )
+    }
 
     var selectedCategory by remember {
         mutableStateOf(categories.find { it.id == transaction?.categoryId })
@@ -116,7 +129,7 @@ fun TransactionFormScreen(
     var amountDisplay by remember {
         mutableStateOf(
             if (transaction?.amount != null)
-                RupiahFormatter.formatRupiahDisplay(transaction.amount.toLong())
+                CurrencyFormatter.formatDisplay(transaction.amount.toLong(), currency)
             else ""
         )
     }
@@ -125,7 +138,8 @@ fun TransactionFormScreen(
     // Date picker state - using Calendar for API 24 compatibility
     var selectedDate by remember {
         mutableStateOf(
-            transaction?.date?.let { DateUtil.isoStringToLocalDate(it) } ?: DateUtil.getCurrentDate()
+            transaction?.date?.let { DateUtil.isoStringToLocalDate(it) }
+                ?: DateUtil.getCurrentDate()
         )
     }
     var showDatePicker by remember { mutableStateOf(false) }
@@ -434,7 +448,7 @@ fun TransactionFormScreen(
                     if (digitsOnly.length <= 15) { // Reasonable limit for amount
                         val longValue = digitsOnly.toLongOrNull() ?: 0L
                         amountValue = longValue
-                        amountDisplay = RupiahFormatter.formatRupiahDisplay(longValue)
+                        amountDisplay = CurrencyFormatter.formatDisplay(longValue, currency)
                     }
                 },
                 label = { Text(stringResource(R.string.amount)) },
@@ -602,6 +616,7 @@ fun TransactionFormScreen(
                             accountId = selectedAccount?.id
                         )
                         onSave(transactionToSave)
+                        showSuccess = true
                     },
                     modifier = if (isEditing) Modifier.weight(1f) else Modifier.fillMaxWidth(),
                     enabled = title.isNotBlank() && amountValue > 0
@@ -694,10 +709,11 @@ fun TransactionFormScreen(
                 if (selectedTitle.isNotBlank()) title = selectedTitle
                 if (selectedVendor.isNotBlank()) merchant = selectedVendor
                 if (selectedAmount.isNotBlank()) {
-                    val extractedAmount = TransactionFormUtils.extractAmountFromText(selectedAmount)
+                    val extractedAmount = TransactionFormUtils.extractAmountFromText(selectedAmount, currency)
                     if (extractedAmount > 0) {
                         amountValue = extractedAmount.toLong()
-                        amountDisplay = TransactionFormUtils.getFormattedAmountDisplay(extractedAmount)
+                        amountDisplay =
+                            TransactionFormUtils.getFormattedAmountDisplay(extractedAmount, currency)
                     }
                 }
                 showTextSelectionDialog = false
@@ -725,5 +741,13 @@ fun TransactionFormScreen(
             },
             confirmButton = {}
         )
+    }
+
+    // Show success snackbar after save/update
+    if (showSuccess) {
+        LaunchedEffect(showSuccess) {
+            mainViewModel.showSnackbar(successMessage)
+            showSuccess = false
+        }
     }
 }

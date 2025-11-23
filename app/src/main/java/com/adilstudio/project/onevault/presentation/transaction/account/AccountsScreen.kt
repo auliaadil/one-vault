@@ -38,10 +38,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.adilstudio.project.onevault.R
-import com.adilstudio.project.onevault.core.util.RupiahFormatter
 import com.adilstudio.project.onevault.domain.model.Account
 import com.adilstudio.project.onevault.presentation.component.EmptyState
 import com.adilstudio.project.onevault.presentation.component.BaseScreen
+import com.adilstudio.project.onevault.presentation.component.AutoCurrencyText
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -196,14 +196,13 @@ fun AccountCard(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Medium
                     )
-                    Text(
-                        text = RupiahFormatter.formatWithRupiahPrefix(account.amount.toLong()),
+                    AutoCurrencyText(
+                        amount = account.amount,
                         style = MaterialTheme.typography.titleLarge,
                         color = if (account.amount >= 0)
                             MaterialTheme.colorScheme.primary
                         else
-                            MaterialTheme.colorScheme.error,
-                        fontWeight = FontWeight.Bold
+                            MaterialTheme.colorScheme.error
                     )
                     account.description?.let { desc ->
                         if (desc.isNotBlank()) {

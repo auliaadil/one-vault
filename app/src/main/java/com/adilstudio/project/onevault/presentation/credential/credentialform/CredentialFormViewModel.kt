@@ -217,10 +217,12 @@ class CredentialFormViewModel(
                     _successMessage.value = "Credential updated successfully"
                 } else {
                     addCredentialUseCase(credential)
-                    _successMessage.value = "Credential saved successfully"
                     // Save as default template if checked
                     if (_saveAsDefaultTemplateChecked.value) {
                         saveCurrentTemplateAsDefault()
+                        _successMessage.value = "Credential and default template saved successfully"
+                    } else {
+                        _successMessage.value = "Credential saved successfully"
                     }
                 }
 
@@ -260,15 +262,12 @@ class CredentialFormViewModel(
     /**
      * Save the current template as default in DataStore
      */
-    fun saveCurrentTemplateAsDefault() {
-        viewModelScope.launch {
-            val templateJson = PasswordTemplateHelper.serializeTemplate(_useTemplate.value, _rules.toList())
-            if (!templateJson.isNullOrBlank()) {
-                saveDefaultCredentialTemplateUseCase(templateJson)
-                _successMessage.value = "Default template saved!"
-            } else {
-                _error.value = "No template to save."
-            }
+    suspend fun saveCurrentTemplateAsDefault() {
+        val templateJson = PasswordTemplateHelper.serializeTemplate(_useTemplate.value, _rules.toList())
+        if (!templateJson.isNullOrBlank()) {
+            saveDefaultCredentialTemplateUseCase(templateJson)
+        } else {
+            _error.value = "No template to save."
         }
     }
 

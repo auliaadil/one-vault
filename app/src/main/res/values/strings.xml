@@ -393,10 +393,18 @@
     <string name="capturing">Capturing…</string>
 
     <!-- Currency Settings -->
-    <string name="currency_rupiah_label">Currency: Rupiah (Rp)</string>
+    <string name="currency_rupiah_label">Currency</string>
+    <string name="select_currency">Select Currency</string>
     <string name="currency_info_dialog_title">Currency Information</string>
     <string name="currency_info_dialog_message">Currently, OneVault only supports the Indonesian Rupiah (Rp) for all transaction and account transactions. Support for other currencies may be added in future updates.</string>
     <string name="currency_info_dialog_ok">OK</string>
+
+    <!-- Currency Change Confirmation -->
+    <string name="change_currency_title">Change Currency?</string>
+    <string name="change_currency_message">You are about to change your currency to %1$s (%2$s).</string>
+    <string name="change_currency_warning_title">Important:</string>
+    <string name="change_currency_warning_description">All money-related data (transactions, accounts, split bills) will be displayed using the new currency symbol and format. This does not convert amounts, only changes how they are displayed.</string>
+    <string name="change_currency_confirm">Change Currency</string>
 
     <!-- Transaction Type -->
     <string name="transaction_type">Transaction Type</string>
@@ -404,6 +412,7 @@
     <string name="expense">Expense</string>
 
     <!-- Split Bill Feature -->
+    <string name="add_split_bill">Add Split Bill</string>
     <string name="split_bill_title">Split Bill</string>
     <string name="capture_receipt_title">Capture Receipt</string>
     <string name="capture_receipt_description">Take a photo of your receipt or bill to automatically extract items and amounts</string>
@@ -437,4 +446,14 @@
     <string name="add_items_from_suggestions_above_or_manually">Add items from suggestions above or manually</string>
     <string name="tap_the_add_button_to_add_items_manually">Tap the add button to add items manually</string>
     <string name="add_item">Add Item</string>
+    <string name="done">Done</string>
+    <string name="exported_to_transaction_success_message">Exported to transaction successfully!</string>
+    <string name="transaction_saved_success">Transaction saved successfully!</string>
+    <string name="transaction_updated_success">Transaction updated successfully!</string>
+    <string name="credential_saved_success">Credential saved successfully!</string>
+    <string name="credential_updated_success">Credential updated successfully!</string>
+    <string name="category_saved_success">Category saved successfully!</string>
+    <string name="category_updated_success">Category updated successfully!</string>
+    <string name="account_saved_success">Account saved successfully!</string>
+    <string name="account_updated_success">Account updated successfully!</string>
 </resources>
